@@ -5,6 +5,10 @@ Open MCT / dashboard, with **jev** (TypeSafe System One) piloting from the groun
 the `claude` CLI) reviewing. The README covers it for humans. This file tells you how to install it on the
 user's machine without them doing the work.
 
+On a Jetson AGX Orin the same stack can run on local models instead: **Rune** (`--system-one rune`, a llama.cpp
+server on :8080) and **Gemma 4 31B** (`--system-two openai --system-two-base-url http://127.0.0.1:8081/v1
+--system-two-model gemma-4-31b`). For that setup follow `docs/JETSON-RUNBOOK.md`, not the steps below.
+
 ## If the user asks you to set this up
 
 Do the steps in order. Every script is idempotent, so if a step fails, fix the cause and re-run the same step.
@@ -97,7 +101,7 @@ for the dev set. The shareware `doom1.wad` E1M1 is the test level.
 | `scripts/` | `flight.sh` (entry point), `setup_flight.sh`, `setup_ground.sh`, `start_pilot.sh`, `start_openmct.sh`, `common.sh` (paths + `.env`) |
 | `flight/` | the F´ component (`Components/Doom/`), topology (`DoomSat/Top/`), com-buffer config. `wsl_sync.sh` copies them into `$DOOMSAT_HOME/DoomSat` before each build |
 | `payload/` | the game as an instrument: `doom_payload.py`, `world_model.py`, `executor.py`, `play.py`. Many `*_probe.py` files are one-off developer probes with hard-coded paths, so ignore them |
-| `ground/` | `pilot.py` (the loop), `targeting.py`, `decision_graph.py`, `providers.py` (jev / Claude / OpenAI-compatible), `yamcs/`, `openmct/`, `dashboard/`, `graph/` |
+| `ground/` | `pilot.py` (the loop), `targeting.py`, `decision_graph.py`, `providers.py` (jev / Rune on llama.cpp / Claude / OpenAI-compatible), `yamcs/`, `openmct/`, `dashboard/`, `graph/` |
 | `research/` | the measurement harness (the "ruler"). Read-only for experiments: see `research/PROGRAM.md` |
 | `tools/` | `doctor.py`, `serve_dashboard.py`, `run_report.py`, `replay.py`, charts, recording |
 | `docs/` | `ARCHITECTURE.md`, `CHARTER.md` (mission and rules), `CHARTER-STATUS.md`, `results/`, report PDF |
@@ -125,3 +129,7 @@ for the dev set. The shareware `doom1.wad` E1M1 is the test level.
 - Don't edit `research/levels.yaml` or `research/frozen_metrics.py` to make a result look better. Every change
   to behaviour goes through the experiment ledger (`research/PROGRAM.md`).
 - Run the tests before you commit: `python -m unittest discover -s tests`.
+- `--system-one rune` reproduces Surogate's "decisions v1" prompt and readout exactly (`ground/providers.py`;
+  `tests/test_providers.py` pins it against a port of Surogate's reference). Don't "improve" the prompt text, the
+  option labels or the arithmetic: the model was trained on them. The graph's thresholds are still tuned against
+  `jev-1.13.0`; re-tuning for Rune goes through the experiment ledger.

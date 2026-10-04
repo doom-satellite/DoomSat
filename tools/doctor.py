@@ -2,8 +2,10 @@
 
     python tools/doctor.py           installs, keys, and which services answer
     python tools/doctor.py --jev     also makes one real jev call with the key in .env
+    python tools/doctor.py --rune    also makes one real Rune call (a local llama.cpp server, RUNE_BASE_URL) and
+                                     checks the prompt the server renders for it (docs/JETSON-RUNBOOK.md)
 
-Uses only the standard library (plus `requests` for --jev), so any Python 3.10+ can run it.
+Uses only the standard library (plus `requests` for --jev and --rune), so any Python 3.10+ can run it.
 """
 import argparse
 import os
@@ -48,9 +50,19 @@ def answers(url):
         return False
 
 
+# One small question for the real model calls: a door and a hallway.
+SAMPLE_STATE = {"door": "open", "hallway": "empty"}
+SAMPLE_QUESTION = {
+    "type": "choice",
+    "instructions": {"question": "Should the player walk through the door?", "inspect": "`door`, `hallway`"},
+    "criteria": {"Go": {"what": "`door` is open and `hallway` is empty"},
+                 "Wait": {"what": "`door` is closed or `hallway` is not empty"}}}
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--jev", action="store_true", help="make one real jev call")
+    p.add_argument("--rune", action="store_true", help="make one real Rune call and check its rendered prompt")
     a = p.parse_args()
 
     print("== keys (.env at the repo root; see .env.example)")
@@ -91,6 +103,13 @@ def main():
     line(answers("http://localhost:8070/") or None, "Dashboard http://localhost:8070   (python tools/serve_dashboard.py)")
     line(answers("http://localhost:5000/") or None, "F´ GDS    http://localhost:5000   (scripts/flight.sh gds)")
 
+    # Optional local models: the Jetson setup in docs/JETSON-RUNBOOK.md. llama-server answers /health with 200
+    # once its model is loaded, so a server still loading (503) or not started shows as not running.
+    rune = (env_key("RUNE_BASE_URL") or "http://localhost:8080").rstrip("/")
+    two = (env_key("SYSTEM_TWO_BASE_URL") or "http://localhost:8081/v1").rstrip("/")
+    line(answers(rune.removesuffix("/v1") + "/health") or None, f"Rune      {rune}   (System One: --system-one rune; llama.cpp)")
+    line(answers(two.removesuffix("/v1") + "/health") or None, f"Gemma 4   {two}   (System Two: --system-two openai --system-two-model gemma-4-31b)")
+
     if a.jev:
         print("== one jev call")
         key = env_key("TYPESAFE_API_KEY")
@@ -101,14 +120,26 @@ def main():
             import providers
             providers.SYSTEM_ONE_TIMEOUT_S = 15  # a first call is not a reflex
             try:
-                r = TypeSafeSystemOne(key).ask({"door": "open", "hallway": "empty"}, {"go": {
-                    "type": "choice",
-                    "instructions": {"question": "Should the player walk through the door?", "inspect": "`door`, `hallway`"},
-                    "criteria": {"Go": {"what": "`door` is open and `hallway` is empty"},
-                                 "Wait": {"what": "`door` is closed or `hallway` is not empty"}}}})
+                r = TypeSafeSystemOne(key).ask(SAMPLE_STATE, {"go": SAMPLE_QUESTION})
                 line(True, f"jev answered {r['answers']['go'].get('choice')} in {r['latency_ms']} ms (model {r['model']})")
             except Exception as e:  # noqa: BLE001
                 line(False, f"jev call failed: {e}", "check the key (TypeSafe keys can expire) and your network")
+    if a.rune:
+        print("== one Rune call")
+        from providers import RUNE_TEMPERATURE, RuneSystemOne  # noqa: E402
+        one = RuneSystemOne(rune, None, float(env_key("RUNE_TEMPERATURE") or RUNE_TEMPERATURE), timeout=30)  # a first call is not a reflex
+        try:
+            r = one.ask(SAMPLE_STATE, {"go": SAMPLE_QUESTION})
+            ans = r["answers"]["go"]
+            probs = {k: round(v, 3) for k, v in ans["probabilities"].items()}
+            line(True, f"Rune answered {ans['choice']} {probs} in {r['latency_ms']} ms (model {r['model']})")
+            tail = one.rendered_prompt(SAMPLE_STATE, SAMPLE_QUESTION)[-80:]
+            line("<|channel>thought\n<channel|>" in tail,
+                 "the server's chat template ends the prompt with the empty thought block (thinking off)",
+                 f"the rendered prompt ends {tail!r}; Rune was trained with <|channel>thought\\n<channel|> there. "
+                 "Update llama.cpp (git pull, rebuild) or check the chat template")
+        except Exception as e:  # noqa: BLE001
+            line(False, f"Rune call failed: {e}", f"start the server (sudo systemctl start rune-server) and check RUNE_BASE_URL ({rune})")
     print(f"\n{bad} problem(s)" if bad else "\nall checked pieces are in place")
     return 1 if bad else 0
 

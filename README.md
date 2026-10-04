@@ -263,6 +263,193 @@ scripts/start_pilot.sh --system-two none            # jev + code only
 
 </details>
 
+## Run it on a Jetson AGX Orin (local models, no cloud, no key)
+
+The whole demo can run on one **Jetson AGX Orin 64 GB**. **Rune** (Surogate's decision model, a Gemma 4 26B-A4B)
+plays as System One in place of jev, and **Gemma 4 31B** reviews as System Two in place of Claude. Both run on
+[llama.cpp](https://github.com/ggml-org/llama.cpp) servers (`:8080` and `:8081`). `--system-one rune` speaks
+Surogate's "decisions v1" protocol to llama.cpp and answers in the same shapes as jev.
+
+This was set up and measured on 4 October 2026 on one Orin Developer Kit (JetPack 7.2, Ubuntu 24.04.4, L4T R39.2.1,
+CUDA 13.2). **It flies, but it is not yet a real-time pilot**: read [What to expect](#what-to-expect-on-the-jetson)
+before you build it. [docs/JETSON-RUNBOOK.md](docs/JETSON-RUNBOOK.md) is the plan this follows. The Teensy 4.1 part
+was not done: see [docs/JETSON-HANDOFF.md](docs/JETSON-HANDOFF.md).
+
+<details>
+<summary><b>Setup, step by step</b> (1 to 2 hours, most of it downloads and builds)</summary>
+
+<br>
+
+Run these on the Jetson, over SSH or at a keyboard. Several steps need `sudo`. Anything that takes more than a
+minute or two (apt, the llama.cpp build, the model downloads) is best run under `tmux` or `nohup` with a log file,
+so a dropped SSH session doesn't kill it.
+
+**1. Check the machine, and where the big files will go.** You need about 100 GB free for models, builds and swap.
+
+```bash
+uname -m                          # aarch64
+grep VERSION= /etc/os-release     # 24.04
+free -g | sed -n 2p               # total about 61 GB
+findmnt -n -o SOURCE /; df -h /   # which disk is the OS on, and how much is free?
+lsblk -d -o NAME,SIZE,MODEL
+```
+
+JetPack may have been flashed to the small eMMC (`/dev/mmcblk0p1`, about 24 GB free) even when a big NVMe is
+installed. If so, use the NVMe as a **data disk**. These commands **erase the disk**, so run them only on a disk
+you have checked is blank (`lsblk` shows no partitions and no filesystem):
+
+```bash
+sudo sfdisk /dev/nvme0n1 <<< $'label: gpt\n,,L'                  # one partition, the whole disk
+sudo mkfs.ext4 -L doomdata -m 1 /dev/nvme0n1p1
+sudo mkdir -p /mnt/nvme
+echo "UUID=$(sudo blkid -s UUID -o value /dev/nvme0n1p1) /mnt/nvme ext4 defaults,noatime,nofail 0 2" | sudo tee -a /etc/fstab
+sudo mount /mnt/nvme && sudo mkdir -p /mnt/nvme/$USER && sudo chown $USER: /mnt/nvme/$USER
+for d in models llama.cpp doom venvs hf-cache; do mkdir -p /mnt/nvme/$USER/$d && ln -s /mnt/nvme/$USER/$d ~/$d; done
+```
+
+The symlinks keep every path in the runbook and the units below valid. If the OS is already on the NVMe, skip all of
+this. Put `export PATH=/usr/local/cuda/bin:$PATH` and `export HF_HOME=$HOME/hf-cache` in `~/.bashrc`.
+
+**2. Switch to MAXN and pin the clocks.** The default 30 W mode runs 8 of 12 cores and caps the GPU at 612 MHz. The
+switch **needs a reboot**, so do it before the long builds:
+
+```bash
+sudo nvpmodel -q                  # MODE_30W; MAXN is mode 0 on this board (check /etc/nvpmodel.conf)
+echo YES | sudo nvpmodel -m 0     # answers the reboot prompt: the Jetson reboots now
+# after it comes back:
+sudo nvpmodel -q                  # MAXN
+sudo jetson_clocks                # a oneshot systemd unit that runs this at boot keeps it (runbook, phase 1)
+```
+
+Add a 16 GB swap file on the data disk (`/mnt/nvme/swapfile`, priority 10, an `/etc/fstab` line) and
+`vm.swappiness=10`. Swap was never touched in the measured run, but it is the safety net.
+
+**3. Packages, Node and the repo.**
+
+```bash
+sudo apt update
+sudo apt install -y git curl build-essential binutils cmake pkg-config python3 python3-venv python3-pip \
+  libcurl4-openssl-dev jq tmux htop libboost-all-dev libsdl2-dev libopenal-dev libgl1-mesa-dev zlib1g-dev libjpeg-dev
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash && . ~/.nvm/nvm.sh && nvm install 24
+git clone https://github.com/doom-satellite/DoomSat.git ~/DoomSat && cd ~/DoomSat && cp -n .env.example .env
+```
+
+nvm only puts `node` on the `PATH` of interactive shells. In a script, or in `ssh <jetson> 'command'`, start with
+`. ~/.nvm/nvm.sh`; without it `tools/doctor.py` reports Node as missing and `scripts/start_openmct.sh` fails.
+
+**4. Build llama.cpp natively for the Orin GPU** (architecture 87). NVIDIA's JetPack 7.2 forum guide says prebuilt
+CUDA 12 binaries fail on it (not tested here). The first third of the build took 17 minutes in the 30 W mode; the
+rest took about 4 minutes after the switch to MAXN.
+
+```bash
+git clone https://github.com/ggml-org/llama.cpp ~/llama.cpp    # into the (empty) directory the symlink points to
+cd ~/llama.cpp && cmake -B build -DGGML_CUDA=ON -DCMAKE_CUDA_ARCHITECTURES=87 -DCMAKE_BUILD_TYPE=Release
+cmake --build build --config Release -j"$(nproc)" && ./build/bin/llama-server --version
+```
+
+**5. Download the two models** (about 34 GB). Rune is a third-party GGUF by Livesport; Surogate's own serving engine
+targets other hardware, according to its README (not tried here). Gemma has three vision projectors: take the F16
+one only.
+
+```bash
+python3 -m venv ~/venvs/hf && . ~/venvs/hf/bin/activate && pip install -U huggingface_hub
+hf download Livesport/rune-26b-a4b-v3-GGUF rune-26b-a4b-v3-IQ4_XS-dyn.gguf --local-dir ~/models/rune-v3
+hf download unsloth/gemma-4-31B-it-qat-GGUF gemma-4-31B-it-qat-UD-Q4_K_XL.gguf mmproj-F16.gguf --local-dir ~/models/gemma4-31b
+```
+
+**6. Run both as systemd services**, so a dropped SSH session cannot kill them. Wrap each command in a unit with
+`User=<you>`, `Restart=on-failure`, `RequiresMountsFor=/mnt/nvme` (if the models are there) and
+`WantedBy=multi-user.target`; the full unit text is in the runbook, phase 5. Start Rune first and wait for its
+health check before Gemma, so the two model loads do not overlap.
+
+```bash
+# rune-server.service (ExecStart, one line)
+~/llama.cpp/build/bin/llama-server -m ~/models/rune-v3/rune-26b-a4b-v3-IQ4_XS-dyn.gguf -ngl 99 -c 16384 -np 1 --swa-full -fa on -ctk q8_0 -ctv q8_0 -b 512 -ub 512 --jinja --cache-ram 0 --host 0.0.0.0 --port 8080
+# gemma-server.service (ExecStart, one line)
+~/llama.cpp/build/bin/llama-server -m ~/models/gemma4-31b/gemma-4-31B-it-qat-UD-Q4_K_XL.gguf --mmproj ~/models/gemma4-31b/mmproj-F16.gguf -ngl 99 -c 8192 -np 1 -fa on --jinja --cache-ram 0 --temp 1.0 --top-p 0.95 --top-k 64 --host 0.0.0.0 --port 8081
+```
+
+Use absolute paths in a unit (`/home/<you>/...`). Both came up healthy in under 20 seconds each, with about 41 GB of
+RAM used. `--host 0.0.0.0` makes both ports reachable from your whole network, and this setup did not enable a
+firewall: keep the Jetson on a network you trust. If you enable `ufw`, run `sudo ufw allow OpenSSH` first or you
+lock yourself out.
+
+**7. Install the flight stack.** Everything below ran natively on aarch64 with no source fixes: ViZDoom 1.3.0 has an
+aarch64 wheel, the JRE bundled with `fprime-yamcs` is aarch64, and F´ builds on the Orin in a few minutes. The
+scripts are stored in git without the executable bit, so run them with `bash`:
+
+```bash
+cd ~/DoomSat && . ~/.nvm/nvm.sh
+bash scripts/flight.sh setup payload && bash scripts/flight.sh setup wads && bash scripts/flight.sh setup fprime
+bash scripts/setup_ground.sh          # ground/.venv and Open MCT
+```
+
+**8. Check it.**
+
+```bash
+python3 tools/doctor.py --rune        # one real Rune call, and a check of the prompt the server builds
+~/doom/payload-venv/bin/python payload/play.py --check          # writes out/doom_check.png (no display needed)
+bash scripts/flight.sh start && sleep 40 && bash scripts/flight.sh check   # FRAMES_SENT rising, PAYLOAD_LINK True
+bash scripts/flight.sh stop
+ground/.venv/bin/python -m unittest discover -s tests           # no network, no game
+```
+
+`doctor.py --rune` prints "ok" when the server's chat template ends Rune's prompt with the empty thought block
+(`<|channel>thought\n<channel|>`). If it does not, the answers are off-distribution: update and rebuild llama.cpp.
+
+</details>
+
+<details>
+<summary><b>Fly it</b></summary>
+
+<br>
+
+```bash
+cd ~/DoomSat
+bash scripts/flight.sh start; sleep 40; bash scripts/flight.sh check
+python3 tools/serve_dashboard.py &        # http://localhost:8070 on the Jetson
+bash scripts/start_openmct.sh &           # http://localhost:9000 on the Jetson
+RUNE_TIMEOUT_S=10 bash scripts/start_pilot.sh \
+  --system-one rune --system-one-base-url http://127.0.0.1:8080 \
+  --system-two openai --system-two-base-url http://127.0.0.1:8081/v1 --system-two-model gemma-4-31b \
+  --duration 120
+bash scripts/flight.sh stop               # leave the two model services running
+```
+
+The dashboard and Open MCT listen on the Jetson's loopback. To watch from your own computer, forward the ports and
+open `http://localhost:8070` there:
+
+```bash
+ssh -N -L 8070:127.0.0.1:8070 -L 9000:127.0.0.1:9000 -L 8090:127.0.0.1:8090 <you>@<jetson-address>
+```
+
+`RUNE_TIMEOUT_S=10` is there on purpose: with the default 1.2 s, almost every tick would time out and fall back to
+the code rule (next section), so you would be watching the rules fly, not Rune. Each role has its own endpoint:
+`--system-one-base-url` and `--system-two-base-url`, or `RUNE_BASE_URL` and `SYSTEM_TWO_BASE_URL` in `.env`.
+
+</details>
+
+### What to expect on the Jetson
+
+One 120 s flight on the unit above (23 decision ticks, so treat the numbers as indicative, not as a benchmark):
+
+| | Result |
+|---|---|
+| Memory, both models and the whole flight stack | peak **43.1 GiB** of 61 GiB; swap unused |
+| Rune's answer to a question | one question costs about **0.65 s** (about 390 new prompt tokens at about 780 tokens/s); questions run one after another |
+| Rune per decision tick | **5.2 s** for the usual 8 candidates, 0.7 s for one. jev's median is 0.54 s and the pilot's ceiling is 1.2 s: **19 of the 20 ticks Rune answered were over it** |
+| Rune while Gemma is running | worse: the last 3 ticks, which coincided with Gemma's first call, each timed out at 10 s and fell back to the code rule. Both models share one GPU |
+| Rune's confidence against the graph | 11 of the 20 answered ticks landed in the graph's "unsure" band and used the code rule. Its thresholds were tuned against `jev-1.13.0` and **have not been re-tuned for Rune**; any change goes through the experiment ledger (`research/PROGRAM.md`) |
+| Gemma 4 31B (System Two) | about **7.8 tokens/s**. A small JSON call took 39 to 55 s with its thinking on and about 7 s with thinking off. The flight's real after-action prompt, replayed afterwards, took **279 s** even with thinking off |
+| System Two in the pilot | **did not deliver**: `OpenAIChat` waits 180 s, so the stall consult and the after-action review both failed with a read timeout, and no `[pilot] ... (gemma-4-31b, N ms)` line appeared |
+| `probabilities` in `out/decisions.jsonl` | **not logged** on the default `--control intent` rows (only `answers` and `confidence`) |
+| The dashboard's headings | still say "jev" and "Claude Sonnet 5": they are fixed text, not what is flying. The pilot log line `System One = rune plays` and the model name on each decision row are what to trust |
+
+What is not verified: whether Rune's judgments are any good (there is no ground truth here), whether any of the
+fixes below help, and anything over a longer flight. Ideas that were **not tried**: asking Rune fewer candidates per
+tick or shortening the rubric text, larger `-b`/`-ub` batches for faster prompt processing, turning Gemma's thinking
+off for System Two (`chat_template_kwargs: {"enable_thinking": false}`) and lengthening its 180 s timeout.
+
 ## Configuration
 
 Everything is in one file, `.env` at the repo root. Copy it from [`.env.example`](.env.example):
@@ -271,6 +458,8 @@ Everything is in one file, `.env` at the repo root. Copy it from [`.env.example`
 |---|---|
 | `TYPESAFE_API_KEY` | jev (the pilot, the jev bench) |
 | `ANTHROPIC_API_KEY` | only `--system-two anthropic` |
+| `RUNE_BASE_URL`, `RUNE_TEMPERATURE`, `RUNE_TIMEOUT_S` | only `--system-one rune` (a local llama.cpp server) |
+| `SYSTEM_TWO_BASE_URL` | only `--system-two openai`, to give System Two its own endpoint |
 | `DOOMSAT_HOME` | where the flight side is installed (default `~/doom`) |
 | `DOOMSAT_WSL_DISTRO`, `DOOMSAT_WSL_USER` | only when you drive WSL from Git Bash |
 

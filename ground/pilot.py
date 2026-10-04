@@ -13,6 +13,10 @@ Code owns the loop, the mode machine, the thresholds, the hysteresis and the com
 Sonnet reviews. Every row of the decision log carries the exact state jev saw, so a run can be replayed
 against a new graph without the game (tools/replay.py).
 
+Local models (no key, no cloud; docs/JETSON-RUNBOOK.md):
+  --system-one rune                     Surogate's Rune on a llama.cpp server plays instead of jev
+  --system-two openai --system-two-base-url http://HOST:8081/v1 --system-two-model gemma-4-31b
+                                        a local Gemma 4 reviews instead of Claude
 Without jev (no key needed):
   --system-one code    the exact rules answer every head: the bench's code baseline, flown on the full stack
   --system-one manual  a person drives from the dashboard (http://localhost:8070); its keys go up as CONTROL
@@ -78,6 +82,14 @@ def _knowledge():
     return yaml.safe_load(open(path, encoding="utf-8"))
 
 
+def pinned_system_one_model(args, cfg):
+    """The System One model to ask for. The graph carries the version its numbers were tuned against (a jev
+    version); the flag still overrides it. Rune is not a jev version, so it names its own model."""
+    if args.system_one == "rune":
+        return args.system_one_model
+    return args.system_one_model or cfg.get("model")
+
+
 class FrameAssembler:
     """Puts FRAME_CHUNK records back together into JPEG files; tolerates loss and reordering."""
 
@@ -136,8 +148,7 @@ class Pilot:
         self.processor = self.client.get_processor(args.instance, "realtime")
         self.pub_processor = self.pub_client.get_processor(args.instance, "realtime")
         self.cfg = gc.load()
-        # The graph carries the System One version its numbers were tuned against; the flag still overrides it.
-        args.system_one_model = args.system_one_model or self.cfg.get("model")
+        args.system_one_model = pinned_system_one_model(args, self.cfg)
         self.manual = args.system_one == "manual"
         self.system_one = None if self.manual else make_system_one(args.system_one, args, self.cfg)
         self.system_two = make_system_two(args.system_two, args) if args.after_action else None
@@ -648,14 +659,22 @@ def main():
     p.add_argument("--yamcs", default="localhost:8090", help="Yamcs host:port for the client")
     p.add_argument("--yamcs-public", default="http://localhost:8090", help="Yamcs base URL as the browser reaches it (frame URLs)")
     p.add_argument("--instance", default="fprime-project")
-    p.add_argument("--system-one", default="typesafe", choices=["typesafe", "openai", "code", "manual"],
-                   help="typesafe: jev (needs TYPESAFE_API_KEY). code: the exact rules, no model, no key. "
-                        "manual: a person drives from the dashboard, no model, no key")
+    p.add_argument("--system-one", default="typesafe", choices=["typesafe", "rune", "openai", "code", "manual"],
+                   help="typesafe: jev (needs TYPESAFE_API_KEY). rune: Surogate's Rune on a local llama.cpp "
+                        "server (--system-one-base-url, default RUNE_BASE_URL). code: the exact rules, no model, "
+                        "no key. manual: a person drives from the dashboard, no model, no key")
     p.add_argument("--system-one-model", default=None)
     p.add_argument("--system-two", default="claude-cli", choices=["claude-cli", "anthropic", "openai", "none"])
     p.add_argument("--system-two-model", default=None, help="e.g. sonnet (CLI alias), claude-sonnet-5, gpt-4o")
     p.add_argument("--no-after-action", dest="after_action", action="store_false", help="never call System Two")
-    p.add_argument("--openai-base-url", default=os.environ.get("OPENAI_BASE_URL", "http://localhost:1234/v1"))
+    p.add_argument("--openai-base-url", default=os.environ.get("OPENAI_BASE_URL", "http://localhost:1234/v1"),
+                   help="the endpoint for any OpenAI-compatible role that has no URL of its own")
+    p.add_argument("--system-one-base-url", default=None,
+                   help="System One's endpoint (rune: the llama.cpp server, with or without /v1; openai: the /v1 URL). "
+                        "Falls back to RUNE_BASE_URL (rune only), then --openai-base-url")
+    p.add_argument("--system-two-base-url", default=None,
+                   help="System Two's endpoint when it is openai (the /v1 URL). Falls back to SYSTEM_TWO_BASE_URL, "
+                        "then --openai-base-url")
     p.add_argument("--env-files", nargs="*", default=[str(HERE / ".env"), str(HERE.parent / ".env")])
     p.add_argument("--period", type=float, default=0.25, help="seconds between control decisions (lower bound)")
     p.add_argument("--bump-every", type=float, default=60.0, help="seconds between System Two progress checks (0 = never)")
