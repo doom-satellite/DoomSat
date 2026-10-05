@@ -18,7 +18,6 @@ module DoomSat {
     import CdhCore.Subtopology
     import ComCcsds.Subtopology
     import DataProducts.Subtopology
-    import FileHandling.Subtopology
 
   # ----------------------------------------------------------------------
   # Instances used in the topology
@@ -33,6 +32,10 @@ module DoomSat {
     instance comDriver
     instance cmdSeq
     instance doom
+    instance cfdpManager
+    instance cfdpBufferManager
+    instance fileManager
+    instance prmDb
 
   # ----------------------------------------------------------------------
   # Pattern graph specifiers
@@ -43,7 +46,7 @@ module DoomSat {
     telemetry connections instance CdhCore.tlmSend
     text event connections instance CdhCore.textLogger
     health connections instance CdhCore.$health
-    param connections instance FileHandling.prmDb
+    param connections instance prmDb
     time connections instance chronoTime
 
   # ----------------------------------------------------------------------
@@ -60,14 +63,27 @@ module DoomSat {
       CdhCore.cmdDisp.seqCmdStatus -> ComCcsds.fprimeRouter.cmdResponseIn
     }
 
-    connections ComCcsds_FileHandling {
-      # File Downlink to Communication Queue
-      FileHandling.fileDownlink.bufferSendOut -> ComCcsds.comQueue.bufferQueueIn[ComCcsds.Ports_ComBufferQueue.FILE]
-      ComCcsds.comQueue.bufferReturnOut[ComCcsds.Ports_ComBufferQueue.FILE] -> FileHandling.fileDownlink.bufferReturn
+    connections ComCcsds_Cfdp {
+      # CFDP downlink: PDUs (FW_PACKET_FILE descriptor + PDU) into the FILE buffer queue, so APID 3.
+      # Both channels share the one FILE slot; every command-reachable channel must be wired,
+      # because an unconnected output port asserts when the engine uses it.
+      cfdpManager.dataOut[0] -> ComCcsds.comQueue.bufferQueueIn[ComCcsds.Ports_ComBufferQueue.FILE]
+      cfdpManager.dataOut[1] -> ComCcsds.comQueue.bufferQueueIn[ComCcsds.Ports_ComBufferQueue.FILE]
+      # dataReturnIn only deallocates, and both channels allocate from cfdpBufferManager,
+      # so returning every FILE buffer on port 0 is safe
+      ComCcsds.comQueue.bufferReturnOut[ComCcsds.Ports_ComBufferQueue.FILE] -> cfdpManager.dataReturnIn[0]
 
-      # Router to File Uplink
-      ComCcsds.fprimeRouter.fileOut -> FileHandling.fileUplink.bufferSendIn
-      FileHandling.fileUplink.bufferSendOut -> ComCcsds.fprimeRouter.fileBufferReturnIn
+      # CFDP uplink: the router's FW_PACKET_FILE (APID 3) output feeds channel 0
+      ComCcsds.fprimeRouter.fileOut -> cfdpManager.dataIn[0]
+      cfdpManager.dataInReturn[0] -> ComCcsds.fprimeRouter.fileBufferReturnIn
+      cfdpManager.dataInReturn[1] -> ComCcsds.fprimeRouter.fileBufferReturnIn
+
+      # PDU buffers cfdpManager allocates (downlinked file data, ACK/NAK/FIN) come from a dedicated pool, not
+      # ComCcsds.commsBufferManager. Uplinked PDUs still sit in commsBufferManager buffers until dataIn takes them.
+      cfdpManager.bufferAllocate[0]   -> cfdpBufferManager.bufferGetCallee
+      cfdpManager.bufferAllocate[1]   -> cfdpBufferManager.bufferGetCallee
+      cfdpManager.bufferDeallocate[0] -> cfdpBufferManager.bufferSendIn
+      cfdpManager.bufferDeallocate[1] -> cfdpBufferManager.bufferSendIn
     }
 
     connections Communications {
@@ -84,10 +100,15 @@ module DoomSat {
       comDriver.ready         -> ComCcsds.comStub.drvConnected
     }
 
-    connections FileHandling_DataProducts {
-      # Data Products to File Downlink
-      DataProducts.dpCat.fileOut -> FileHandling.fileDownlink.SendFile
-      FileHandling.fileDownlink.FileComplete -> DataProducts.dpCat.fileDone
+    # FileHandling_Doom is gone: CfdpManager has no fileAnnounce-style output, so doom.fileAnnounce is left
+    # unconnected (it is a sync input, so that is legal). The ground's COMMIT_WAD renames the .part once the
+    # Class 2 transfer has its FIN, and only if the file's size and checksum are the ones the ground sent.
+
+    connections Cfdp_DataProducts {
+      # Data Products downlink over CFDP (channel, class, keep, priority and destination entity
+      # come from the FileInDefault* parameters)
+      DataProducts.dpCat.fileOut -> cfdpManager.fileIn
+      cfdpManager.fileDoneOut -> DataProducts.dpCat.fileDone
     }
 
     connections RateGroups {
@@ -102,7 +123,7 @@ module DoomSat {
 
       # 1Hz rate group
       rateGroupDriver.CycleOut[Ports_RateGroups.rateGroup_1Hz] -> rateGroup_1Hz.CycleIn
-      rateGroup_1Hz.RateGroupMemberOut[0] -> FileHandling.fileDownlink.Run
+      rateGroup_1Hz.RateGroupMemberOut[0] -> cfdpManager.run1Hz
       rateGroup_1Hz.RateGroupMemberOut[1] -> systemResources.run
       rateGroup_1Hz.RateGroupMemberOut[2] -> ComCcsds.comQueue.run
       rateGroup_1Hz.RateGroupMemberOut[3] -> CdhCore.cmdDisp.run
@@ -115,6 +136,7 @@ module DoomSat {
       rateGroup_0_25Hz.RateGroupMemberOut[2] -> DataProducts.dpBufferManager.schedIn
       rateGroup_0_25Hz.RateGroupMemberOut[3] -> DataProducts.dpWriter.schedIn
       rateGroup_0_25Hz.RateGroupMemberOut[4] -> DataProducts.dpMgr.schedIn
+      rateGroup_0_25Hz.RateGroupMemberOut[5] -> cfdpBufferManager.schedIn
     }
 
     connections CdhCore_cmdSeq {

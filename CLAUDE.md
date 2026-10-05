@@ -86,6 +86,8 @@ instead: the user clicks the dashboard's picture and drives. Finish with `script
 | jev bench (no F´/Yamcs) | `~/doom/payload-venv/bin/python research/runner.py bench --maps E1M1 --seeds 1 --budget 60 --decider jev --wad ~/doom/wads/freedoom1.wad --out out/bench --allow-dirty` | key |
 | Pilot | `scripts/start_pilot.sh [--system-two claude-cli\|anthropic\|none] [--duration S]` | flight side up, key |
 | Play without jev | `scripts/play.sh` (a person drives from the dashboard) or `scripts/play.sh --autopilot` (the pilot with `--system-one code`) | flight side installed; no key |
+| Uplink a WAD, switch to it (`LOAD_WAD`) | `ground/.venv/bin/python tools/wad_uplink_demo.py --wad PATH [--iwad NAME] --map MAP`, or `--iwad NAME --map MAP` alone for a WAD already on board. CFDP class 2 on this build (`--pdu-delay 5` for speed). Demonstrations only, never scored | flight side up; no key |
+| Lossy link | `DOOMSAT_RELAY=1 scripts/flight.sh start`, then `python3 tools/lossy_relay.py --loss 5 [--seed N]`; the demo with `--tries 3` | flight side installed |
 
 `WAD=`, `MAP=`, `GEOMETRY=on` and `SKILL=` before `scripts/flight.sh start` choose the level. Use `WAD=freedoom1.wad`
 for the dev set. The shareware `doom1.wad` E1M1 is the test level.
@@ -95,11 +97,11 @@ for the dev set. The shareware `doom1.wad` E1M1 is the test level.
 | Path | What |
 |---|---|
 | `scripts/` | `flight.sh` (entry point), `setup_flight.sh`, `setup_ground.sh`, `start_pilot.sh`, `start_openmct.sh`, `common.sh` (paths + `.env`) |
-| `flight/` | the F´ component (`Components/Doom/`), topology (`DoomSat/Top/`), com-buffer config. `wsl_sync.sh` copies them into `$DOOMSAT_HOME/DoomSat` before each build |
-| `payload/` | the game as an instrument: `doom_payload.py`, `world_model.py`, `executor.py`, `play.py`. Many `*_probe.py` files are one-off developer probes with hard-coded paths, so ignore them |
+| `flight/` | the F´ component (`Components/Doom/`), topology (`DoomSat/Top/`), config (com buffers, `CfdpCfg.fpp` and `CfdpCfg.hpp`, and `PrmDb.json`, which `wsl_run_flight.sh` turns into the `PrmDb.dat` the binary loads at boot). `wsl_sync.sh` copies them into `$DOOMSAT_HOME/DoomSat` before each build |
+| `payload/` | the game as an instrument: `doom_payload.py`, `world_model.py`, `executor.py`, `play.py`, `wad_uplink.py` (`LOAD_WAD`'s records and name checks). Many `*_probe.py` files are one-off developer probes with hard-coded paths, so ignore them |
 | `ground/` | `pilot.py` (the loop), `targeting.py`, `decision_graph.py`, `providers.py` (jev / Claude / OpenAI-compatible), `yamcs/`, `openmct/`, `dashboard/`, `graph/` |
 | `research/` | the measurement harness (the "ruler"). Read-only for experiments: see `research/PROGRAM.md` |
-| `tools/` | `doctor.py`, `serve_dashboard.py`, `run_report.py`, `replay.py`, charts, recording |
+| `tools/` | `doctor.py`, `serve_dashboard.py`, `run_report.py`, `replay.py`, `wad_uplink_demo.py`, `lossy_relay.py`, charts, recording |
 | `docs/` | `ARCHITECTURE.md`, `CHARTER.md` (mission and rules), `CHARTER-STATUS.md`, `results/`, report PDF |
 
 ## Gotchas that have cost hours
@@ -116,6 +118,21 @@ for the dev set. The shareware `doom1.wad` E1M1 is the test level.
 - openmct-yamcs asks for Node ≥ 24.14.1. The setup turns engine-strict off, so 24.14.0 works.
 - F´ `fprime-xtce` comes from a PR branch (for `!binary`). pip warns that it conflicts with fprime-yamcs's pin.
   Expect that warning and ignore it.
+- Uplinked WADs land in `$DOOMSAT_HOME/wads/uplink` as `NAME.<nonce>.part`, and `COMMIT_WAD(part, fileSize,
+  checksum)` renames them once the CFDP class 2 transfer has finished, and only if the size and CFDP checksum
+  match (`wad_uplink_demo.py --checksum FILE` prints both). Use absolute paths: F´ command strings hold 40
+  characters on board, and a relative path lands in the flight binary's working directory
+  (`build-artifacts/Linux/DoomSat/bin`).
+- Yamcs starts through `ground/yamcs/launch.py`, not `fprime-yamcs` itself: fprime-yamcs writes the instance YAML
+  back with sorted keys, which breaks the CFDP stream SQL. The parameter file is `$DOOMSAT_HOME/run/PrmDb.dat`,
+  built at every start; if it cannot be built the start stops (`DOOMSAT_PRM_DEFAULTS=1` flies on F´'s defaults).
+  Keep `bin/` to the binary alone: fprime-gds exits when it finds two files there and no `--app` (the scripts
+  pass `--app` anyway).
+- `feature/wad-uplink` (the native build) and this branch share `$DOOMSAT_HOME/DoomSat`. Each commits its own
+  `DoomSatTopologyDefs.hpp` and `wsl_sync.sh` copies it, so after switching branches `scripts/flight.sh build` is
+  enough.
+- CFDP class 1 has no retransmission, and F´ keeps a class 1 file whose checksum failed and calls it completed.
+  Send WADs as class 2.
 
 ## Rules for working in this repo
 

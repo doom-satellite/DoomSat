@@ -21,21 +21,27 @@ Protocol (big-endian; the payload is the server on 127.0.0.1:4242):
   payload -> flight   'D' kind:u8 length:u16 body
      kind 1 STATUS  fixed struct (see STATUS_FMT)
      kind 2 FRAME   seq:u32 jpeg bytes (seq with the high bit set: the map, a PNG)
+     kind 3 WAD     what became of a LOAD_WAD; also sent on connect (payload/wad_uplink.py)
   flight -> payload   'D' kind:u8 length:u16 body
      kind 0x10 CONTROL      move:i8 strafe:i8 turn:f32 (degrees to turn, +left) fire:u8 use:u8 weapon:u8
      kind 0x11 SET_GOAL     goal:u8
      kind 0x12 RESET
      kind 0x13 FRAME_RATE   hz:u8 quality:u8
      kind 0x14 EXPLORE_HINT bearing:i16 (degrees, positive left) ttl:u8 (seconds)
+     kind 0x15 INTENT       see INTENT_FMT
+     kind 0x16 LOAD_WAD     iwad, pwad, map (payload/wad_uplink.py)
 """
 import argparse
 import io
 import math
 import os
 import re
+import signal
 import socket
 import struct
+import subprocess
 import sys
+import tempfile
 import time
 from collections import deque
 
@@ -47,6 +53,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import executor as ex_mod            # noqa: E402  the onboard executor (charter 3.1)
 import seen_geometry as geom_mod     # noqa: E402  exact lines, gated on the automap having drawn them
 import world_model as wm_mod         # noqa: E402  frontiers, objects, the planner (charter 3.2)
+import wad_uplink as wu              # noqa: E402  LOAD_WAD: its link records and which names may load
 
 TICRATE = 35
 STATUS_FMT = "!hhhhBBHfffBfHHHHHHHHBBBBBHfHfHHHHfffBBBIHBBHBBBhHHHHBBBBBBBBBBBB"   # 120 bytes, 64 fields (see pack_status)
@@ -124,6 +131,8 @@ STEP_MARKS_BARRIER = False  # on: tell the planner instead, so it routes round r
 DEPTH_FAR = 56         # depth steps beyond which the range camera is not trusted (~400 units)
 SENSE_EVERY = 7        # tics between automap stamps and the slower sensing (5 Hz)
 UPLINK_TIMEOUT_S = 3.0  # no CONTROL for this long -> release everything (safe mode)
+WAD_PROBE_TIMEOUT_S = 15.0  # a LOAD_WAD whose game has not flown a second in a child process by now is refused
+PROBE_LOADED = "[probe] the game loaded the file"   # what the child says between loading and starting the map
 DOOR_TRIES = 10        # use presses at a door before it counts as "does not open for me now"
 DOOR_RETRY_S = 120.0   # a door that did not open is treated as a wall for this long
 # How long a barrier learned by bumping into something is believed. It used to be an hour, which inside a
@@ -617,6 +626,7 @@ class Payload:
     def __init__(self, args):
         self.args = args
         self.wad = self._find_wad(args.wad)
+        self.pwad = self._find_wad(args.pwad) if getattr(args, "pwad", None) else None
         self.map = args.map
         # Two switches, and the difference between them is the whole knowledge boundary.
         #
@@ -689,6 +699,10 @@ class Payload:
         # seven; without this the only honest thing anyone could say about it was "slow".
         self.phase_s = {}
         self.exit_bearing_of = None
+        # LOAD_WAD: switches made, the request being proven in a child process, and reports for the flight
+        # software that wait for the main loop (which holds the link).
+        self.wad_loads, self.wad_job, self.outbox = 0, None, []
+        self.wad_serial, self.wad_pinned = 0, None   # LOAD_WAD's pinned links (wad_uplink.pin): the request, the one flying
         self.new_episode()
 
     @staticmethod
@@ -701,6 +715,8 @@ class Payload:
     def _make_game(self):
         g = vzd.DoomGame()
         g.set_doom_game_path(self.wad)
+        if self.pwad:
+            g.set_doom_scenario_path(self.pwad)
         g.set_doom_map(self.map)
         g.set_doom_skill(self.args.skill)
         g.set_available_buttons(BUTTONS)
@@ -729,6 +745,8 @@ class Payload:
         g.init()
         for c in AM_CVARS:
             g.send_game_command(c)
+        if getattr(self.args, "probe", False):
+            print(PROBE_LOADED, flush=True)
         return g
 
     def new_episode(self):
@@ -792,7 +810,10 @@ class Payload:
     def level_finished(self):
         """Carry weapons and ammunition into the next map, as the game does (keys stay behind)."""
         self.carry = {"shotgun": self.var("WEAPON3") > 0, "shells": int(self.var("AMMO3")), "bullets": int(self.var("AMMO2"))}
-        self.map = next_map(self.map)
+        # Over a PWAD (LOAD_WAD) the next map would be the IWAD's, or one the engine cannot find, and
+        # new_episode() on a missing map never returns: fly the uplinked one again instead.
+        if not self.pwad:
+            self.map = next_map(self.map)
         self.new_episode()
 
     # ------------------------------------------------------------------ observation
@@ -1235,8 +1256,135 @@ class Payload:
             rel, ttl = struct.unpack("!hB", body[:3])
             self.explorer.hint = (self.var("ANGLE") + rel, time.time() + ttl)
             print(f"[payload] explore hint {rel:+d} deg for {ttl} s", flush=True)
+        elif kind == wu.KIND_LOAD_WAD:
+            self.request_wad(body)
         else:
             print(f"[payload] unknown uplink kind {kind:#x}", flush=True)
+
+    # ------------------------------------------------------------------ LOAD_WAD
+    def wad_report(self, result, name="", reason=""):
+        return wu.encode_wad_report(result, self.wad_loads, os.path.basename(self.wad),
+                                    os.path.basename(self.pwad) if self.pwad else "", name, self.map, reason)
+
+    def request_wad(self, body):
+        """Check a LOAD_WAD, and start proving the game runs on it in a child process.
+
+        Proven elsewhere first because a damaged WAD does not raise in ViZDoom: it kills the process (a
+        truncated doom1.wad segfaults in init), and this process holds the flight link. The game here keeps
+        running until the child has flown a second on the new file; only then does it switch.
+        """
+        try:
+            iwad, pwad, map_name = wu.decode_load_wad(body)
+        except ValueError:
+            self.outbox.append(self.wad_report(wu.FAILED, "?", "malformed LOAD_WAD record"))
+            return
+        name, map_name = wu.display_name(iwad, pwad), map_name.upper()   # next_map() reads upper case
+        ipath = ppath = None
+        if self.wad_job is not None:
+            why = "another LOAD_WAD is still being checked"
+        elif self.oracle != "off":
+            why = "the diagnostic ladder (--oracle) only knows the level it was launched on"
+        else:
+            ipath, ppath, why = wu.resolve(iwad, pwad, map_name)
+        if why:
+            print(f"[payload] LOAD_WAD {name}: {why}", flush=True)
+            self.outbox.append(self.wad_report(wu.FAILED, name, why))
+            return
+        # The child proves, and then this process loads, the same file: pin it (a hard link), or failing that
+        # remember what it was and check nothing was renamed over it in between.
+        self.wad_serial += 1
+        pinned = [wu.pin(p, self.wad_serial) if p else None for p in (ipath, ppath)]
+        if pinned[0] and (pinned[1] or not ppath):
+            ipath, ppath = pinned
+        else:
+            wu.unpin(self.wad_serial)
+        ident = (wu.identity(ipath), wu.identity(ppath) if ppath else None)
+        cmd = [sys.executable, os.path.abspath(__file__), "--probe", "--wad", ipath, "--map", map_name,
+               "--skill", str(self.args.skill), "--seed", str(self.args.seed), "--geometry", self.geometry]
+        if ppath:
+            cmd += ["--pwad", ppath]
+        out = tempfile.TemporaryFile()
+        # Its own process group: a child that dies or is killed leaves its ViZDoom engine running (as an
+        # orphan, still loading, still growing), so it is the group that gets killed.
+        proc = subprocess.Popen(cmd, stdin=subprocess.DEVNULL, stdout=out, stderr=subprocess.STDOUT,
+                                start_new_session=True)
+        request = dict(name=name, map=map_name, ipath=ipath, ppath=ppath, serial=self.wad_serial, ident=ident)
+        self.wad_job = (proc, out, request, time.time())
+        print(f"[payload] LOAD_WAD {name} on {map_name}: proving the game starts on it", flush=True)
+
+    def poll_wad(self):
+        """Finish a LOAD_WAD once its child is done. True when the game here was rebuilt."""
+        proc, out, request, started = self.wad_job
+        code = proc.poll()
+        if code is None and time.time() - started < WAD_PROBE_TIMEOUT_S:
+            return False
+        self.wad_job = None
+        try:
+            os.killpg(proc.pid, signal.SIGKILL)   # the child's engine, whatever became of the child
+        except OSError:
+            pass
+        proc.wait()
+        out.seek(0)
+        said = [ln.strip() for ln in out.read().decode("utf-8", "replace").splitlines()
+                if ln.strip() and not ln.startswith("[payload]")]
+        out.close()
+        if code is None:
+            # Both hang silently: a damaged PWAD while loading, and a map the WAD does not have once loaded
+            why = (f"the map would not start within {WAD_PROBE_TIMEOUT_S:.0f} s (is it in that WAD?)"
+                   if PROBE_LOADED in said else
+                   f"the game had not loaded it after {WAD_PROBE_TIMEOUT_S:.0f} s (a truncated or damaged file?)")
+        elif code != 0:
+            said = [ln for ln in said if ln != PROBE_LOADED]
+            how = f"killed by signal {-code}" if code < 0 else f"exit {code}"
+            why = f"the game would not start on it ({how}{': ' + said[-1][:60] if said else ''})"
+        elif (wu.identity(request["ipath"]), wu.identity(request["ppath"]) if request["ppath"] else None) != request["ident"]:
+            why = "the file changed while it was being proven (a new uplink of the same name?); send LOAD_WAD again"
+        else:
+            why = self.switch_wad(request["ipath"], request["ppath"], request["map"])
+        if why is None:
+            if self.wad_pinned is not None:
+                wu.unpin(self.wad_pinned)               # the links of the WAD that just stopped flying
+            self.wad_pinned = request["serial"]
+            self.wad_loads += 1
+            self.outbox.append(self.wad_report(wu.LOADED, request["name"]))
+            print(f"[payload] LOAD_WAD {request['name']}: now flying it on {self.map}", flush=True)
+            return True
+        print(f"[payload] LOAD_WAD {request['name']}: {why}", flush=True)
+        self.outbox.append(self.wad_report(wu.FAILED, request["name"], why))
+        wu.unpin(request["serial"])
+        return False
+
+    def switch_wad(self, ipath, ppath, map_name):
+        """Rebuild the game on another WAD; the process, and with it the flight link, stays up.
+
+        The new game is built before the old one is closed, so a build that fails leaves the old game flying.
+        """
+        old = (self.wad, self.pwad, self.map)
+        self.wad, self.pwad, self.map = ipath, ppath, map_name
+        try:
+            game = self._make_game()
+        except Exception as e:  # noqa: BLE001  the old game never stopped
+            self.wad, self.pwad, self.map = old
+            return f"the game would not start on it ({type(e).__name__}: {str(e)[:60]})"
+        self.game.close()
+        self.game = game
+        # A different game: nothing carries over, not the loadout, the count of levels played, the last
+        # observation of the old one, or a map image of it still waiting to go down
+        self.carry, self.level, self.explorer_map = None, 0, None
+        self.last_obs = self.exec_obs = self.map_png_bytes = None
+        self.new_episode()
+        return None
+
+    def probe(self, tics=TICRATE):
+        """--probe: fly a second on this WAD through the whole sensing path, then exit 0 (LOAD_WAD's check)."""
+        for tic in range(tics):
+            if self.game.is_episode_finished() or self.game.is_player_dead():
+                break
+            obs = self.observe(self.game.get_state())
+            self.game.make_action(self.action(tic), 1)
+            self.pack_status(obs)
+        self.game.close()
+        return 0
 
     def _candidate_at(self, tx, ty):
         """The offered candidate the ground meant. Never an invented one.
@@ -1331,6 +1479,7 @@ class Payload:
                 conn.close()
 
     def run(self, conn):
+        self.send(conn, wu.KIND_WAD, self.wad_report(wu.REPORT))   # which file the game is running
         inbuf = b""
         next_frame = 0.0
         t0 = time.perf_counter()
@@ -1351,6 +1500,10 @@ class Payload:
                 inbuf = inbuf[4 + length:]
             if inbuf and inbuf[0] != ord("D"):
                 inbuf = b""  # resync
+            if self.wad_job is not None and self.poll_wad():
+                t0, tic = time.perf_counter(), 0
+            while self.outbox:
+                self.send(conn, wu.KIND_WAD, self.outbox.pop(0))
             if self.game.is_episode_finished() or self.game.is_player_dead():
                 died = self.game.is_player_dead()
                 if self.last_obs is not None:
@@ -1411,7 +1564,35 @@ def main():
     p.add_argument("--oracle", default="off", choices=["off", "L0", "L1", "L2"],
                    help="DIAGNOSTIC LADDER, never scored: L0 the whole level and the exit, L1 seen "
                         "geometry with the exit revealed once looked at, L2 the stack as flown")
-    Payload(p.parse_args()).serve()
+    p.add_argument("--pwad", default=None, help="a PWAD to load over the IWAD (LOAD_WAD switches both in flight)")
+    p.add_argument("--probe", action="store_true",
+                   help="fly one second on --wad/--pwad and exit 0 if the game ran: LOAD_WAD's check, run "
+                        "in a child process because a damaged WAD kills the process rather than raising")
+    args = p.parse_args()
+    if args.probe:
+        # If the payload that started this probe dies before it can, a watchdog takes the probe and its engine
+        # down. A process, not a thread: ViZDoom holds the GIL while it hangs, so a thread would never run.
+        # The payload's killpg when the probe ends takes the watchdog with it.
+        if os.getpgrp() == os.getpid() and os.fork() == 0:
+            time.sleep(WAD_PROBE_TIMEOUT_S + 5)
+            os.killpg(0, signal.SIGKILL)
+            os._exit(0)
+        sys.exit(Payload(args).probe())
+    wu.unpin()   # pinned links a previous flight left behind (only the flight payload pins or clears them)
+    payload = Payload(args)
+
+    def _stop(*_):
+        # scripts/flight.sh stop and every restart send SIGTERM; without this the ViZDoom engine (and a
+        # LOAD_WAD probe's) outlives the payload, one more orphan per restart
+        if payload.wad_job is not None:
+            try:
+                os.killpg(payload.wad_job[0].pid, signal.SIGKILL)
+            except OSError:
+                pass
+        payload.game.close()
+        sys.exit(0)
+    signal.signal(signal.SIGTERM, _stop)
+    payload.serve()
 
 
 if __name__ == "__main__":

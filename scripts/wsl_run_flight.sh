@@ -1,24 +1,34 @@
 #!/bin/bash
 # Start (or restart) the flight side: Doom payload + Yamcs (fprime-yamcs) + the DoomSat binary.
 # Linux, macOS or inside WSL; on Windows call scripts/flight.sh, which forwards here.
-# Usage: wsl_run_flight.sh [start|yamcs|stop|status|payload]
+# Usage: wsl_run_flight.sh [start|yamcs|stop|status|payload|prmdb]
 #   start    payload + F´ + Yamcs
 #   yamcs    F´ + Yamcs only, no game (for Yamcs / Open MCT on their own; the Doom channels stay still)
 #   payload  restart only the game process (after editing the payload)
+#   prmdb    only build the parameter file (flight.sh gds runs this before it starts the binary)
 . "$(dirname "$0")/common.sh"
 REPO=$DOOMSAT_REPO
 # GEOMETRY=on   exact lines, gated on the automap having drawn them (payload/seen_geometry.py)
 # ORACLE=L0|L1  the diagnostic ladder. Never on a shareware level, and never scored.
 # WAD=, MAP=    which level. A dev flight is WAD=freedoom1.wad.
-mkdir -p "$RUN" "$REPO/out"
+# DOOMSAT_RELAY=1  Yamcs's TM/TC links behind tools/lossy_relay.py (ground/yamcs/launch.py); off by default.
+# DOOMSAT_PRM_DEFAULTS=1  start even if PrmDb.dat cannot be built, on the stock parameter defaults (not safe
+#                  for uplinks: see build_prmdb).
+mkdir -p "$RUN" "$REPO/out" "$WADS/uplink"   # uplink: where an uplinked WAD lands (LOAD_WAD, README)
 stop() {
   pkill -f "doom_payloa[d].py --fps" 2>/dev/null
-  pkill -f "fprime_yamc[s]" 2>/dev/null
+  pkill -f "fprime_yamc[s]" 2>/dev/null; pkill -f "yamcs/launc[h].py" 2>/dev/null
   pkill -f "YamcsServe[r]" 2>/dev/null
   pkill -f "bin/DoomSa[t]" 2>/dev/null
   pkill -f "fprime-gd[s] " 2>/dev/null; pkill -f "fprime_gds[.]executables" 2>/dev/null   # flight.sh gds
   sleep 1
+  kill_hung_payload
+  # Yamcs takes up to ~15 s to shut down; a new one started sooner fails, and the flight software with it
+  for _ in $(seq 1 40); do pgrep -f "YamcsServe[r]" >/dev/null || break; sleep 0.5; done
 }
+# The payload closes its game on SIGTERM, but one stuck inside ViZDoom never gets to run that handler (the
+# engine holds the GIL): kill it outright rather than leave it holding port 4242.
+kill_hung_payload() { pkill -KILL -f "doom_payloa[d].py --fps" 2>/dev/null; }
 # Detached, so it outlives this shell. setsid -f in WSL: anything started with plain nohup inside a
 # `wsl bash -c` call dies when that call returns. macOS has no setsid; nohup is enough there.
 detach() {
@@ -31,19 +41,47 @@ start_payload() {
   cd "$PROJ" || exit 1
   detach "'$PAYLOAD_PY' '$REPO'/payload/doom_payload.py --fps ${FPS:-10} --quality ${QUALITY:-45} --skill ${SKILL:-3} --wad ${WAD:-doom1.wad} --map ${MAP:-E1M1} --geometry ${GEOMETRY:-off} --oracle ${ORACLE:-off} --map-png '$REPO/out/payload_map.png' > '$RUN/payload.log' 2>&1"
 }
+# Parameters the flight software loads at boot: $RUN/PrmDb.dat (DoomSatTopology.cpp builds the same path from
+# DOOMSAT_HOME). Built from flight/config/PrmDb.json before every start, so the repo is what holds; a PRM_SAVE on
+# board lasts until then. @UPLINK@ is this machine's uplink directory: cfdpManager's temp directory lives under
+# it, not in /tmp. Without the file the binary boots on the stock defaults (a 992-byte data cap the 1001-byte
+# PDU limit cannot always hold, a 64 KiB/s CRC pass, temp files in /tmp), so a failed build stops the start
+# unless DOOMSAT_PRM_DEFAULTS=1 says that is wanted.
+build_prmdb() {
+  cd "$PROJ" || exit 1
+  rm -f "$DEPLOY/bin/PrmDb.dat"   # where earlier versions put it: a second file in bin/ breaks fprime-gds's find_app
+  if ! { fprime-venv/bin/python "$REPO/tools/prmdb.py" "$REPO/flight/config/PrmDb.json" "$WADS/uplink" \
+           > "$RUN/PrmDb.json" 2> "$RUN/prmdb.log" &&
+         fprime-venv/bin/fprime-prm-write dat "$RUN/PrmDb.json" -d "$DEPLOY/dict/DoomSatTopologyDictionary.json" \
+           -o "$RUN/PrmDb.dat" >> "$RUN/prmdb.log" 2>&1; }; then
+    rm -f "$RUN/PrmDb.dat"   # never fly on the last start's file by mistake
+    case "${DOOMSAT_PRM_DEFAULTS:-}" in
+      1|true|yes|on) echo "PrmDb.dat not built (see $RUN/prmdb.log); flying on parameter defaults (DOOMSAT_PRM_DEFAULTS)" >&2 ;;
+      *) echo "PrmDb.dat not built (see $RUN/prmdb.log); not starting. DOOMSAT_PRM_DEFAULTS=1 starts on the stock defaults." >&2
+         exit 1 ;;
+    esac
+  fi
+}
 start_yamcs() {
   cd "$PROJ" || exit 1
-  detach "cd '$PROJ' && . fprime-venv/bin/activate && export FPRIME_DOWNLINK_DIR='$RUN/downlink' && fprime-yamcs --deployment $DEPLOY --skip-browser-open --yamcs-config-dir '$REPO/ground/yamcs' --yamcs-data-dir '$RUN/yamcs-data' --yamcs-realtime-only-channels DoomSat.doom.FRAME_CHUNK > '$RUN/yamcs.log' 2>&1"
+  # cfdpManager's temp files: a receive that ends before its metadata arrives leaves one behind, and F´ never
+  # removes it. Nothing on board is running here (stop came first, and CFDP keeps no state across a boot).
+  mkdir -p "$WADS/uplink/.cfdp-tmp"
+  rm -f "$WADS/uplink/.cfdp-tmp/"*.tmp
+  detach "cd '$PROJ' && . fprime-venv/bin/activate && python '$REPO/ground/yamcs/launch.py' --deployment $DEPLOY --app $DEPLOY/bin/DoomSat --skip-browser-open --yamcs-config-dir '$REPO/ground/yamcs' --yamcs-data-dir '$RUN/yamcs-data' --yamcs-realtime-only-channels DoomSat.doom.FRAME_CHUNK > '$RUN/yamcs.log' 2>&1"
 }
 case "${1:-start}" in
   stop) stop; echo stopped ;;
   payload)
-    pkill -f "doom_payloa[d].py --fps" 2>/dev/null; sleep 1
+    pkill -f "doom_payloa[d].py --fps" 2>/dev/null; sleep 1; kill_hung_payload
     start_payload; echo "payload restarted" ;;
   status)
     ps aux | grep -E "doom_payloa[d]|fprime_yamc[s]|YamcsServe[r]|bin/DoomSa[t]" | awk '{print $11, $12, $13}' | sort | uniq -c
     curl -s http://localhost:8090/api/instances | grep -c '"name": "fprime-project"' ;;
-  start) stop; start_payload; start_yamcs; echo "started; logs in $RUN; Yamcs on http://localhost:8090 in ~30 s" ;;
-  yamcs) stop; start_yamcs; echo "F´ + Yamcs started (no game); logs in $RUN; Yamcs on http://localhost:8090 in ~30 s" ;;
-  *) echo "usage: $0 [start|yamcs|stop|status|payload]"; exit 2 ;;
+  prmdb)
+    build_prmdb
+    if [ -f "$RUN/PrmDb.dat" ]; then echo "built $RUN/PrmDb.dat"; else echo "no PrmDb.dat: on the stock parameter defaults"; fi ;;
+  start) stop; build_prmdb; start_payload; start_yamcs; echo "started; logs in $RUN; Yamcs on http://localhost:8090 in ~30 s" ;;
+  yamcs) stop; build_prmdb; start_yamcs; echo "F´ + Yamcs started (no game); logs in $RUN; Yamcs on http://localhost:8090 in ~30 s" ;;
+  *) echo "usage: $0 [start|yamcs|stop|status|payload|prmdb]"; exit 2 ;;
 esac
