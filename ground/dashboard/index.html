@@ -14,13 +14,14 @@
   header .chain { color:var(--dim); font-size:14px; }
   header .level { margin-left:auto; font-size:22px; font-weight:700; color:var(--acc); }
   header .level small { color:var(--dim); font-weight:400; font-size:14px; margin-left:10px; }
-  main { display:grid; grid-template-columns: 960px 1fr; grid-template-rows: 1fr 300px; gap:14px; padding:14px 24px; height:1016px; }
+  main { display:grid; grid-template-columns: 960px 1fr; grid-template-rows: minmax(0, 1fr) 300px; gap:14px; padding:14px 24px; height:1016px; }
   .panel { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:12px 14px; overflow:hidden; }
   .panel h2 { margin:0 0 8px; font-size:13px; text-transform:uppercase; letter-spacing:1px; color:var(--dim); font-weight:600; }
   #view { position:relative; }
   #frame { width:932px; height:699px; image-rendering:auto; background:#000; border-radius:6px; display:block; }
   #frameinfo { position:absolute; left:26px; bottom:22px; background:rgba(0,0,0,.55); padding:4px 8px; border-radius:4px; font-size:12px; color:#ccc; }
-  #right { display:grid; grid-template-rows: auto auto 1fr; gap:14px; }
+  /* minmax(0, ...): a long plan or a tall panel shrinks the last panel instead of pushing the bottom row off the page */
+  #right { display:grid; grid-template-rows: auto auto auto minmax(0, 1fr); gap:14px; min-height:0; }
   table { border-collapse:collapse; width:100%; }
   td { padding:3px 6px; border-bottom:1px solid #202737; font-variant-numeric: tabular-nums; }
   td.k { color:var(--dim); width:46%; }
@@ -52,6 +53,16 @@
   #restart { position:absolute; right:10px; bottom:10px; font:13px "Segoe UI", sans-serif; color:var(--fg); cursor:pointer;
     background:#2a3242; border:1px solid #3d4759; border-radius:5px; padding:5px 10px; }
   #restart:hover { background:#3a4458; }
+  /* the level file: which WAD the game runs, and LOAD_WAD */
+  #wadform { display:flex; align-items:center; gap:8px; margin-top:6px; color:var(--dim); font-size:13px; }
+  #wadform input { background:#1d2330; border:1px solid #3d4759; border-radius:4px; color:var(--fg); padding:3px 6px;
+    font: 13px Consolas, monospace; width:150px; }
+  #wadform input#wadMap { width:70px; }
+  #wadform button { font:13px "Segoe UI", sans-serif; color:var(--fg); cursor:pointer; background:#2a3242;
+    border:1px solid #3d4759; border-radius:5px; padding:3px 12px; }
+  #wadsent, #wadmsg { font: 12.5px Consolas, monospace; color:#cfd6e2; white-space:pre; overflow:hidden; margin-top:4px; }
+  /* LOAD_WAD's own line wraps: the reason for a refusal, and where to look when nothing answers, come last */
+  #wadsent { white-space:pre-wrap; }
 </style>
 </head>
 <body>
@@ -108,6 +119,18 @@
           <tr><td class="k">Game tic / frames sent</td><td><span id="TIC"></span> / <span id="FRAMES_SENT"></span></td></tr>
         </tbody></table>
       </div>
+    </section>
+    <section class="panel">
+      <h2>Level file (LOAD_WAD: switch the running game to an uplinked or installed WAD) <span id="wadloads" style="float:right"></span></h2>
+      <div><span id="WAD" class="acc" style="font-size:18px;font-weight:600">&ndash;</span></div>
+      <form id="wadform" autocomplete="off">
+        IWAD <input id="wadIwad" placeholder="freedoom2.wad" spellcheck="false" maxlength="38">
+        PWAD <input id="wadPwad" placeholder="none" spellcheck="false" maxlength="38">
+        map <input id="wadMap" placeholder="MAP01" spellcheck="false" maxlength="8">
+        <button type="submit">Load</button>
+      </form>
+      <div id="wadsent"></div>
+      <div id="wadmsg"></div>
     </section>
     <section class="panel">
       <h2><span id="s1title">System One: jev (TypeSafe) &mdash; live decisions every ~0.5 s</span> <span id="s1lat" style="float:right"></span></h2>
@@ -169,8 +192,10 @@ async function pollArchive() {
     const lines = (ev.event || []).filter(e => e.source !== "FprimePacketPreprocessor").slice(0, 9)
       .map(e => `${e.generationTime.substr(11, 8)} ${(e.severity || "").padEnd(8)} ${e.message}`);
     $("events").textContent = lines.join("\n");
-    const cm = await (await fetch("/api/archive/fprime-project/commands?limit=9&order=desc")).json();
-    $("cmds").textContent = (cm.entry || []).map(c => {
+    const cm = await (await fetch("/api/archive/fprime-project/commands?limit=40&order=desc")).json();
+    // An uplink is thousands of uplinkFilePacket commands (one per 512 bytes): show the commands people send
+    $("cmds").textContent = (cm.entry || cm.commands || []).filter(c => !c.commandId.commandName.endsWith("uplinkFilePacket"))
+      .slice(0, 9).map(c => {
       const args = (c.assignments || []).filter(a => a.userInput).map(a => `${a.name}=${val({engValue: a.value})}`).join(" ");
       return `${new Date(Number(c.commandId.generationTime)).toISOString().substr(11, 8)} ${c.commandId.commandName.split("/").pop().padEnd(9)} ${args}`;
     }).join("\n");
@@ -181,6 +206,17 @@ async function pollArchive() {
     // names it would fail whole and blank the page.
     const r = await fetch("/api/processors/fprime-project/realtime/parameters" + G + "PilotMode");
     if (r.ok) applyMode(val(await r.json()));
+  } catch (e) { console.log(e); }
+  try {
+    // The level file, also asked on its own: a flight build from before LOAD_WAD has no WAD channels.
+    const w = await readWadTlm();
+    if (w) {
+      $("WAD").textContent = w.iwad ? (w.pwad ? `${w.pwad} over ${w.iwad}` : w.iwad) : "-";
+      $("wadloads").textContent = w.loads !== null ? `${w.loads} switched in flight` : "";
+    }
+    const ev = await (await fetch("/api/archive/fprime-project/events?limit=1&order=desc&q=Wad")).json();
+    const last = (ev.events || ev.event || [])[0];
+    if (last) $("wadmsg").textContent = `${last.generationTime.substr(11, 8)} ${last.message}`;
   } catch (e) { console.log(e); }
 }
 
@@ -259,6 +295,7 @@ function letGo() { drive.on = false; held.clear(); $("drive").classList.remove("
 document.addEventListener("keydown", e => {
   if (!drive.on) return;
   if (e.code === "Escape") { letGo(); return; }
+  if (e.target.closest("#wadform")) return;   // typing a WAD name is not driving
   const k = KEYMAP[e.code], w = WEAPON_KEYS[e.code];
   if (!k && !w) return;
   e.preventDefault();
@@ -278,6 +315,7 @@ document.addEventListener("visibilitychange", () => { if (document.hidden && dri
 $("drive").addEventListener("mousedown", e => {
   if (e.target.id === "restart") return;
   e.preventDefault();
+  if (document.activeElement && document.activeElement.closest("#wadform")) document.activeElement.blur();   // keys drive again
   if (!drive.on) { engage(); return; }
   if (e.button === 0) { held.add("mouse"); sendControl(); }
 });
@@ -289,6 +327,85 @@ $("restart").addEventListener("click", async e => {
   try { await issue("RESET_GAME", {}); } catch (err) { drive.errors++; drive.err = String(err.message || err).slice(0, 90); renderHud(); }
 });
 setInterval(() => { if (drive.on && (held.size || Date.now() < drive.weaponUntil + REPEAT_MS)) sendControl(); }, REPEAT_MS);
+// ---------------------------------------------------------------- LOAD_WAD, resent when no answer comes
+// A command is one unprotected TC frame and its answer one event frame (no COP-1 here), so on a lossy link a
+// load can vanish either way. A load that hears nothing back is sent again, as tools/wad_uplink_demo.py --tries
+// does. The wait outlasts the payload's own proof of the file (15 s), so a slow answer is not mistaken for none.
+const LOAD_TRIES = 3, LOAD_ANSWER_MS = 25000, ARCHIVE_TRIES = 3;
+// The WAD channels; null when this flight build has none. The names come down as zero-padded bytes (F'
+// string telemetry does not survive fprime-xtce).
+async function readWadTlm() {
+  const body = {id: ["WAD_IWAD", "WAD_PWAD", "WAD_LOADS"].map(n => ({name: SS + n}))};
+  const r = await fetch("/api/processors/fprime-project/realtime/parameters:batchGet", {method: "POST",
+    headers: {"Content-Type": "application/json"}, body: JSON.stringify(body)});
+  if (!r.ok) return null;
+  const w = {}, name = b => b ? atob(b).replace(/\0+$/, "") : "";
+  for (const pv of ((await r.json()).value || [])) w[pv.id.name.split("/").pop()] = val(pv);
+  const loads = w.WAD_LOADS !== undefined && w.WAD_LOADS !== null ? Number(w.WAD_LOADS) : null;
+  return {iwad: name(w.WAD_IWAD), pwad: name(w.WAD_PWAD), loads};
+}
+// The latest WadLoaded / WadLoadFailed / WadAlreadyFlying events, newest first, each with a key that names it.
+// WadAlreadyFlying answers a LOAD_WAD for the game already flying (a repeat after a lost answer): nothing changed.
+// Throws when the archive does not answer; a 200 with no events is none (Yamcs leaves an empty list out).
+async function wadEvents() {
+  const get = async q => {
+    const r = await fetch(`/api/archive/fprime-project/events?limit=20&order=desc&q=${q}`);
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return r.json();
+  };
+  const lists = await Promise.all(["WadLoad", "WadAlreadyFlying"].map(get));
+  return lists.flatMap(ev => ev.events || ev.event || [])
+    .map(e => ({t: e.generationTime || "", key: `${e.generationTime}|${e.seqNumber}|${e.message}`, message: e.message || ""}))
+    .sort((a, b) => (a.t < b.t ? 1 : a.t > b.t ? -1 : 0));
+}
+// What the spacecraft said to this load, or null for nothing yet: a WadLoaded, WadLoadFailed or WadAlreadyFlying
+// event that names this load and was not seen before it was sent, or else the WAD channels showing this load (the
+// count above the one before, and the names asked for). Without a count from before, the channels prove nothing.
+// An event names its load as payload/wad_uplink.py's display_name does, so a load of other files is not this one's answer.
+// The payload reads the names as ASCII, so a character outside it comes back as a "?" per UTF-8 byte (and is refused).
+function loadAnswer(before, events, tlm, args) {
+  const ascii = s => [...s].map(c => c < "\x80" ? c : "?".repeat(new TextEncoder().encode(c).length)).join("");
+  const name = args.pwad ? `${ascii(args.pwad)} over ${ascii(args.iwad)}` : ascii(args.iwad);
+  const ours = [`[WadLoaded] Now flying ${name} on `, `[WadLoadFailed] Could not load ${name}: `,
+    `[WadAlreadyFlying] Already flying ${name} on `];
+  const fresh = events.filter(e => !before.seen.has(e.key) && ours.some(p => e.message.startsWith(p)));
+  if (fresh.length) return fresh[fresh.length - 1].message;   // newest first: the last is the earliest
+  if (tlm && before.loads !== null && tlm.loads !== null && tlm.loads > before.loads &&
+      tlm.iwad === args.iwad && tlm.pwad === args.pwad)
+    return `[WadLoaded] (event not seen; WAD_LOADS ${before.loads} -> ${tlm.loads})`;
+  return null;
+}
+$("wadform").addEventListener("submit", async e => {
+  e.preventDefault();
+  const args = {iwad: $("wadIwad").value.trim(), pwad: $("wadPwad").value.trim(), map: $("wadMap").value.trim()};
+  const said = `${args.pwad ? args.pwad + " over " : ""}${args.iwad} on ${args.map}`;
+  const button = $("wadform").querySelector("button"), stamp = () => new Date().toISOString().substr(11, 8);
+  if (document.activeElement) document.activeElement.blur();
+  button.disabled = true;
+  try {
+    const tlm0 = await readWadTlm().catch(() => null);
+    // The events from before the send: without them any old answer would pass for this one's, so no send either
+    let seen = null, why = "";
+    for (let i = 1; i <= ARCHIVE_TRIES && !seen; i++) {
+      if (i > 1) await new Promise(r => setTimeout(r, 1000));
+      try { seen = new Set((await wadEvents()).map(e => e.key)); } catch (err) { why = String(err.message || err).slice(0, 80); }
+    }
+    if (!seen) { $("wadsent").textContent = `${stamp()} LOAD_WAD ${said} not sent: the event archive did not answer (${why})`; return; }
+    const before = {seen, loads: tlm0 ? tlm0.loads : null};
+    for (let t = 1; t <= LOAD_TRIES; t++) {
+      try { await issue("LOAD_WAD", args); }
+      catch (err) { $("wadsent").textContent = `LOAD_WAD ${said}: refused by Yamcs, ${String(err.message || err).slice(0, 80)}`; return; }
+      $("wadsent").textContent = `${stamp()} LOAD_WAD ${said}: sent (try ${t} of ${LOAD_TRIES}); the payload proves it before switching`;
+      for (const end = Date.now() + LOAD_ANSWER_MS; Date.now() < end;) {
+        await new Promise(r => setTimeout(r, 1000));
+        const answer = loadAnswer(before, await wadEvents().catch(() => []), await readWadTlm().catch(() => null), args);
+        if (answer) { $("wadsent").textContent = `${stamp()} LOAD_WAD ${said} (try ${t}): ${answer}`; return; }
+      }
+    }
+    $("wadsent").textContent = `${stamp()} LOAD_WAD ${said}: no answer after ${LOAD_TRIES} tries; the command or ` +
+      "its answer was lost on the way. The level file above shows what the game is running";
+  } finally { button.disabled = false; }
+});
 
 // The page is laid out for 1920 x 1080; on a smaller screen, shrink it to fit rather than cut it off.
 function fit() {

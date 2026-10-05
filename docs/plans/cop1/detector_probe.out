@@ -1,0 +1,9 @@
+SpacecraftId=0x0044; detector expects first U16 == 0x2044
+BD  (bypass=1 ctrl=0) N(S)=0, VC1                first U16=2044 len= 19 -> FRAME_DETECTED size_out=19
+BD  (bypass=1 ctrl=0) N(S)=200, VC2              first U16=2044 len= 19 -> FRAME_DETECTED size_out=19
+AD  (bypass=0 ctrl=0) N(S)=5, VC1                first U16=0044 len= 19 -> NO_FRAME_DETECTED size_out=0
+BC  Unlock (bypass=1 ctrl=1) data=00             first U16=3044 len=  8 -> NO_FRAME_DETECTED size_out=0
+BC  Set V(R)=7 (bypass=1 ctrl=1) data=82 00 07   first U16=3044 len= 10 -> NO_FRAME_DETECTED size_out=0
+AC  (bypass=0 ctrl=1, illegal)                   first U16=1044 len=  8 -> NO_FRAME_DETECTED size_out=0
+stream: frame of 19 bytes detected after 27 discarded bytes
+stream of AD(19 B) + BC(8 B) + BD(19 B): 1 frame(s) detected, 27 byte(s) discarded one at a time

@@ -42,23 +42,47 @@ services:
       command: ["fprime-yamcs-tlmchan"]
       restart: "always"
       logLevel: INFO
-  # Reassembles Fw::FilePacket downlinks (APID 3) into the fprimeFilesIn bucket.
-  
-  # Environment variables to set before starting YAMCS
-  # FPRIME_UPLINK_CHUNK_SIZE - Bytes per uplink data packet
-  # Set by: export FPRIME_UPLINK_CHUNK_SIZE=1024
-  # FPRIME_DOWNLINK_DIR - Directory to mirror downloaded files
-  # Set by: export FPRIME_DOWNLINK_DIR=/custom/downlink/path
-
-  - class: com.example.myproject.FprimeFilePacketService
+  # CFDP (Stage 2 spike, docs/plans/cfdp-stage2-spike.md) in place of fprime-yamcs's FprimeFilePacketService: the
+  # flight software runs Svc/Ccsds/CfdpManager instead of FileUplink/FileDownlink, so nothing on board speaks
+  # Fw::FilePacket any more. PDUs travel on APID 3 behind the F' descriptor 0x0003 both ways; cfdp_streams.sql wraps
+  # and unwraps them, and UDP_TC_OUT's virtual channel 2 carries them up behind the commands on channel 1.
+  - class: org.yamcs.cfdp.CfdpService
+    name: cfdp
     args:
-      inStream: tm_realtime
-      bucket: fprimeFilesIn
-      fileApid: 3
-      downloadTimeoutMs: 8000
-      uplinkChunkSize: ${FPRIME_UPLINK_CHUNK_SIZE:512}
-      downlinkMirrorDir: ${FPRIME_DOWNLINK_DIR:/tmp/runner/fprime-downlink}
-      
+      inStream: cfdp_in
+      outStream: cfdp_out
+      incomingBucket: cfdpDown
+      localEntities:
+        - name: ground
+          id: 100                   # cfdpManager FileInDefaultDestEntityId; the destId to give SendFile
+      remoteEntities:
+        - name: doomsat
+          id: 42                    # cfdpManager LocalEid
+      entityIdLength: 2
+      sequenceNrLength: 4           # <= 4: F' keeps transaction numbers in a U32
+      maxPduSize: 1009              # 1024-byte TC frame - 5 header - 2 FECF - 6 space packet header - 2 descriptor
+      checksumType: MODULAR         # what F' checks; Yamcs 5.12.8 has no CRC32
+      sleepBetweenPdus: 40          # one PDU every 40 ms, about the Stage 1 rate; see the findings for others
+      canChangePduDelay: true
+      pduDelayPredefinedValues: [5, 10, 20, 40, 100]
+      maxNumPendingUploads: 1
+      eofAckTimeout: 3000
+      eofAckLimit: 10
+      finAckTimeout: 3000
+      finAckLimit: 10
+      immediateNak: true
+      nakTimeout: 3000              # longer than cfdpManager's 1 s cycle
+      nakLimit: 10
+      inactivityTimeout: 30000
+      # A finished transfer keeps answering PDUs by (entity, sequence number) this long. F' numbers its transactions
+      # from 1 at every boot, so after a flight-only restart a new downlink could land on an old transfer for the
+      # default 10 min. 60 s still outlasts F's FIN retries (ack_timer 2 s x ack_limit 10).
+      pendingAfterCompletion: 60000
+      hasDownloadCapability: false  # F' v4.3.0 has no Proxy Put: downlinks start on board (cfdpManager.SendFile)
+      hasFileListingCapability: false
+      senderFaultHandlers:
+        AckLimitReached: suspend
+
 dataLinks:
   - name: UDP_TM_IN
     class: org.yamcs.tctm.ccsds.UdpTmFrameLink
@@ -88,14 +112,30 @@ dataLinks:
     spacecraftId: 68
     maxFrameLength: 1024
     errorDetection: CRC16
+    priorityScheme: ABSOLUTE
     virtualChannels:
       - vcId: 1
         ocfPresent: false
         service: "PACKET"
-        priority: 1
+        priority: 10
+        # One space packet per TC frame. By default Yamcs packs every queued command that fits into one frame,
+        # and F' v4.3.0's SpacePacketDeframer reads only the first packet of a frame and drops the rest without
+        # an event: 19 to 36 of 100 commands issued together were lost, and a file uplink failed its checksum.
+        multiplePacketsPerFrame: false
         commandPostprocessorClassName: com.example.myproject.FprimeCommandPostprocessor
         stream: "tc_realtime"
         useCop1: false
+      # CFDP PDUs (cfdp_streams.sql), after anything waiting on channel 1: ABSOLUTE priority, not FIFO, because
+      # every PDU carries its transfer's start time and FIFO would put the whole transfer ahead of commands
+      - vcId: 2
+        ocfPresent: false
+        service: "PACKET"
+        priority: 1
+        multiplePacketsPerFrame: false
+        commandPostprocessorClassName: com.example.myproject.FprimeCommandPostprocessor
+        stream: "cfdp_tc"
+        useCop1: false
+        tcQueueSize: 64
 
 mdb:
   # Configuration of the active loaders
@@ -121,3 +161,6 @@ streamConfig:
   tc:
     - name: "tc_realtime"
       processor: "realtime"
+  # Last: it reads tm_realtime and must come after the streams above (ground/yamcs/launch.py keeps the order).
+  # An absolute path, because Yamcs runs from the F' project directory; DOOMSAT_REPO comes from scripts/common.sh.
+  sqlFile: "${env.DOOMSAT_REPO}/ground/yamcs/etc/cfdp_streams.sql"
