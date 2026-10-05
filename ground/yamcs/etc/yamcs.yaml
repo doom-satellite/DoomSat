@@ -3,6 +3,9 @@ services:
     args:
       port: 8090
       address: "0.0.0.0"
+      # Request bodies up to 32 MiB. A bucket upload is capped at the larger of this and UploadObject's own
+      # 5 MiB, and an uplinked IWAD (freedoom2.wad, 28.8 MB) goes into a bucket in one request.
+      maxContentLength: 33554432
       cors:
         allowOrigin: "*"
         allowCredentials: false

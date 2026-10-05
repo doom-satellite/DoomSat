@@ -431,9 +431,10 @@ class Pilot:
     # ------------------------------------------------------------ System Two: a bump when the walk stalls
     def check_stall(self):
         """Every --bump-every seconds, System Two looks at the map and the walk and pushes exploration somewhere;
-        after --level-budget seconds without finishing the level, the game is reset and the episode reviewed."""
+        after --level-budget seconds without finishing the level, the game is reset (and, with a System Two, the episode
+        reviewed). The budget holds with or without a System Two, never while a person drives."""
         t = self.telemetry
-        if "EXPLORED_CELLS" not in t or self.system_two is None:
+        if "EXPLORED_CELLS" not in t or self.manual:
             return
         now = time.time()
         self.progress.append((now, int(t.get("EXPLORED_CELLS", 0)), t.get("LEVEL")))
@@ -445,6 +446,8 @@ class Pilot:
             self.level_start_t = now
             self.attempt += 1
             self.last_hint_t = now
+            return
+        if self.system_two is None:   # the bump is System Two's: without one the budget is all this does
             return
         if not self.args.bump_every or self.bump_busy or now - self.last_hint_t < self.args.bump_every:
             return
@@ -659,7 +662,7 @@ def main():
     p.add_argument("--env-files", nargs="*", default=[str(HERE / ".env"), str(HERE.parent / ".env")])
     p.add_argument("--period", type=float, default=0.25, help="seconds between control decisions (lower bound)")
     p.add_argument("--bump-every", type=float, default=60.0, help="seconds between System Two progress checks (0 = never)")
-    p.add_argument("--level-budget", type=float, default=180.0, help="seconds per level attempt before a reset and a review (0 = none)")
+    p.add_argument("--level-budget", type=float, default=180.0, help="seconds per level attempt before a reset, and a review with a System Two (0 = none; not when a person drives)")
     p.add_argument("--auto-apply-graph", action="store_true",
                    help="make System Two's revision current immediately instead of saving it as a candidate "
                         "for tools/promote_graph.py (one episode is one sample; off by default)")

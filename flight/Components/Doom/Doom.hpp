@@ -5,7 +5,8 @@
 // Polled by a rate group. Reads STATUS and FRAME records from the payload socket, publishes
 // the status as telemetry channels and every JPEG frame as a run of FrameChunk telemetry
 // records sent straight to the com queue (so no chunk is lost to TlmChan sampling). Forwards
-// CONTROL / SET_GOAL / RESET / FRAME_RATE commands to the payload.
+// CONTROL / SET_GOAL / RESET / FRAME_RATE / LOAD_WAD commands to the payload, and turns its WAD
+// reports into the WAD_* channels and the WadLoaded / WadLoadFailed events.
 // ======================================================================
 
 #ifndef DoomMission_Doom_HPP
@@ -28,6 +29,8 @@ class Doom final : public DoomComponentBase {
   private:
     // Rate group tick: connect if needed, drain the socket, downlink what arrived
     void run_handler(FwIndexType portNum, U32 context) override;
+    // A file FileUplink has verified: an uplinked WAD is renamed into place (unconnected on the CFDP build)
+    void fileAnnounce_handler(FwIndexType portNum, Fw::StringBase& file_name) override;
 
     void CONTROL_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, I8 move, I8 strafe, F32 turn, bool fire, bool use,
                             const DoomMission::Weapon& weapon) override;
@@ -39,6 +42,14 @@ class Doom final : public DoomComponentBase {
     void RESET_GAME_cmdHandler(FwOpcodeType opCode, U32 cmdSeq) override;
     void EXPLORE_HINT_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, I16 bearing, U8 ttl) override;
     void FRAME_RATE_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, U8 hz, U8 quality) override;
+    void LOAD_WAD_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdStringArg& iwad,
+                             const Fw::CmdStringArg& pwad, const Fw::CmdStringArg& map) override;
+    void COMMIT_WAD_cmdHandler(FwOpcodeType opCode, U32 cmdSeq, const Fw::CmdStringArg& part, U32 fileSize,
+                               U32 checksum) override;
+    // Rename an uplinked NAME.wad.<nonce>.part to NAME.wad; false (and no event) if it is not one
+    bool placeWad(const Fw::StringBase& path);
+    // Size and CFDP modular checksum of a file on board; false if it cannot be read
+    static bool fileSum(const char* path, FwSizeType& size, U32& checksum);
 
     // Payload link
     void connectPayload();
@@ -48,6 +59,8 @@ class Doom final : public DoomComponentBase {
     void handleMessage(U8 kind, const U8* body, U16 length);
     void handleStatus(const U8* body, U16 length);
     void handleFrame(const U8* body, U16 length);
+    void handleWad(const U8* body, U16 length);
+    void writeWadTlm();
 
     int m_sock;
     U32 m_retryTicks;
@@ -63,6 +76,11 @@ class Doom final : public DoomComponentBase {
     bool m_wasDone;
     U16 m_lastIntentId;   //!< the intent the executor is carrying out, echoed back in telemetry
     U16 m_watchdogTrips;  //!< times an onboard invariant had to pull the player out of a freeze
+    U32 m_ticks;                  //!< rate group ticks, for the once-a-second WAD channels
+    bool m_wadKnown;              //!< a WAD report has arrived since boot
+    DoomMission::WadName m_wadIwad;  //!< the level file the payload last reported running
+    DoomMission::WadName m_wadPwad;
+    U16 m_wadLoads;
 };
 
 }  // namespace DoomMission

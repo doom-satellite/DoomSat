@@ -10,14 +10,14 @@
 #   scripts/flight.sh build | rebuild               after editing flight/ (incremental / full)
 #   scripts/flight.sh gds                           F´ on its own with the stock F´ GDS (:5000), no Yamcs
 #
-# WAD=, MAP=, GEOMETRY=, ORACLE=, FPS=, QUALITY=, SKILL= pass through to the payload.
+# WAD=, MAP=, GEOMETRY=, ORACLE=, FPS=, QUALITY=, SKILL=, RECORDS= pass through to the payload.
 HERE="$(cd "$(dirname "$0")" && pwd)"
 case "$(uname -s)" in
   MINGW*|MSYS*|CYGWIN*)
     PASS=()
     [ -n "${DOOMSAT_HOME:-}" ] && PASS+=("DOOMSAT_HOME=$DOOMSAT_HOME")   # a WSL path, if set by hand
     . "$HERE/common.sh"
-    for v in WAD MAP GEOMETRY ORACLE FPS QUALITY SKILL; do [ -n "${!v:-}" ] && PASS+=("$v=${!v}"); done
+    for v in WAD MAP GEOMETRY ORACLE FPS QUALITY SKILL RECORDS DOOMSAT_RELAY DOOMSAT_RELAY_TM_PORT DOOMSAT_RELAY_TC_PORT DOOMSAT_PRM_DEFAULTS; do [ -n "${!v:-}" ] && PASS+=("$v=${!v}"); done
     WSL=(-d "${DOOMSAT_WSL_DISTRO:-Ubuntu}")
     [ -n "${DOOMSAT_WSL_USER:-}" ] && WSL+=(-u "$DOOMSAT_WSL_USER")
     REPO_WIN="$(cd "$HERE/.." && pwd -W)"
@@ -33,6 +33,7 @@ case "${1:-start}" in
   gds)
     . "$HERE/common.sh"
     bash "$HERE/wsl_run_flight.sh" stop >/dev/null
-    cd "$PROJ" && . fprime-venv/bin/activate && exec fprime-gds -d "$DEPLOY" --gui-addr 0.0.0.0 ;;
+    bash "$HERE/wsl_run_flight.sh" prmdb >/dev/null || exit 1
+    cd "$PROJ" && . fprime-venv/bin/activate && exec fprime-gds -d "$DEPLOY" --app "$DEPLOY/bin/DoomSat" --gui-addr 0.0.0.0 ;;
   *)       exec bash "$HERE/wsl_run_flight.sh" "${1:-start}" ;;
 esac
