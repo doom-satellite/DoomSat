@@ -19,3 +19,12 @@ _vizdoom/
 
 # Pinned experiment worktrees: scratch checkouts of a commit, created by research/pinned.py
 research/worktrees/
+
+# Open MCT replay packs and the displays built for them: rebuilt from research/out by
+# tools/build_openmct_replay.py, so never committed twice. A campaign build (--plan-start) is one flight's.
+ground/openmct/replay/
+ground/openmct/displays/*.replay.json
+ground/openmct/displays/*.campaign.json
+# What npm writes beside node_modules/ when the README's replay step installs Open MCT into ground/openmct
+ground/openmct/package.json
+ground/openmct/package-lock.json

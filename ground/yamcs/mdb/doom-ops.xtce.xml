@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SpaceSystem xmlns="http://www.omg.org/spec/XTCE/20180204" name="DoomOps">
+  <LongDescription>People, not software. Mission Status actions (GO / NO GO, set from Open MCT's Mission Status
+indicator) and one Operator Status role per console, both read by openmct-yamcs through the OpenMCT:* aliases.
+Nothing here is read by the pilot, jev or Sonnet: the knowledge boundary runs one way, from the stack to the people.</LongDescription>
+  <TelemetryMetaData>
+    <ParameterTypeSet>
+      <EnumeratedParameterType name="MissionStatus">
+        <IntegerDataEncoding sizeInBits="8"/>
+        <EnumerationList>
+          <Enumeration value="0" label="NO GO"/>
+          <Enumeration value="1" label="GO"/>
+        </EnumerationList>
+      </EnumeratedParameterType>
+      <!-- Labels match STATUS_STYLES in index.js -->
+      <EnumeratedParameterType name="OperatorStatus">
+        <IntegerDataEncoding sizeInBits="8"/>
+        <EnumerationList>
+          <Enumeration value="0" label="NO_STATUS"/>
+          <Enumeration value="1" label="GO"/>
+          <Enumeration value="2" label="MAYBE"/>
+          <Enumeration value="3" label="NO_GO"/>
+        </EnumerationList>
+      </EnumeratedParameterType>
+    </ParameterTypeSet>
+    <ParameterSet>
+      <!-- Mission actions: may we fly an attempt, may jev hold the loop, may Sonnet's reviews be proposed -->
+      <Parameter name="FlyAttempt" parameterTypeRef="MissionStatus">
+        <AliasSet>
+          <Alias nameSpace="OpenMCT:type" alias="yamcs.missionStatus"/>
+          <Alias nameSpace="OpenMCT:action" alias="Fly attempt"/>
+        </AliasSet>
+        <ParameterProperties dataSource="local"/>
+      </Parameter>
+      <Parameter name="JevInLoop" parameterTypeRef="MissionStatus">
+        <AliasSet>
+          <Alias nameSpace="OpenMCT:type" alias="yamcs.missionStatus"/>
+          <Alias nameSpace="OpenMCT:action" alias="Jev in loop"/>
+        </AliasSet>
+        <ParameterProperties dataSource="local"/>
+      </Parameter>
+      <Parameter name="SystemTwoReview" parameterTypeRef="MissionStatus">
+        <AliasSet>
+          <Alias nameSpace="OpenMCT:type" alias="yamcs.missionStatus"/>
+          <Alias nameSpace="OpenMCT:action" alias="Sonnet review"/>
+        </AliasSet>
+        <ParameterProperties dataSource="local"/>
+      </Parameter>
+      <!-- Operator status, one per console -->
+      <Parameter name="FlightStatus" parameterTypeRef="OperatorStatus">
+        <AliasSet>
+          <Alias nameSpace="OpenMCT:type" alias="yamcs.operatorStatus"/>
+          <Alias nameSpace="OpenMCT:role" alias="FLIGHT"/>
+        </AliasSet>
+        <ParameterProperties dataSource="local"/>
+      </Parameter>
+      <Parameter name="AutonomyStatus" parameterTypeRef="OperatorStatus">
+        <AliasSet>
+          <Alias nameSpace="OpenMCT:type" alias="yamcs.operatorStatus"/>
+          <Alias nameSpace="OpenMCT:role" alias="AUTONOMY"/>
+        </AliasSet>
+        <ParameterProperties dataSource="local"/>
+      </Parameter>
+      <Parameter name="GdsStatus" parameterTypeRef="OperatorStatus">
+        <AliasSet>
+          <Alias nameSpace="OpenMCT:type" alias="yamcs.operatorStatus"/>
+          <Alias nameSpace="OpenMCT:role" alias="GDS"/>
+        </AliasSet>
+        <ParameterProperties dataSource="local"/>
+      </Parameter>
+    </ParameterSet>
+  </TelemetryMetaData>
+</SpaceSystem>

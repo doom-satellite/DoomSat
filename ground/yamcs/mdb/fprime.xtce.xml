@@ -122,7 +122,6 @@
           </SizeInBits>
         </StringDataEncoding>
       </StringParameterType>
-      <IntegerParameterType name="FwOpcodeType" shortDescription="The type of a command opcode" baseType="FwIdType" signed="false" sizeInBits="32" />
       <IntegerParameterType name="FwPrmIdType" shortDescription="The type of a parameter identifier" baseType="FwIdType" signed="false" sizeInBits="32" />
       <IntegerParameterType name="FwDpPriorityType" shortDescription="The type of a data product priority" baseType="U32" signed="false" sizeInBits="32" />
       <IntegerParameterType name="PlatformSizeType" shortDescription="The unsigned type of larger sizes internal to the software,&#10;e.g., memory buffer sizes, file sizes. Must be unsigned.&#10;Supplied by platform, overridable by project." baseType="U64" signed="false" sizeInBits="64" />
@@ -133,6 +132,7 @@
       <IntegerParameterType name="FwIdType" shortDescription="The id type." baseType="U32" signed="false" sizeInBits="32" />
       <IntegerParameterType name="FwIndexType" shortDescription="The type of smaller indices internal to the software, used&#10;for array indices, e.g., port indices. Must be signed." baseType="PlatformIndexType" signed="true" sizeInBits="16" />
       <IntegerParameterType name="FwTlmPacketizeIdType" shortDescription="The type of a telemetry packet identifier" baseType="U16" signed="false" sizeInBits="16" />
+      <IntegerParameterType name="FwOpcodeType" shortDescription="The type of a command opcode" baseType="FwIdType" signed="false" sizeInBits="32" />
       <EnumeratedParameterType name="TimeBase" shortDescription="Define enumeration for Time base types">
         <IntegerDataEncoding sizeInBits="16" encoding="unsigned" byteOrder="mostSignificantByteFirst" />
         <EnumerationList>
@@ -168,6 +168,16 @@
           </SizeInBits>
         </StringDataEncoding>
       </StringParameterType>
+      <StringParameterType name="string120">
+        <StringDataEncoding encoding="UTF-8">
+          <SizeInBits>
+            <Fixed>
+              <FixedValue>976</FixedValue>
+            </Fixed>
+            <LeadingSize sizeInBitsOfSizeTag="16" />
+          </SizeInBits>
+        </StringDataEncoding>
+      </StringParameterType>
       <StringParameterType name="string256">
         <StringDataEncoding encoding="UTF-8">
           <SizeInBits>
@@ -183,6 +193,26 @@
           <SizeInBits>
             <Fixed>
               <FixedValue>496</FixedValue>
+            </Fixed>
+            <LeadingSize sizeInBitsOfSizeTag="16" />
+          </SizeInBits>
+        </StringDataEncoding>
+      </StringParameterType>
+      <StringParameterType name="string8">
+        <StringDataEncoding encoding="UTF-8">
+          <SizeInBits>
+            <Fixed>
+              <FixedValue>80</FixedValue>
+            </Fixed>
+            <LeadingSize sizeInBitsOfSizeTag="16" />
+          </SizeInBits>
+        </StringDataEncoding>
+      </StringParameterType>
+      <StringParameterType name="string90">
+        <StringDataEncoding encoding="UTF-8">
+          <SizeInBits>
+            <Fixed>
+              <FixedValue>736</FixedValue>
             </Fixed>
             <LeadingSize sizeInBitsOfSizeTag="16" />
           </SizeInBits>
@@ -448,7 +478,6 @@
           </Variable>
         </StringDataEncoding>
       </StringArgumentType>
-      <IntegerArgumentType name="FwOpcodeType" shortDescription="The type of a command opcode" baseType="FwIdType" signed="false" sizeInBits="32" />
       <IntegerArgumentType name="FwPrmIdType" shortDescription="The type of a parameter identifier" baseType="FwIdType" signed="false" sizeInBits="32" />
       <IntegerArgumentType name="FwDpPriorityType" shortDescription="The type of a data product priority" baseType="U32" signed="false" sizeInBits="32" />
       <IntegerArgumentType name="PlatformSizeType" shortDescription="The unsigned type of larger sizes internal to the software,&#10;e.g., memory buffer sizes, file sizes. Must be unsigned.&#10;Supplied by platform, overridable by project." baseType="U64" signed="false" sizeInBits="64" />
@@ -459,6 +488,7 @@
       <IntegerArgumentType name="FwIdType" shortDescription="The id type." baseType="U32" signed="false" sizeInBits="32" />
       <IntegerArgumentType name="FwIndexType" shortDescription="The type of smaller indices internal to the software, used&#10;for array indices, e.g., port indices. Must be signed." baseType="PlatformIndexType" signed="true" sizeInBits="16" />
       <IntegerArgumentType name="FwTlmPacketizeIdType" shortDescription="The type of a telemetry packet identifier" baseType="U16" signed="false" sizeInBits="16" />
+      <IntegerArgumentType name="FwOpcodeType" shortDescription="The type of a command opcode" baseType="FwIdType" signed="false" sizeInBits="32" />
       <EnumeratedArgumentType name="TimeBase" shortDescription="Define enumeration for Time base types">
         <IntegerDataEncoding sizeInBits="16" encoding="unsigned" byteOrder="mostSignificantByteFirst" />
         <EnumerationList>
@@ -474,6 +504,16 @@
       <IntegerArgumentType name="FwPacketDescriptorType" shortDescription="The width of packet descriptors when they are serialized by the framework" baseType="U16" signed="false" sizeInBits="16" />
       <IntegerArgumentType name="FwTimeBaseStoreType" shortDescription="The type used to serialize a time base value" baseType="U16" signed="false" sizeInBits="16" />
       <IntegerArgumentType name="FwEventIdType" shortDescription="The type of an event identifier" baseType="FwIdType" signed="false" sizeInBits="32" />
+      <StringArgumentType name="string10">
+        <StringDataEncoding encoding="UTF-8">
+          <Variable maxSizeInBits="80">
+            <DynamicValue>
+              <ParameterInstanceRef parameterRef="_yamcs_ignore" />
+            </DynamicValue>
+            <LeadingSize sizeInBitsOfSizeTag="16" />
+          </Variable>
+        </StringDataEncoding>
+      </StringArgumentType>
       <StringArgumentType name="string100">
         <StringDataEncoding encoding="UTF-8">
           <Variable maxSizeInBits="800">
@@ -1752,6 +1792,16 @@
             </SizeInBits>
           </BinaryDataEncoding>
         </BinaryParameterType>
+        <BinaryParameterType name="WadName" shortDescription="A WAD file name in ASCII, padded with zeros. Bytes rather than a string: fprime-xtce gives F' string&#10;telemetry a fixed size while F' sends it length-prefixed, and Yamcs then rejects the whole packet.">
+          <AliasSet>
+            <Alias nameSpace="fprime:elementType" alias="U8" />
+          </AliasSet>
+          <BinaryDataEncoding>
+            <SizeInBits>
+              <FixedValue>320</FixedValue>
+            </SizeInBits>
+          </BinaryDataEncoding>
+        </BinaryParameterType>
         <EnumeratedParameterType name="AheadKind" shortDescription="What the range camera and the map say is at arm's length ahead">
           <IntegerDataEncoding sizeInBits="8" encoding="unsigned" byteOrder="mostSignificantByteFirst" />
           <EnumerationList>
@@ -1764,6 +1814,18 @@
             <Enumeration shortDescription="A monster or a barrel" value="6" label="THING" />
           </EnumerationList>
         </EnumeratedParameterType>
+        <EnumeratedParameterType name="CandKind" shortDescription="What kind of place a candidate target is">
+          <IntegerDataEncoding sizeInBits="8" encoding="unsigned" byteOrder="mostSignificantByteFirst" />
+          <EnumerationList>
+            <Enumeration value="0" label="FRONTIER" />
+            <Enumeration value="1" label="DOOR" />
+            <Enumeration value="2" label="EXIT" />
+            <Enumeration value="3" label="KEY" />
+            <Enumeration value="4" label="ITEM" />
+            <Enumeration value="5" label="SWITCH" />
+            <Enumeration value="6" label="ENEMY" />
+          </EnumerationList>
+        </EnumeratedParameterType>
         <EnumeratedParameterType name="Weapon" shortDescription="Weapon the player currently holds">
           <IntegerDataEncoding sizeInBits="8" encoding="unsigned" byteOrder="mostSignificantByteFirst" />
           <EnumerationList>
@@ -1771,6 +1833,50 @@
             <Enumeration value="1" label="PISTOL" />
             <Enumeration value="2" label="SHOTGUN" />
             <Enumeration value="3" label="OTHER" />
+          </EnumerationList>
+        </EnumeratedParameterType>
+        <AggregateParameterType name="Candidate" shortDescription="Somewhere worth going, as the onboard world model offers it to the ground (charter 3.3).&#10;The distance is along walkable floor, not the straight line: a frontier 200 units away through a&#10;wall is not 200 units away, and scoring it as though it were is how a pilot walks into the same&#10;corner all afternoon.">
+          <MemberList>
+            <Member name="kind" typeRef="/DoomSat_DoomSat/DoomMission/CandKind" />
+            <Member name="x" shortDescription="where it is, in map units" typeRef="/DoomSat_DoomSat/F32" />
+            <Member name="y" typeRef="/DoomSat_DoomSat/F32" />
+            <Member name="pathUnits" shortDescription="distance along the floor the payload has actually seen" typeRef="/DoomSat_DoomSat/U16" />
+            <Member name="novelty" shortDescription="how much unseen ground lies behind it" typeRef="/DoomSat_DoomSat/U8" />
+            <Member name="flags" shortDescription="bits 0-1 key colour (0 none, 1 red, 2 blue, 3 yellow), bits 2-5 tries so far" typeRef="/DoomSat_DoomSat/U8" />
+            <Member name="threatClass" shortDescription="worst monster class standing near it, by index; 255 = nothing there" typeRef="/DoomSat_DoomSat/U8" />
+            <Member name="threatCount" shortDescription="how many live things are near it" typeRef="/DoomSat_DoomSat/U8" />
+            <Member name="opening" shortDescription="how wide the way on is, in map units" typeRef="/DoomSat_DoomSat/U16" />
+            <Member name="depth" shortDescription="how far the unknown runs past it" typeRef="/DoomSat_DoomSat/U16" />
+            <Member name="away" shortDescription="1 when it leads away from the ground already walked" typeRef="/DoomSat_DoomSat/U8" />
+          </MemberList>
+        </AggregateParameterType>
+        <EnumeratedParameterType name="FirePolicy" shortDescription="What the executor is allowed to shoot at">
+          <IntegerDataEncoding sizeInBits="8" encoding="unsigned" byteOrder="mostSignificantByteFirst" />
+          <EnumerationList>
+            <Enumeration value="0" label="NONE" />
+            <Enumeration value="1" label="ANY_ATTACKER" />
+            <Enumeration value="2" label="NEAREST" />
+            <Enumeration value="3" label="TARGET" />
+          </EnumerationList>
+        </EnumeratedParameterType>
+        <EnumeratedParameterType name="Stance" shortDescription="How to move while carrying out an intent">
+          <IntegerDataEncoding sizeInBits="8" encoding="unsigned" byteOrder="mostSignificantByteFirst" />
+          <EnumerationList>
+            <Enumeration value="0" label="ADVANCE" />
+            <Enumeration value="1" label="ADVANCE_STRAFING" />
+            <Enumeration value="2" label="HOLD" />
+            <Enumeration value="3" label="RETREAT" />
+          </EnumerationList>
+        </EnumeratedParameterType>
+        <EnumeratedParameterType name="IntentMode" shortDescription="What the onboard executor is being asked to do (charter 3.1)">
+          <IntegerDataEncoding sizeInBits="8" encoding="unsigned" byteOrder="mostSignificantByteFirst" />
+          <EnumerationList>
+            <Enumeration value="0" label="EXPLORE" />
+            <Enumeration value="1" label="APPROACH" />
+            <Enumeration value="2" label="OPERATE" />
+            <Enumeration value="3" label="FIGHT" />
+            <Enumeration value="4" label="RETREAT" />
+            <Enumeration value="5" label="RECOVER" />
           </EnumerationList>
         </EnumeratedParameterType>
         <AggregateParameterType name="FrameChunk" shortDescription="One slice of a JPEG frame, downlinked as an image product. Reassemble on the ground by (seq, index).">
@@ -1809,6 +1915,16 @@
             </SizeInBits>
           </BinaryDataEncoding>
         </BinaryArgumentType>
+        <BinaryArgumentType name="WadName" shortDescription="A WAD file name in ASCII, padded with zeros. Bytes rather than a string: fprime-xtce gives F' string&#10;telemetry a fixed size while F' sends it length-prefixed, and Yamcs then rejects the whole packet.">
+          <AliasSet>
+            <Alias nameSpace="fprime:elementType" alias="U8" />
+          </AliasSet>
+          <BinaryDataEncoding>
+            <SizeInBits>
+              <FixedValue>320</FixedValue>
+            </SizeInBits>
+          </BinaryDataEncoding>
+        </BinaryArgumentType>
         <EnumeratedArgumentType name="AheadKind" shortDescription="What the range camera and the map say is at arm's length ahead">
           <IntegerDataEncoding sizeInBits="8" encoding="unsigned" byteOrder="mostSignificantByteFirst" />
           <EnumerationList>
@@ -1821,6 +1937,18 @@
             <Enumeration shortDescription="A monster or a barrel" value="6" label="THING" />
           </EnumerationList>
         </EnumeratedArgumentType>
+        <EnumeratedArgumentType name="CandKind" shortDescription="What kind of place a candidate target is">
+          <IntegerDataEncoding sizeInBits="8" encoding="unsigned" byteOrder="mostSignificantByteFirst" />
+          <EnumerationList>
+            <Enumeration value="0" label="FRONTIER" />
+            <Enumeration value="1" label="DOOR" />
+            <Enumeration value="2" label="EXIT" />
+            <Enumeration value="3" label="KEY" />
+            <Enumeration value="4" label="ITEM" />
+            <Enumeration value="5" label="SWITCH" />
+            <Enumeration value="6" label="ENEMY" />
+          </EnumerationList>
+        </EnumeratedArgumentType>
         <EnumeratedArgumentType name="Weapon" shortDescription="Weapon the player currently holds">
           <IntegerDataEncoding sizeInBits="8" encoding="unsigned" byteOrder="mostSignificantByteFirst" />
           <EnumerationList>
@@ -1828,6 +1956,50 @@
             <Enumeration value="1" label="PISTOL" />
             <Enumeration value="2" label="SHOTGUN" />
             <Enumeration value="3" label="OTHER" />
+          </EnumerationList>
+        </EnumeratedArgumentType>
+        <AggregateArgumentType name="Candidate" shortDescription="Somewhere worth going, as the onboard world model offers it to the ground (charter 3.3).&#10;The distance is along walkable floor, not the straight line: a frontier 200 units away through a&#10;wall is not 200 units away, and scoring it as though it were is how a pilot walks into the same&#10;corner all afternoon.">
+          <MemberList>
+            <Member name="kind" typeRef="/DoomSat_DoomSat/DoomMission/CandKind" />
+            <Member name="x" shortDescription="where it is, in map units" typeRef="/DoomSat_DoomSat/F32" />
+            <Member name="y" typeRef="/DoomSat_DoomSat/F32" />
+            <Member name="pathUnits" shortDescription="distance along the floor the payload has actually seen" typeRef="/DoomSat_DoomSat/U16" />
+            <Member name="novelty" shortDescription="how much unseen ground lies behind it" typeRef="/DoomSat_DoomSat/U8" />
+            <Member name="flags" shortDescription="bits 0-1 key colour (0 none, 1 red, 2 blue, 3 yellow), bits 2-5 tries so far" typeRef="/DoomSat_DoomSat/U8" />
+            <Member name="threatClass" shortDescription="worst monster class standing near it, by index; 255 = nothing there" typeRef="/DoomSat_DoomSat/U8" />
+            <Member name="threatCount" shortDescription="how many live things are near it" typeRef="/DoomSat_DoomSat/U8" />
+            <Member name="opening" shortDescription="how wide the way on is, in map units" typeRef="/DoomSat_DoomSat/U16" />
+            <Member name="depth" shortDescription="how far the unknown runs past it" typeRef="/DoomSat_DoomSat/U16" />
+            <Member name="away" shortDescription="1 when it leads away from the ground already walked" typeRef="/DoomSat_DoomSat/U8" />
+          </MemberList>
+        </AggregateArgumentType>
+        <EnumeratedArgumentType name="FirePolicy" shortDescription="What the executor is allowed to shoot at">
+          <IntegerDataEncoding sizeInBits="8" encoding="unsigned" byteOrder="mostSignificantByteFirst" />
+          <EnumerationList>
+            <Enumeration value="0" label="NONE" />
+            <Enumeration value="1" label="ANY_ATTACKER" />
+            <Enumeration value="2" label="NEAREST" />
+            <Enumeration value="3" label="TARGET" />
+          </EnumerationList>
+        </EnumeratedArgumentType>
+        <EnumeratedArgumentType name="Stance" shortDescription="How to move while carrying out an intent">
+          <IntegerDataEncoding sizeInBits="8" encoding="unsigned" byteOrder="mostSignificantByteFirst" />
+          <EnumerationList>
+            <Enumeration value="0" label="ADVANCE" />
+            <Enumeration value="1" label="ADVANCE_STRAFING" />
+            <Enumeration value="2" label="HOLD" />
+            <Enumeration value="3" label="RETREAT" />
+          </EnumerationList>
+        </EnumeratedArgumentType>
+        <EnumeratedArgumentType name="IntentMode" shortDescription="What the onboard executor is being asked to do (charter 3.1)">
+          <IntegerDataEncoding sizeInBits="8" encoding="unsigned" byteOrder="mostSignificantByteFirst" />
+          <EnumerationList>
+            <Enumeration value="0" label="EXPLORE" />
+            <Enumeration value="1" label="APPROACH" />
+            <Enumeration value="2" label="OPERATE" />
+            <Enumeration value="3" label="FIGHT" />
+            <Enumeration value="4" label="RETREAT" />
+            <Enumeration value="5" label="RECOVER" />
           </EnumerationList>
         </EnumeratedArgumentType>
         <AggregateArgumentType name="FrameChunk" shortDescription="One slice of a JPEG frame, downlinked as an image product. Reassemble on the ground by (seq, index).">
@@ -2119,6 +2291,24 @@
           <Parameter name="DOOR_BR" parameterTypeRef="/DoomSat_DoomSat/U8" />
           <Parameter name="DOOR_RIGHT" parameterTypeRef="/DoomSat_DoomSat/U8" />
           <Parameter name="DOOR_AR" parameterTypeRef="/DoomSat_DoomSat/U8" />
+          <Parameter name="CAND_COUNT" shortDescription="The candidate targets the onboard world model offers for scoring (charter 3.3)&#10;how many of the eight slots below are filled" parameterTypeRef="/DoomSat_DoomSat/U8" />
+          <Parameter name="CAND0" parameterTypeRef="/DoomSat_DoomSat/DoomMission/Candidate" />
+          <Parameter name="CAND1" parameterTypeRef="/DoomSat_DoomSat/DoomMission/Candidate" />
+          <Parameter name="CAND2" parameterTypeRef="/DoomSat_DoomSat/DoomMission/Candidate" />
+          <Parameter name="CAND3" parameterTypeRef="/DoomSat_DoomSat/DoomMission/Candidate" />
+          <Parameter name="CAND4" parameterTypeRef="/DoomSat_DoomSat/DoomMission/Candidate" />
+          <Parameter name="CAND5" parameterTypeRef="/DoomSat_DoomSat/DoomMission/Candidate" />
+          <Parameter name="CAND6" parameterTypeRef="/DoomSat_DoomSat/DoomMission/Candidate" />
+          <Parameter name="CAND7" parameterTypeRef="/DoomSat_DoomSat/DoomMission/Candidate" />
+          <Parameter name="INTENT_ID" shortDescription="the intent the executor is currently carrying out" parameterTypeRef="/DoomSat_DoomSat/U16" />
+          <Parameter name="WATCHDOG_TRIPS" shortDescription="times an invariant had to pull the player out of a freeze" parameterTypeRef="/DoomSat_DoomSat/U16" />
+          <Parameter name="THREAT_CLASS" shortDescription="What is threatening the player right now (charter 4, the engage head). The class is a fact;&#10;how dangerous it is comes from the knowledge file on the ground.&#10;worst visible monster class by index; 255 = nothing in view" parameterTypeRef="/DoomSat_DoomSat/U8" />
+          <Parameter name="THREAT_COUNT" shortDescription="how many are in view" parameterTypeRef="/DoomSat_DoomSat/U8" />
+          <Parameter name="DOOR_PRESSES" shortDescription="Use presses, and the ones that opened something. The ratio is door_precision: whether&#10;the automap's ceiling-change category is telling the truth about what is a door." parameterTypeRef="/DoomSat_DoomSat/U16" />
+          <Parameter name="DOOR_OPENS" parameterTypeRef="/DoomSat_DoomSat/U16" />
+          <Parameter name="WAD_IWAD" shortDescription="the IWAD" parameterTypeRef="/DoomSat_DoomSat/DoomMission/WadName" />
+          <Parameter name="WAD_PWAD" shortDescription="the PWAD loaded over it; zeros for none" parameterTypeRef="/DoomSat_DoomSat/DoomMission/WadName" />
+          <Parameter name="WAD_LOADS" shortDescription="LOAD_WAD commands that switched the game" parameterTypeRef="/DoomSat_DoomSat/U16" />
         </ParameterSet>
         <ContainerSet>
           <SequenceContainer name="HEALTH">
@@ -2961,6 +3151,222 @@
               </RestrictionCriteria>
             </BaseContainer>
           </SequenceContainer>
+          <SequenceContainer name="CAND_COUNT">
+            <EntryList>
+              <ParameterRefEntry parameterRef="DoomSat/doom/CAND_COUNT" />
+            </EntryList>
+            <BaseContainer containerRef="FPrimeTelemetryChannel">
+              <RestrictionCriteria>
+                <ComparisonList>
+                  <Comparison parameterRef="FPrimeChannelId" value="268456006" />
+                </ComparisonList>
+              </RestrictionCriteria>
+            </BaseContainer>
+          </SequenceContainer>
+          <SequenceContainer name="CAND0">
+            <EntryList>
+              <ParameterRefEntry parameterRef="DoomSat/doom/CAND0" />
+            </EntryList>
+            <BaseContainer containerRef="FPrimeTelemetryChannel">
+              <RestrictionCriteria>
+                <ComparisonList>
+                  <Comparison parameterRef="FPrimeChannelId" value="268456007" />
+                </ComparisonList>
+              </RestrictionCriteria>
+            </BaseContainer>
+          </SequenceContainer>
+          <SequenceContainer name="CAND1">
+            <EntryList>
+              <ParameterRefEntry parameterRef="DoomSat/doom/CAND1" />
+            </EntryList>
+            <BaseContainer containerRef="FPrimeTelemetryChannel">
+              <RestrictionCriteria>
+                <ComparisonList>
+                  <Comparison parameterRef="FPrimeChannelId" value="268456008" />
+                </ComparisonList>
+              </RestrictionCriteria>
+            </BaseContainer>
+          </SequenceContainer>
+          <SequenceContainer name="CAND2">
+            <EntryList>
+              <ParameterRefEntry parameterRef="DoomSat/doom/CAND2" />
+            </EntryList>
+            <BaseContainer containerRef="FPrimeTelemetryChannel">
+              <RestrictionCriteria>
+                <ComparisonList>
+                  <Comparison parameterRef="FPrimeChannelId" value="268456009" />
+                </ComparisonList>
+              </RestrictionCriteria>
+            </BaseContainer>
+          </SequenceContainer>
+          <SequenceContainer name="CAND3">
+            <EntryList>
+              <ParameterRefEntry parameterRef="DoomSat/doom/CAND3" />
+            </EntryList>
+            <BaseContainer containerRef="FPrimeTelemetryChannel">
+              <RestrictionCriteria>
+                <ComparisonList>
+                  <Comparison parameterRef="FPrimeChannelId" value="268456010" />
+                </ComparisonList>
+              </RestrictionCriteria>
+            </BaseContainer>
+          </SequenceContainer>
+          <SequenceContainer name="CAND4">
+            <EntryList>
+              <ParameterRefEntry parameterRef="DoomSat/doom/CAND4" />
+            </EntryList>
+            <BaseContainer containerRef="FPrimeTelemetryChannel">
+              <RestrictionCriteria>
+                <ComparisonList>
+                  <Comparison parameterRef="FPrimeChannelId" value="268456011" />
+                </ComparisonList>
+              </RestrictionCriteria>
+            </BaseContainer>
+          </SequenceContainer>
+          <SequenceContainer name="CAND5">
+            <EntryList>
+              <ParameterRefEntry parameterRef="DoomSat/doom/CAND5" />
+            </EntryList>
+            <BaseContainer containerRef="FPrimeTelemetryChannel">
+              <RestrictionCriteria>
+                <ComparisonList>
+                  <Comparison parameterRef="FPrimeChannelId" value="268456012" />
+                </ComparisonList>
+              </RestrictionCriteria>
+            </BaseContainer>
+          </SequenceContainer>
+          <SequenceContainer name="CAND6">
+            <EntryList>
+              <ParameterRefEntry parameterRef="DoomSat/doom/CAND6" />
+            </EntryList>
+            <BaseContainer containerRef="FPrimeTelemetryChannel">
+              <RestrictionCriteria>
+                <ComparisonList>
+                  <Comparison parameterRef="FPrimeChannelId" value="268456013" />
+                </ComparisonList>
+              </RestrictionCriteria>
+            </BaseContainer>
+          </SequenceContainer>
+          <SequenceContainer name="CAND7">
+            <EntryList>
+              <ParameterRefEntry parameterRef="DoomSat/doom/CAND7" />
+            </EntryList>
+            <BaseContainer containerRef="FPrimeTelemetryChannel">
+              <RestrictionCriteria>
+                <ComparisonList>
+                  <Comparison parameterRef="FPrimeChannelId" value="268456014" />
+                </ComparisonList>
+              </RestrictionCriteria>
+            </BaseContainer>
+          </SequenceContainer>
+          <SequenceContainer name="INTENT_ID">
+            <EntryList>
+              <ParameterRefEntry parameterRef="DoomSat/doom/INTENT_ID" />
+            </EntryList>
+            <BaseContainer containerRef="FPrimeTelemetryChannel">
+              <RestrictionCriteria>
+                <ComparisonList>
+                  <Comparison parameterRef="FPrimeChannelId" value="268456015" />
+                </ComparisonList>
+              </RestrictionCriteria>
+            </BaseContainer>
+          </SequenceContainer>
+          <SequenceContainer name="WATCHDOG_TRIPS">
+            <EntryList>
+              <ParameterRefEntry parameterRef="DoomSat/doom/WATCHDOG_TRIPS" />
+            </EntryList>
+            <BaseContainer containerRef="FPrimeTelemetryChannel">
+              <RestrictionCriteria>
+                <ComparisonList>
+                  <Comparison parameterRef="FPrimeChannelId" value="268456016" />
+                </ComparisonList>
+              </RestrictionCriteria>
+            </BaseContainer>
+          </SequenceContainer>
+          <SequenceContainer name="THREAT_CLASS">
+            <EntryList>
+              <ParameterRefEntry parameterRef="DoomSat/doom/THREAT_CLASS" />
+            </EntryList>
+            <BaseContainer containerRef="FPrimeTelemetryChannel">
+              <RestrictionCriteria>
+                <ComparisonList>
+                  <Comparison parameterRef="FPrimeChannelId" value="268456017" />
+                </ComparisonList>
+              </RestrictionCriteria>
+            </BaseContainer>
+          </SequenceContainer>
+          <SequenceContainer name="THREAT_COUNT">
+            <EntryList>
+              <ParameterRefEntry parameterRef="DoomSat/doom/THREAT_COUNT" />
+            </EntryList>
+            <BaseContainer containerRef="FPrimeTelemetryChannel">
+              <RestrictionCriteria>
+                <ComparisonList>
+                  <Comparison parameterRef="FPrimeChannelId" value="268456018" />
+                </ComparisonList>
+              </RestrictionCriteria>
+            </BaseContainer>
+          </SequenceContainer>
+          <SequenceContainer name="DOOR_PRESSES">
+            <EntryList>
+              <ParameterRefEntry parameterRef="DoomSat/doom/DOOR_PRESSES" />
+            </EntryList>
+            <BaseContainer containerRef="FPrimeTelemetryChannel">
+              <RestrictionCriteria>
+                <ComparisonList>
+                  <Comparison parameterRef="FPrimeChannelId" value="268456019" />
+                </ComparisonList>
+              </RestrictionCriteria>
+            </BaseContainer>
+          </SequenceContainer>
+          <SequenceContainer name="DOOR_OPENS">
+            <EntryList>
+              <ParameterRefEntry parameterRef="DoomSat/doom/DOOR_OPENS" />
+            </EntryList>
+            <BaseContainer containerRef="FPrimeTelemetryChannel">
+              <RestrictionCriteria>
+                <ComparisonList>
+                  <Comparison parameterRef="FPrimeChannelId" value="268456020" />
+                </ComparisonList>
+              </RestrictionCriteria>
+            </BaseContainer>
+          </SequenceContainer>
+          <SequenceContainer name="WAD_IWAD">
+            <EntryList>
+              <ParameterRefEntry parameterRef="DoomSat/doom/WAD_IWAD" />
+            </EntryList>
+            <BaseContainer containerRef="FPrimeTelemetryChannel">
+              <RestrictionCriteria>
+                <ComparisonList>
+                  <Comparison parameterRef="FPrimeChannelId" value="268456021" />
+                </ComparisonList>
+              </RestrictionCriteria>
+            </BaseContainer>
+          </SequenceContainer>
+          <SequenceContainer name="WAD_PWAD">
+            <EntryList>
+              <ParameterRefEntry parameterRef="DoomSat/doom/WAD_PWAD" />
+            </EntryList>
+            <BaseContainer containerRef="FPrimeTelemetryChannel">
+              <RestrictionCriteria>
+                <ComparisonList>
+                  <Comparison parameterRef="FPrimeChannelId" value="268456022" />
+                </ComparisonList>
+              </RestrictionCriteria>
+            </BaseContainer>
+          </SequenceContainer>
+          <SequenceContainer name="WAD_LOADS">
+            <EntryList>
+              <ParameterRefEntry parameterRef="DoomSat/doom/WAD_LOADS" />
+            </EntryList>
+            <BaseContainer containerRef="FPrimeTelemetryChannel">
+              <RestrictionCriteria>
+                <ComparisonList>
+                  <Comparison parameterRef="FPrimeChannelId" value="268456023" />
+                </ComparisonList>
+              </RestrictionCriteria>
+            </BaseContainer>
+          </SequenceContainer>
         </ContainerSet>
       </TelemetryMetaData>
       <CommandMetaData>
@@ -3050,6 +3456,64 @@
               <EntryList>
                 <ArgumentRefEntry argumentRef="bearing" />
                 <ArgumentRefEntry argumentRef="ttl" />
+              </EntryList>
+              <BaseContainer containerRef="FPrimeCommand" />
+            </CommandContainer>
+          </MetaCommand>
+          <MetaCommand name="INTENT">
+            <BaseMetaCommand metaCommandRef="FPrimeCommand">
+              <ArgumentAssignmentList>
+                <ArgumentAssignment argumentName="OpCode" argumentValue="268455941" />
+              </ArgumentAssignmentList>
+            </BaseMetaCommand>
+            <ArgumentList>
+              <Argument name="intentId" argumentTypeRef="/DoomSat_DoomSat/U16" />
+              <Argument name="basedOnTic" argumentTypeRef="/DoomSat_DoomSat/U32" />
+              <Argument name="mode" argumentTypeRef="/DoomSat_DoomSat/DoomMission/IntentMode" />
+              <Argument name="targetX" argumentTypeRef="/DoomSat_DoomSat/F32" />
+              <Argument name="targetY" argumentTypeRef="/DoomSat_DoomSat/F32" />
+              <Argument name="hasTarget" argumentTypeRef="/DoomSat_DoomSat/bool" />
+              <Argument name="stance" argumentTypeRef="/DoomSat_DoomSat/DoomMission/Stance" />
+              <Argument name="firePolicy" argumentTypeRef="/DoomSat_DoomSat/DoomMission/FirePolicy" />
+              <Argument name="fireTargetId" argumentTypeRef="/DoomSat_DoomSat/U8" />
+              <Argument name="weapon" argumentTypeRef="/DoomSat_DoomSat/U8" />
+              <Argument name="useAtTarget" argumentTypeRef="/DoomSat_DoomSat/bool" />
+              <Argument name="ttlMs" argumentTypeRef="/DoomSat_DoomSat/U16" />
+            </ArgumentList>
+            <CommandContainer name="INTENT">
+              <EntryList>
+                <ArgumentRefEntry argumentRef="intentId" />
+                <ArgumentRefEntry argumentRef="basedOnTic" />
+                <ArgumentRefEntry argumentRef="mode" />
+                <ArgumentRefEntry argumentRef="targetX" />
+                <ArgumentRefEntry argumentRef="targetY" />
+                <ArgumentRefEntry argumentRef="hasTarget" />
+                <ArgumentRefEntry argumentRef="stance" />
+                <ArgumentRefEntry argumentRef="firePolicy" />
+                <ArgumentRefEntry argumentRef="fireTargetId" />
+                <ArgumentRefEntry argumentRef="weapon" />
+                <ArgumentRefEntry argumentRef="useAtTarget" />
+                <ArgumentRefEntry argumentRef="ttlMs" />
+              </EntryList>
+              <BaseContainer containerRef="FPrimeCommand" />
+            </CommandContainer>
+          </MetaCommand>
+          <MetaCommand name="LOAD_WAD">
+            <BaseMetaCommand metaCommandRef="FPrimeCommand">
+              <ArgumentAssignmentList>
+                <ArgumentAssignment argumentName="OpCode" argumentValue="268455942" />
+              </ArgumentAssignmentList>
+            </BaseMetaCommand>
+            <ArgumentList>
+              <Argument name="iwad" argumentTypeRef="/DoomSat_DoomSat/string40" />
+              <Argument name="pwad" argumentTypeRef="/DoomSat_DoomSat/string40" />
+              <Argument name="map" argumentTypeRef="/DoomSat_DoomSat/string10" />
+            </ArgumentList>
+            <CommandContainer name="LOAD_WAD">
+              <EntryList>
+                <ArgumentRefEntry argumentRef="iwad" />
+                <ArgumentRefEntry argumentRef="pwad" />
+                <ArgumentRefEntry argumentRef="map" />
               </EntryList>
               <BaseContainer containerRef="FPrimeCommand" />
             </CommandContainer>
@@ -4116,18 +4580,6 @@
   <SpaceSystem name="Svc">
     <TelemetryMetaData>
       <ParameterTypeSet>
-        <ArrayParameterType name="ComQueueDepth" shortDescription="Array of queue depths for Fw::Com types" arrayTypeRef="/DoomSat_DoomSat/U32">
-          <DimensionList>
-            <Dimension>
-              <StartingIndex>
-                <FixedValue>0</FixedValue>
-              </StartingIndex>
-              <EndingIndex>
-                <FixedValue>1</FixedValue>
-              </EndingIndex>
-            </Dimension>
-          </DimensionList>
-        </ArrayParameterType>
         <ArrayParameterType name="BuffQueueDepth" shortDescription="Array of queue depths for Fw::Buffer types" arrayTypeRef="/DoomSat_DoomSat/U32">
           <DimensionList>
             <Dimension>
@@ -4147,6 +4599,18 @@
             <Enumeration value="1" label="BUFFER_QUEUE" />
           </EnumerationList>
         </EnumeratedParameterType>
+        <ArrayParameterType name="ComQueueDepth" shortDescription="Array of queue depths for Fw::Com types" arrayTypeRef="/DoomSat_DoomSat/U32">
+          <DimensionList>
+            <Dimension>
+              <StartingIndex>
+                <FixedValue>0</FixedValue>
+              </StartingIndex>
+              <EndingIndex>
+                <FixedValue>1</FixedValue>
+              </EndingIndex>
+            </Dimension>
+          </DimensionList>
+        </ArrayParameterType>
         <EnumeratedParameterType name="VersionType" shortDescription="An enumeration for Version Type">
           <IntegerDataEncoding sizeInBits="8" encoding="unsigned" byteOrder="mostSignificantByteFirst" />
           <EnumerationList>
@@ -4237,18 +4701,6 @@
     </TelemetryMetaData>
     <CommandMetaData>
       <ArgumentTypeSet>
-        <ArrayArgumentType name="ComQueueDepth" shortDescription="Array of queue depths for Fw::Com types" arrayTypeRef="/DoomSat_DoomSat/U32">
-          <DimensionList>
-            <Dimension>
-              <StartingIndex>
-                <FixedValue>0</FixedValue>
-              </StartingIndex>
-              <EndingIndex>
-                <FixedValue>1</FixedValue>
-              </EndingIndex>
-            </Dimension>
-          </DimensionList>
-        </ArrayArgumentType>
         <ArrayArgumentType name="BuffQueueDepth" shortDescription="Array of queue depths for Fw::Buffer types" arrayTypeRef="/DoomSat_DoomSat/U32">
           <DimensionList>
             <Dimension>
@@ -4268,6 +4720,18 @@
             <Enumeration value="1" label="BUFFER_QUEUE" />
           </EnumerationList>
         </EnumeratedArgumentType>
+        <ArrayArgumentType name="ComQueueDepth" shortDescription="Array of queue depths for Fw::Com types" arrayTypeRef="/DoomSat_DoomSat/U32">
+          <DimensionList>
+            <Dimension>
+              <StartingIndex>
+                <FixedValue>0</FixedValue>
+              </StartingIndex>
+              <EndingIndex>
+                <FixedValue>1</FixedValue>
+              </EndingIndex>
+            </Dimension>
+          </DimensionList>
+        </ArrayArgumentType>
         <EnumeratedArgumentType name="VersionType" shortDescription="An enumeration for Version Type">
           <IntegerDataEncoding sizeInBits="8" encoding="unsigned" byteOrder="mostSignificantByteFirst" />
           <EnumerationList>
@@ -4559,17 +5023,6 @@
     <SpaceSystem name="FileManager">
       <TelemetryMetaData>
         <ParameterTypeSet>
-          <EnumeratedParameterType name="GenerateDpStage" shortDescription="Where a data product generation failure occurred">
-            <IntegerDataEncoding sizeInBits="32" encoding="twosComplement" byteOrder="mostSignificantByteFirst" />
-            <EnumerationList>
-              <Enumeration shortDescription="Opening the source file" value="0" label="OPEN" />
-              <Enumeration shortDescription="Querying the size of the source file" value="1" label="SIZE" />
-              <Enumeration shortDescription="Seeking to the requested begin offset" value="2" label="SEEK" />
-              <Enumeration shortDescription="Reading a chunk from the source file" value="3" label="READ" />
-              <Enumeration shortDescription="Serializing a chunk into the container" value="4" label="SERIALIZE" />
-              <Enumeration shortDescription="A request arrived while another was in progress" value="5" label="BUSY" />
-            </EnumerationList>
-          </EnumeratedParameterType>
           <EnumeratedParameterType name="GenerateDpMode" shortDescription="How the chunks of a file are emitted">
             <IntegerDataEncoding sizeInBits="32" encoding="twosComplement" byteOrder="mostSignificantByteFirst" />
             <EnumerationList>
@@ -4584,11 +5037,7 @@
               <Member name="dataSize" shortDescription="The number of data bytes in this chunk" typeRef="/DoomSat_DoomSat/U32" />
             </MemberList>
           </AggregateParameterType>
-        </ParameterTypeSet>
-      </TelemetryMetaData>
-      <CommandMetaData>
-        <ArgumentTypeSet>
-          <EnumeratedArgumentType name="GenerateDpStage" shortDescription="Where a data product generation failure occurred">
+          <EnumeratedParameterType name="GenerateDpStage" shortDescription="Where a data product generation failure occurred">
             <IntegerDataEncoding sizeInBits="32" encoding="twosComplement" byteOrder="mostSignificantByteFirst" />
             <EnumerationList>
               <Enumeration shortDescription="Opening the source file" value="0" label="OPEN" />
@@ -4598,7 +5047,11 @@
               <Enumeration shortDescription="Serializing a chunk into the container" value="4" label="SERIALIZE" />
               <Enumeration shortDescription="A request arrived while another was in progress" value="5" label="BUSY" />
             </EnumerationList>
-          </EnumeratedArgumentType>
+          </EnumeratedParameterType>
+        </ParameterTypeSet>
+      </TelemetryMetaData>
+      <CommandMetaData>
+        <ArgumentTypeSet>
           <EnumeratedArgumentType name="GenerateDpMode" shortDescription="How the chunks of a file are emitted">
             <IntegerDataEncoding sizeInBits="32" encoding="twosComplement" byteOrder="mostSignificantByteFirst" />
             <EnumerationList>
@@ -4613,6 +5066,17 @@
               <Member name="dataSize" shortDescription="The number of data bytes in this chunk" typeRef="/DoomSat_DoomSat/U32" />
             </MemberList>
           </AggregateArgumentType>
+          <EnumeratedArgumentType name="GenerateDpStage" shortDescription="Where a data product generation failure occurred">
+            <IntegerDataEncoding sizeInBits="32" encoding="twosComplement" byteOrder="mostSignificantByteFirst" />
+            <EnumerationList>
+              <Enumeration shortDescription="Opening the source file" value="0" label="OPEN" />
+              <Enumeration shortDescription="Querying the size of the source file" value="1" label="SIZE" />
+              <Enumeration shortDescription="Seeking to the requested begin offset" value="2" label="SEEK" />
+              <Enumeration shortDescription="Reading a chunk from the source file" value="3" label="READ" />
+              <Enumeration shortDescription="Serializing a chunk into the container" value="4" label="SERIALIZE" />
+              <Enumeration shortDescription="A request arrived while another was in progress" value="5" label="BUSY" />
+            </EnumerationList>
+          </EnumeratedArgumentType>
         </ArgumentTypeSet>
       </CommandMetaData>
     </SpaceSystem>

@@ -1,77 +1,159 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <SpaceSystem xmlns="http://www.omg.org/spec/XTCE/20180204" name="DoomGround">
-  <LongDescription>Ground-side software parameters for the Doom pilot (set through the Yamcs API, not downlinked). DoomFrame carries the URL of the last reassembled image product in the Yamcs bucket "doomframes"; the OpenMCT:type alias makes openmct-yamcs show it as imagery.</LongDescription>
+  <LongDescription>Ground-side software parameters for the Doom pilot (set through the Yamcs API, not downlinked).
+DoomFrame and DoomMap carry the URL of the last reassembled image product in the Yamcs bucket "doomframes"; the
+OpenMCT:type alias makes openmct-yamcs show them as imagery. The autonomy block (DecisionAgeMs and below) is what the
+Open MCT GROUND screens read; the pilot publishes it once a second with an expiry, so a stalled pilot shows as stale
+rather than as a frozen good value. Alarm ranges here are the charter's budgets (section 6.4), not opinions.</LongDescription>
   <TelemetryMetaData>
     <ParameterTypeSet>
       <StringParameterType name="url_t">
-        <StringDataEncoding>
-          <SizeInBits>
-            <Fixed>
-              <FixedValue>2048</FixedValue>
-            </Fixed>
-          </SizeInBits>
-        </StringDataEncoding>
+        <StringDataEncoding><SizeInBits><Fixed><FixedValue>2048</FixedValue></Fixed></SizeInBits></StringDataEncoding>
       </StringParameterType>
       <StringParameterType name="text_t">
-        <StringDataEncoding>
-          <SizeInBits>
-            <Fixed>
-              <FixedValue>4096</FixedValue>
-            </Fixed>
-          </SizeInBits>
-        </StringDataEncoding>
+        <StringDataEncoding><SizeInBits><Fixed><FixedValue>4096</FixedValue></Fixed></SizeInBits></StringDataEncoding>
       </StringParameterType>
       <IntegerParameterType name="count_t" signed="false">
-        <IntegerDataEncoding sizeInBits="32"></IntegerDataEncoding>
+        <IntegerDataEncoding sizeInBits="32"/>
       </IntegerParameterType>
-      <FloatParameterType name="ms_t">
-        <FloatDataEncoding sizeInBits="32"></FloatDataEncoding>
+      <FloatParameterType name="ms_t" sizeInBits="32">
+        <UnitSet><Unit>ms</Unit></UnitSet>
+        <FloatDataEncoding sizeInBits="32"/>
       </FloatParameterType>
+      <!-- System One round trip. The decision-age budget is 900 ms end to end, so jev alone past 800 is a warning. -->
+      <FloatParameterType name="jev_latency_t" sizeInBits="32">
+        <UnitSet><Unit>ms</Unit></UnitSet>
+        <FloatDataEncoding sizeInBits="32"/>
+        <DefaultAlarm>
+          <StaticAlarmRanges>
+            <WatchRange maxInclusive="650"/>
+            <WarningRange maxInclusive="800"/>
+          </StaticAlarmRanges>
+        </DefaultAlarm>
+      </FloatParameterType>
+      <!-- Observation tic to first-effect tic. Charter guardrail: p95 at or under 900 ms on flight. -->
+      <FloatParameterType name="decision_age_t" sizeInBits="32">
+        <UnitSet><Unit>ms</Unit></UnitSet>
+        <FloatDataEncoding sizeInBits="32"/>
+        <DefaultAlarm>
+          <StaticAlarmRanges>
+            <WatchRange maxInclusive="750"/>
+            <WarningRange maxInclusive="850"/>
+            <CriticalRange maxInclusive="900"/>
+          </StaticAlarmRanges>
+        </DefaultAlarm>
+      </FloatParameterType>
+      <!-- Charter section 1, done condition 4: at least 70% of intent changes come from jev. -->
+      <FloatParameterType name="share_t" sizeInBits="32">
+        <FloatDataEncoding sizeInBits="32"/>
+        <DefaultAlarm>
+          <StaticAlarmRanges>
+            <WarningRange minInclusive="0.70"/>
+          </StaticAlarmRanges>
+        </DefaultAlarm>
+      </FloatParameterType>
+      <FloatParameterType name="ratio_t" sizeInBits="32">
+        <FloatDataEncoding sizeInBits="32"/>
+      </FloatParameterType>
+      <!-- The target head's nine-level rubric (ground/graph_config.py); 0 means the slot is empty. -->
+      <FloatParameterType name="score_t" sizeInBits="32">
+        <FloatDataEncoding sizeInBits="32"/>
+      </FloatParameterType>
+      <EnumeratedParameterType name="intent_mode_t">
+        <IntegerDataEncoding sizeInBits="8"/>
+        <EnumerationList>
+          <Enumeration value="0" label="EXPLORE"/>
+          <Enumeration value="1" label="APPROACH"/>
+          <Enumeration value="2" label="OPERATE"/>
+          <Enumeration value="3" label="FIGHT"/>
+          <Enumeration value="4" label="RETREAT"/>
+          <Enumeration value="5" label="RECOVER"/>
+        </EnumerationList>
+      </EnumeratedParameterType>
+      <EnumeratedParameterType name="pick_kind_t">
+        <IntegerDataEncoding sizeInBits="8"/>
+        <EnumerationList>
+          <Enumeration value="0" label="FRONTIER"/>
+          <Enumeration value="1" label="DOOR"/>
+          <Enumeration value="2" label="EXIT"/>
+          <Enumeration value="3" label="KEY"/>
+          <Enumeration value="4" label="ITEM"/>
+          <Enumeration value="5" label="SWITCH"/>
+          <Enumeration value="6" label="ENEMY"/>
+          <Enumeration value="255" label="NONE"/>
+        </EnumerationList>
+      </EnumeratedParameterType>
+      <!-- Why this decision came out the way it did (summary.json "decision_reasons"). -->
+      <EnumeratedParameterType name="decision_source_t">
+        <IntegerDataEncoding sizeInBits="8"/>
+        <EnumerationList>
+          <Enumeration value="0" label="JEV"/>
+          <Enumeration value="1" label="UNSURE_BAND"/>
+          <Enumeration value="2" label="HELD"/>
+          <Enumeration value="3" label="CACHED"/>
+          <Enumeration value="4" label="RULE"/>
+          <Enumeration value="5" label="UNAVAILABLE"/>
+        </EnumerationList>
+      </EnumeratedParameterType>
+      <EnumeratedParameterType name="honesty_t">
+        <IntegerDataEncoding sizeInBits="8"/>
+        <EnumerationList>
+          <Enumeration value="0" label="UNKNOWN"/>
+          <Enumeration value="1" label="PASS"/>
+          <Enumeration value="2" label="FAIL"/>
+        </EnumerationList>
+        <DefaultAlarm>
+          <EnumerationAlarmList>
+            <EnumerationAlarm alarmLevel="critical" enumerationLabel="FAIL"/>
+          </EnumerationAlarmList>
+        </DefaultAlarm>
+      </EnumeratedParameterType>
     </ParameterTypeSet>
     <ParameterSet>
       <Parameter name="DoomFrame" parameterTypeRef="url_t">
-        <AliasSet>
-          <Alias nameSpace="OpenMCT:type" alias="yamcs.image"></Alias>
-        </AliasSet>
-        <ParameterProperties dataSource="local" persistence="false"></ParameterProperties>
+        <AliasSet><Alias nameSpace="OpenMCT:type" alias="yamcs.image"/></AliasSet>
+        <ParameterProperties dataSource="local" persistence="false"/>
       </Parameter>
       <Parameter name="DoomMap" parameterTypeRef="url_t">
-        <AliasSet>
-          <Alias nameSpace="OpenMCT:type" alias="yamcs.image"></Alias>
-        </AliasSet>
-        <ParameterProperties dataSource="local" persistence="false"></ParameterProperties>
+        <AliasSet><Alias nameSpace="OpenMCT:type" alias="yamcs.image"/></AliasSet>
+        <ParameterProperties dataSource="local" persistence="false"/>
       </Parameter>
-      <Parameter name="SystemTwoHint" parameterTypeRef="url_t">
-        <ParameterProperties dataSource="local" persistence="false"></ParameterProperties>
-      </Parameter>
-      <Parameter name="FrameSeq" parameterTypeRef="count_t">
-        <ParameterProperties dataSource="local" persistence="false"></ParameterProperties>
-      </Parameter>
-      <Parameter name="FramesComplete" parameterTypeRef="count_t">
-        <ParameterProperties dataSource="local" persistence="false"></ParameterProperties>
-      </Parameter>
-      <Parameter name="FramesIncomplete" parameterTypeRef="count_t">
-        <ParameterProperties dataSource="local" persistence="false"></ParameterProperties>
-      </Parameter>
-      <Parameter name="SystemOneLatencyMs" parameterTypeRef="ms_t">
-        <ParameterProperties dataSource="local" persistence="false"></ParameterProperties>
-      </Parameter>
-      <Parameter name="SystemTwoLatencyMs" parameterTypeRef="ms_t">
-        <ParameterProperties dataSource="local" persistence="false"></ParameterProperties>
-      </Parameter>
-      <Parameter name="ControlCommands" parameterTypeRef="count_t">
-        <ParameterProperties dataSource="local" persistence="false"></ParameterProperties>
-      </Parameter>
-      <Parameter name="Plan" parameterTypeRef="text_t">
-        <ParameterProperties dataSource="local" persistence="false"></ParameterProperties>
-      </Parameter>
-      <Parameter name="Controls" parameterTypeRef="text_t">
-        <ParameterProperties dataSource="local" persistence="false"></ParameterProperties>
-      </Parameter>
+      <Parameter name="SystemTwoHint" parameterTypeRef="url_t"><ParameterProperties dataSource="local" persistence="false"/></Parameter>
+      <Parameter name="FrameSeq" parameterTypeRef="count_t"><ParameterProperties dataSource="local" persistence="false"/></Parameter>
+      <Parameter name="FramesComplete" parameterTypeRef="count_t"><ParameterProperties dataSource="local" persistence="false"/></Parameter>
+      <Parameter name="FramesIncomplete" parameterTypeRef="count_t"><ParameterProperties dataSource="local" persistence="false"/></Parameter>
+      <Parameter name="SystemOneLatencyMs" parameterTypeRef="jev_latency_t"><ParameterProperties dataSource="local" persistence="false"/></Parameter>
+      <Parameter name="SystemTwoLatencyMs" parameterTypeRef="ms_t"><ParameterProperties dataSource="local" persistence="false"/></Parameter>
+      <Parameter name="ControlCommands" parameterTypeRef="count_t"><ParameterProperties dataSource="local" persistence="false"/></Parameter>
+      <Parameter name="Plan" parameterTypeRef="text_t"><ParameterProperties dataSource="local" persistence="false"/></Parameter>
+      <Parameter name="Controls" parameterTypeRef="text_t"><ParameterProperties dataSource="local" persistence="false"/></Parameter>
       <!-- Who is flying: jev, code (the exact rules, no model) or manual (a person at the dashboard) -->
-      <Parameter name="PilotMode" parameterTypeRef="url_t">
-        <ParameterProperties dataSource="local" persistence="false"></ParameterProperties>
-      </Parameter>
+      <Parameter name="PilotMode" parameterTypeRef="url_t"><ParameterProperties dataSource="local" persistence="false"/></Parameter>
+
+      <!-- ===== autonomy block (new): published by ground/ops_telemetry.py from each decision row ===== -->
+      <Parameter name="DecisionAgeMs" parameterTypeRef="decision_age_t"><ParameterProperties dataSource="local" persistence="false"/></Parameter>
+      <Parameter name="IntentMode" parameterTypeRef="intent_mode_t"><ParameterProperties dataSource="local" persistence="false"/></Parameter>
+      <Parameter name="DecisionSource" parameterTypeRef="decision_source_t"><ParameterProperties dataSource="local" persistence="false"/></Parameter>
+      <Parameter name="PickSlot" parameterTypeRef="count_t"><ParameterProperties dataSource="local" persistence="false"/></Parameter>
+      <Parameter name="PickKind" parameterTypeRef="pick_kind_t"><ParameterProperties dataSource="local" persistence="false"/></Parameter>
+      <Parameter name="PickGap" parameterTypeRef="ratio_t"><ParameterProperties dataSource="local" persistence="false"/></Parameter>
+      <Parameter name="PickConfidence" parameterTypeRef="ratio_t"><ParameterProperties dataSource="local" persistence="false"/></Parameter>
+      <Parameter name="JevShare" parameterTypeRef="share_t"><ParameterProperties dataSource="local" persistence="false"/></Parameter>
+      <Parameter name="FallbackRate" parameterTypeRef="ratio_t"><ParameterProperties dataSource="local" persistence="false"/></Parameter>
+      <Parameter name="Score0" parameterTypeRef="score_t"><ParameterProperties dataSource="local" persistence="false"/></Parameter>
+      <Parameter name="Score1" parameterTypeRef="score_t"><ParameterProperties dataSource="local" persistence="false"/></Parameter>
+      <Parameter name="Score2" parameterTypeRef="score_t"><ParameterProperties dataSource="local" persistence="false"/></Parameter>
+      <Parameter name="Score3" parameterTypeRef="score_t"><ParameterProperties dataSource="local" persistence="false"/></Parameter>
+      <Parameter name="Score4" parameterTypeRef="score_t"><ParameterProperties dataSource="local" persistence="false"/></Parameter>
+      <Parameter name="Score5" parameterTypeRef="score_t"><ParameterProperties dataSource="local" persistence="false"/></Parameter>
+      <Parameter name="Score6" parameterTypeRef="score_t"><ParameterProperties dataSource="local" persistence="false"/></Parameter>
+      <Parameter name="Score7" parameterTypeRef="score_t"><ParameterProperties dataSource="local" persistence="false"/></Parameter>
+      <Parameter name="EngageAnswer" parameterTypeRef="text_t"><ParameterProperties dataSource="local" persistence="false"/></Parameter>
+      <Parameter name="GraphVersion" parameterTypeRef="count_t"><ParameterProperties dataSource="local" persistence="false"/></Parameter>
+      <Parameter name="Attempt" parameterTypeRef="count_t"><ParameterProperties dataSource="local" persistence="false"/></Parameter>
+      <!-- PASS when research/preflight.py's honesty suite passed and the payload was fresh (EXPLORED_CELLS 1 or
+           less, honesty test 3), FAIL otherwise. Only preflight sets it, when it runs; it holds until Yamcs restarts. -->
+      <Parameter name="HonestyStatus" parameterTypeRef="honesty_t"><ParameterProperties dataSource="local" persistence="false"/></Parameter>
     </ParameterSet>
   </TelemetryMetaData>
 </SpaceSystem>
