@@ -1,5 +1,7 @@
 # COMMIT_WAD and LOAD_WAD, safe to send again
 
+_PR numbers here (#9 and #10) are those of PaulMRamirez/DoomSat, where this work was reviewed._
+
 A command goes up as one unprotected TC frame (no COP-1: `docs/plans/cop1-investigation.md`, #10), so on a lossy
 link the ground resends a command when no answer comes. The demo does this with `--tries`, and the dashboard's
 `LOAD_WAD` form does it (#9). Often only the answer was lost, and the command had already run. Before this change, a

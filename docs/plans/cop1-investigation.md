@@ -1,5 +1,7 @@
 # COP-1 for DoomSat's commands: investigation
 
+_PR numbers here (#7 to #9) are those of PaulMRamirez/DoomSat, where this work was reviewed._
+
 The question: would COP-1 (CCSDS 232.1-B: FOP-1 on the ground, FARM-1 on board, the CLCW in every downlink frame)
 give DoomSat's commands exactly-once, in-order delivery on a lossy link? This was a short investigation, not a
 build. It was done on 4 October 2026 against the versions DoomSat pins: F´ v4.3.0, fprime-yamcs 0.2.1 and Yamcs

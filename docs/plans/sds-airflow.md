@@ -482,7 +482,7 @@ Baseline → plan → Airflow stack → product package and tests → Phase A (f
     1.2.0 and 1.3.0 checksums for the fixture are both recorded. `l0_record` stays 1.0.0: its bytes are the file.
 - 2026-10-04, verified by running on the CFDP stack (flight software built from main 9070517c, the flight and the
   SDS started from this branch, `RECORDS=on`, `DOOMSAT_SDS_RECORDS=on`, code autopilot with no System Two, flying
-  the level budget from fix PR #6 so episodes end within 180 s):
+  the level budget from `fix/level-budget-without-system-two` so episodes end within 180 s):
   - Before the port, the merge alone (0abfafa7) processed its first episode on the new stack
     (`20261004T160006Z-e0001`, died after 220 s): L1, the three L2s and the publish, context `freedoom1.wad E1M1
     dev`. The links the quicklook reads are all still there; main adds `UDP_TC_OUT.vc2` (CFDP's uplink). Two L1s

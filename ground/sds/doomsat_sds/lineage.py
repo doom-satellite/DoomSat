@@ -18,7 +18,7 @@ from pathlib import Path
 
 from .config import Settings
 
-PRODUCER = "https://github.com/PaulMRamirez/DoomSat/tree/main/ground/sds"
+PRODUCER = "https://github.com/Devonance/DoomSat/tree/main/ground/sds"
 SCHEMA = "https://openlineage.io/spec/2-0-2/OpenLineage.json#/$defs/RunEvent"
 FACET = "https://openlineage.io/spec/facets/1-0-1/%s.json#/$defs/%s"        # as openlineage-python writes them
 CUSTOM_FACET = PRODUCER + "/README.md#publishing-phase-e"                   # our own run facet's description
