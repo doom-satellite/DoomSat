@@ -1,0 +1,10 @@
+4 Hz, t1 3 s, K 10 (Yamcs defaults)    p=0.05 delivered 0.9928 p99  4360 ms  w/o uplink>1.5s 0.0429 >3s 0.0284 suspends/h 1.6
+4 Hz, t1 1 s, K 10                     p=0.05 delivered 0.9952 p99  2290 ms  w/o uplink>1.5s 0.0224 >3s 0.0083 suspends/h 1.2
+4 Hz, t1 1 s, K 10, txLimit 10         p=0.05 delivered 1.0000 p99  2410 ms  w/o uplink>1.5s 0.0194 >3s 0.0049 suspends/h 0.2
+4 Hz, t1 1 s, K 3                      p=0.05 delivered 0.9943 p99   770 ms  w/o uplink>1.5s 0.0074 >3s 0.0044 suspends/h 1.6
+4 Hz, t1 3 s, K 10, CLCW 5 Hz          p=0.05 delivered 0.9959 p99  4490 ms  w/o uplink>1.5s 0.0446 >3s 0.0285 suspends/h 1.2
+4 Hz, t1 3 s, K 10 (Yamcs defaults)    p=0.10 delivered 0.9303 p99  5280 ms  w/o uplink>1.5s 0.1810 >3s 0.1269 suspends/h 13.6
+4 Hz, t1 1 s, K 10                     p=0.10 delivered 0.9500 p99  3130 ms  w/o uplink>1.5s 0.1049 >3s 0.0535 suspends/h 12.4
+4 Hz, t1 1 s, K 10, txLimit 10         p=0.10 delivered 0.9999 p99  3270 ms  w/o uplink>1.5s 0.0723 >3s 0.0191 suspends/h 0.4
+4 Hz, t1 1 s, K 3                      p=0.10 delivered 0.9524 p99  1490 ms  w/o uplink>1.5s 0.0507 >3s 0.0372 suspends/h 13.6
+4 Hz, t1 3 s, K 10, CLCW 5 Hz          p=0.10 delivered 0.9328 p99  5330 ms  w/o uplink>1.5s 0.1803 >3s 0.1254 suspends/h 13.4

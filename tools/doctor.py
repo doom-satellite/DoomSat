@@ -84,6 +84,14 @@ def main():
         line((home / "wads" / "doom1.wad").exists(), "doom1.wad", "scripts/flight.sh setup wads")
         dep = home / "DoomSat" / "build-artifacts" / platform.system() / "DoomSat" / "bin" / "DoomSat"
         line(dep.exists(), "DoomSat F´ binary built", "scripts/flight.sh setup fprime")
+        import yamcs_time_patch   # noqa: E402 (tools/, next to this file)
+        t = yamcs_time_patch.state(yamcs_time_patch.find_jar())
+        if t in ("patched", "unpatched"):
+            line(t == "patched", "fprime-yamcs stamps F´ times as Yamcs does (TAI-UTC 37 s, not 38)",
+                 "scripts/flight.sh setup fprime  (docs/plans/fprime-yamcs-time.md)")
+        elif t == "unknown":
+            line(None, "fprime-yamcs is a version tools/yamcs_time_patch.py does not know: check its F´ times "
+                       "(docs/plans/fprime-yamcs-time.md)")
 
     print("== running now (not an error if you have not started them)")
     line(answers("http://localhost:8090/api/instances") or None, "Yamcs     http://localhost:8090   (scripts/flight.sh start | yamcs)")

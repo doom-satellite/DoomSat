@@ -1,0 +1,6558 @@
+{
+ "openmct": {
+  "bbd1d17e-0bf9-578a-ba62-68967000f175": {
+   "identifier": {
+    "key": "bbd1d17e-0bf9-578a-ba62-68967000f175",
+    "namespace": ""
+   },
+   "name": "Level game time (s)",
+   "type": "comps",
+   "composition": [
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~TIC",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "630edbad-b38d-5b0b-9893-92c067e7e460",
+   "configuration": {
+    "comps": {
+     "expression": "tic / 35",
+     "outputFormat": "%.2f",
+     "parameters": [
+      {
+       "keyString": "taxonomy:~DoomSat_DoomSat~DoomSat~doom~TIC",
+       "name": "tic",
+       "valueToUse": "value",
+       "testValue": 1,
+       "timeMetaData": {
+        "key": "utc",
+        "source": "timestamp",
+        "name": "Timestamp",
+        "format": "iso",
+        "hints": {
+         "domain": 1
+        }
+       },
+       "accumulateValues": false,
+       "sampleSize": 10
+      }
+     ]
+    }
+   },
+   "telemetry": {},
+   "description": "tic / 35 s"
+  },
+  "05f683bd-8f14-554a-8d11-527aa85f3040": {
+   "identifier": {
+    "key": "05f683bd-8f14-554a-8d11-527aa85f3040",
+    "namespace": ""
+   },
+   "name": "Door precision",
+   "type": "comps",
+   "composition": [
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~DOOR_OPENS",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~DOOR_PRESSES",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "630edbad-b38d-5b0b-9893-92c067e7e460",
+   "configuration": {
+    "comps": {
+     "expression": "opens / max(presses, 1)",
+     "outputFormat": "%.2f",
+     "parameters": [
+      {
+       "keyString": "taxonomy:~DoomSat_DoomSat~DoomSat~doom~DOOR_OPENS",
+       "name": "opens",
+       "valueToUse": "value",
+       "testValue": 1,
+       "timeMetaData": {
+        "key": "utc",
+        "source": "timestamp",
+        "name": "Timestamp",
+        "format": "iso",
+        "hints": {
+         "domain": 1
+        }
+       },
+       "accumulateValues": false,
+       "sampleSize": 10
+      },
+      {
+       "keyString": "taxonomy:~DoomSat_DoomSat~DoomSat~doom~DOOR_PRESSES",
+       "name": "presses",
+       "valueToUse": "value",
+       "testValue": 1,
+       "timeMetaData": {
+        "key": "utc",
+        "source": "timestamp",
+        "name": "Timestamp",
+        "format": "iso",
+        "hints": {
+         "domain": 1
+        }
+       },
+       "accumulateValues": false,
+       "sampleSize": 10
+      }
+     ]
+    }
+   },
+   "telemetry": {},
+   "description": "opens / max(presses, 1)"
+  },
+  "8940ce97-fae4-54ae-8b6a-bbc6ab56d987": {
+   "identifier": {
+    "key": "8940ce97-fae4-54ae-8b6a-bbc6ab56d987",
+    "namespace": ""
+   },
+   "name": "Frame reassembly loss (%)",
+   "type": "comps",
+   "composition": [
+    {
+     "key": "~DoomGround~FramesComplete",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomGround~FramesIncomplete",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "630edbad-b38d-5b0b-9893-92c067e7e460",
+   "configuration": {
+    "comps": {
+     "expression": "100 * bad / max(good + bad, 1)",
+     "outputFormat": "%.2f",
+     "parameters": [
+      {
+       "keyString": "taxonomy:~DoomGround~FramesComplete",
+       "name": "good",
+       "valueToUse": "value",
+       "testValue": 1,
+       "timeMetaData": {
+        "key": "utc",
+        "source": "timestamp",
+        "name": "Timestamp",
+        "format": "iso",
+        "hints": {
+         "domain": 1
+        }
+       },
+       "accumulateValues": false,
+       "sampleSize": 10
+      },
+      {
+       "keyString": "taxonomy:~DoomGround~FramesIncomplete",
+       "name": "bad",
+       "valueToUse": "value",
+       "testValue": 1,
+       "timeMetaData": {
+        "key": "utc",
+        "source": "timestamp",
+        "name": "Timestamp",
+        "format": "iso",
+        "hints": {
+         "domain": 1
+        }
+       },
+       "accumulateValues": false,
+       "sampleSize": 10
+      }
+     ]
+    }
+   },
+   "telemetry": {},
+   "description": "100 * bad / max(good + bad, 1) %"
+  },
+  "d825b799-142b-5cbc-94db-7f94bca198c2": {
+   "identifier": {
+    "key": "d825b799-142b-5cbc-94db-7f94bca198c2",
+    "namespace": ""
+   },
+   "name": "Chunks per frame",
+   "type": "comps",
+   "composition": [
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~CHUNKS_SENT",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~FRAMES_SENT",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "630edbad-b38d-5b0b-9893-92c067e7e460",
+   "configuration": {
+    "comps": {
+     "expression": "chunks / max(frames, 1)",
+     "outputFormat": "%.2f",
+     "parameters": [
+      {
+       "keyString": "taxonomy:~DoomSat_DoomSat~DoomSat~doom~CHUNKS_SENT",
+       "name": "chunks",
+       "valueToUse": "value",
+       "testValue": 1,
+       "timeMetaData": {
+        "key": "utc",
+        "source": "timestamp",
+        "name": "Timestamp",
+        "format": "iso",
+        "hints": {
+         "domain": 1
+        }
+       },
+       "accumulateValues": false,
+       "sampleSize": 10
+      },
+      {
+       "keyString": "taxonomy:~DoomSat_DoomSat~DoomSat~doom~FRAMES_SENT",
+       "name": "frames",
+       "valueToUse": "value",
+       "testValue": 1,
+       "timeMetaData": {
+        "key": "utc",
+        "source": "timestamp",
+        "name": "Timestamp",
+        "format": "iso",
+        "hints": {
+         "domain": 1
+        }
+       },
+       "accumulateValues": false,
+       "sampleSize": 10
+      }
+     ]
+    }
+   },
+   "telemetry": {},
+   "description": "chunks / max(frames, 1)"
+  },
+  "327d8963-7c50-5eea-afe0-e07dcda71008": {
+   "identifier": {
+    "key": "327d8963-7c50-5eea-afe0-e07dcda71008",
+    "namespace": ""
+   },
+   "name": "Memory used (%)",
+   "type": "comps",
+   "composition": [
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~systemResources~MEMORY_USED",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~systemResources~MEMORY_TOTAL",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "630edbad-b38d-5b0b-9893-92c067e7e460",
+   "configuration": {
+    "comps": {
+     "expression": "100 * used / max(total, 1)",
+     "outputFormat": "%.2f",
+     "parameters": [
+      {
+       "keyString": "taxonomy:~DoomSat_DoomSat~DoomSat~systemResources~MEMORY_USED",
+       "name": "used",
+       "valueToUse": "value",
+       "testValue": 1,
+       "timeMetaData": {
+        "key": "utc",
+        "source": "timestamp",
+        "name": "Timestamp",
+        "format": "iso",
+        "hints": {
+         "domain": 1
+        }
+       },
+       "accumulateValues": false,
+       "sampleSize": 10
+      },
+      {
+       "keyString": "taxonomy:~DoomSat_DoomSat~DoomSat~systemResources~MEMORY_TOTAL",
+       "name": "total",
+       "valueToUse": "value",
+       "testValue": 1,
+       "timeMetaData": {
+        "key": "utc",
+        "source": "timestamp",
+        "name": "Timestamp",
+        "format": "iso",
+        "hints": {
+         "domain": 1
+        }
+       },
+       "accumulateValues": false,
+       "sampleSize": 10
+      }
+     ]
+    }
+   },
+   "telemetry": {},
+   "description": "100 * used / max(total, 1) %"
+  },
+  "5d26c3e3-f46b-5483-b8c8-5f57525cc601": {
+   "identifier": {
+    "key": "5d26c3e3-f46b-5483-b8c8-5f57525cc601",
+    "namespace": ""
+   },
+   "name": "Player position (x, y)",
+   "type": "telemetry.correlator",
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "3a206f8a-f907-524f-a4bf-38b47b4bdef1",
+   "telemetry": {},
+   "xSource": [
+    {
+     "identifier": {
+      "key": "~DoomSat_DoomSat~DoomSat~doom~POS_X",
+      "namespace": "taxonomy"
+     }
+    }
+   ],
+   "ySource": [
+    {
+     "identifier": {
+      "key": "~DoomSat_DoomSat~DoomSat~doom~POS_Y",
+      "namespace": "taxonomy"
+     }
+    }
+   ]
+  },
+  "3a206f8a-f907-524f-a4bf-38b47b4bdef1": {
+   "identifier": {
+    "key": "3a206f8a-f907-524f-a4bf-38b47b4bdef1",
+    "namespace": ""
+   },
+   "name": "Traverse (built-in scatter)",
+   "type": "telemetry.plot.scatter-plot",
+   "composition": [
+    {
+     "key": "5d26c3e3-f46b-5483-b8c8-5f57525cc601",
+     "namespace": ""
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "48b13011-3b32-570f-a9a2-fc8b9e4a6153",
+   "configuration": {
+    "styles": {},
+    "axes": {
+     "xKey": "x",
+     "yKey": "y"
+    },
+    "ranges": {},
+    "axisScaling": {
+     "xAxis": "linear",
+     "yAxis": "linear"
+    }
+   }
+  },
+  "f5dea75c-3eb2-577a-a43a-d3f16baedb98": {
+   "identifier": {
+    "key": "f5dea75c-3eb2-577a-a43a-d3f16baedb98",
+    "namespace": ""
+   },
+   "name": "CS Vitals",
+   "type": "conditionSet",
+   "composition": [
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~HEALTH",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~DEAD",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "e6c2cd0f-6d9e-5a16-a288-42093a713c74",
+   "telemetry": {},
+   "configuration": {
+    "conditionTestData": [],
+    "conditionCollection": [
+     {
+      "id": "ec525953-8b61-5159-931a-14a5ed429149",
+      "configuration": {
+       "name": "Dead",
+       "output": "DEAD",
+       "trigger": "any",
+       "criteria": [
+        {
+         "id": "436b4c8e-935d-5815-b4bc-803c64bb4509",
+         "telemetry": {
+          "key": "~DoomSat_DoomSat~DoomSat~doom~DEAD",
+          "namespace": "taxonomy"
+         },
+         "operation": "enumValueIs",
+         "input": [
+          "255"
+         ],
+         "metadata": "value"
+        }
+       ]
+      },
+      "summary": "Dead"
+     },
+     {
+      "id": "afcbf293-fea2-5eb7-b12c-6f70ad788ae8",
+      "configuration": {
+       "name": "Critical",
+       "output": "HULL CRITICAL",
+       "trigger": "any",
+       "criteria": [
+        {
+         "id": "4c7384d7-ce9b-5f40-b513-c340f3f2fb01",
+         "telemetry": {
+          "key": "~DoomSat_DoomSat~DoomSat~doom~HEALTH",
+          "namespace": "taxonomy"
+         },
+         "operation": "lessThan",
+         "input": [
+          11
+         ],
+         "metadata": "value"
+        }
+       ]
+      },
+      "summary": "Critical"
+     },
+     {
+      "id": "ea59bb53-bce8-5d54-a525-19a2ee455484",
+      "configuration": {
+       "name": "Warning",
+       "output": "HULL DAMAGED",
+       "trigger": "any",
+       "criteria": [
+        {
+         "id": "61ff2907-7db2-5ab4-930e-479296f6ada7",
+         "telemetry": {
+          "key": "~DoomSat_DoomSat~DoomSat~doom~HEALTH",
+          "namespace": "taxonomy"
+         },
+         "operation": "lessThan",
+         "input": [
+          25
+         ],
+         "metadata": "value"
+        }
+       ]
+      },
+      "summary": "Warning"
+     },
+     {
+      "id": "e1a8d5f7-9190-56db-b576-8ddab3c35d68",
+      "configuration": {
+       "name": "Watch",
+       "output": "HULL LOW",
+       "trigger": "any",
+       "criteria": [
+        {
+         "id": "fd95e630-d997-5c45-ae88-76f326fdeace",
+         "telemetry": {
+          "key": "~DoomSat_DoomSat~DoomSat~doom~HEALTH",
+          "namespace": "taxonomy"
+         },
+         "operation": "lessThan",
+         "input": [
+          50
+         ],
+         "metadata": "value"
+        }
+       ]
+      },
+      "summary": "Watch"
+     },
+     {
+      "isDefault": true,
+      "id": "89c1ff7b-b8bb-5ba1-84fd-9f38ab868bf8",
+      "configuration": {
+       "name": "Default",
+       "output": "HULL OK",
+       "trigger": "all",
+       "criteria": []
+      },
+      "summary": ""
+     }
+    ]
+   }
+  },
+  "5508ef75-60a1-5add-acf5-ec2db573bf60": {
+   "identifier": {
+    "key": "5508ef75-60a1-5add-acf5-ec2db573bf60",
+    "namespace": ""
+   },
+   "name": "CS Payload link",
+   "type": "conditionSet",
+   "composition": [
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~PAYLOAD_LINK",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "e6c2cd0f-6d9e-5a16-a288-42093a713c74",
+   "telemetry": {},
+   "configuration": {
+    "conditionTestData": [],
+    "conditionCollection": [
+     {
+      "id": "53322833-8b8f-5da1-9cc9-50af9d4baadf",
+      "configuration": {
+       "name": "Lost",
+       "output": "LINK NO GO",
+       "trigger": "any",
+       "criteria": [
+        {
+         "id": "6f7df90d-0ff7-5ec5-8d2c-2607bee2df13",
+         "telemetry": {
+          "key": "~DoomSat_DoomSat~DoomSat~doom~PAYLOAD_LINK",
+          "namespace": "taxonomy"
+         },
+         "operation": "enumValueIs",
+         "input": [
+          "0"
+         ],
+         "metadata": "value"
+        }
+       ]
+      },
+      "summary": "Lost"
+     },
+     {
+      "id": "7488de93-9f86-5824-a105-8ded01648b68",
+      "configuration": {
+       "name": "Up",
+       "output": "LINK GO",
+       "trigger": "any",
+       "criteria": [
+        {
+         "id": "0376c9eb-7470-5b69-805d-dedb5e9dc8e6",
+         "telemetry": {
+          "key": "~DoomSat_DoomSat~DoomSat~doom~PAYLOAD_LINK",
+          "namespace": "taxonomy"
+         },
+         "operation": "enumValueIs",
+         "input": [
+          "255"
+         ],
+         "metadata": "value"
+        }
+       ]
+      },
+      "summary": "Up"
+     },
+     {
+      "isDefault": true,
+      "id": "cbe1dd88-dfa5-5a44-b42a-e1701f62c653",
+      "configuration": {
+       "name": "Default",
+       "output": "LINK ?",
+       "trigger": "all",
+       "criteria": []
+      },
+      "summary": ""
+     }
+    ]
+   }
+  },
+  "035a72a1-e368-54b5-bf37-cda25735e46a": {
+   "identifier": {
+    "key": "035a72a1-e368-54b5-bf37-cda25735e46a",
+    "namespace": ""
+   },
+   "name": "CS Autonomy timing",
+   "type": "conditionSet",
+   "composition": [
+    {
+     "key": "~DoomGround~DecisionAgeMs",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomGround~SystemOneLatencyMs",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "e6c2cd0f-6d9e-5a16-a288-42093a713c74",
+   "telemetry": {},
+   "configuration": {
+    "conditionTestData": [],
+    "conditionCollection": [
+     {
+      "id": "2ae8e4f2-fa3a-50f1-a8e0-300d794108d0",
+      "configuration": {
+       "name": "Over budget",
+       "output": "DECISION LATE",
+       "trigger": "any",
+       "criteria": [
+        {
+         "id": "ad54bc60-dde3-5968-aa7d-e5a6aba1a16d",
+         "telemetry": {
+          "key": "~DoomGround~DecisionAgeMs",
+          "namespace": "taxonomy"
+         },
+         "operation": "greaterThan",
+         "input": [
+          900
+         ],
+         "metadata": "value"
+        }
+       ]
+      },
+      "summary": "Over budget"
+     },
+     {
+      "id": "d3e3c609-a609-56f8-b054-e5de6c8901c8",
+      "configuration": {
+       "name": "Warning",
+       "output": "DECISION SLOW",
+       "trigger": "any",
+       "criteria": [
+        {
+         "id": "1c1c768f-fe4b-5745-b270-3e0b5c9c1187",
+         "telemetry": {
+          "key": "~DoomGround~DecisionAgeMs",
+          "namespace": "taxonomy"
+         },
+         "operation": "greaterThan",
+         "input": [
+          850
+         ],
+         "metadata": "value"
+        }
+       ]
+      },
+      "summary": "Warning"
+     },
+     {
+      "id": "e666dc15-2cf2-5a37-9ae8-5b03cf9f2111",
+      "configuration": {
+       "name": "Watch",
+       "output": "DECISION SLOWING",
+       "trigger": "any",
+       "criteria": [
+        {
+         "id": "79b76adf-1a93-58bc-8660-1ae687647b91",
+         "telemetry": {
+          "key": "~DoomGround~DecisionAgeMs",
+          "namespace": "taxonomy"
+         },
+         "operation": "greaterThan",
+         "input": [
+          750
+         ],
+         "metadata": "value"
+        }
+       ]
+      },
+      "summary": "Watch"
+     },
+     {
+      "id": "5a7496ac-a6d7-5089-9b35-81fd53bf19ad",
+      "configuration": {
+       "name": "In budget",
+       "output": "DECISIONS GO",
+       "trigger": "any",
+       "criteria": [
+        {
+         "id": "3f2cd102-0771-507d-93c1-51b645d40d45",
+         "telemetry": {
+          "key": "~DoomGround~DecisionAgeMs",
+          "namespace": "taxonomy"
+         },
+         "operation": "lessThanOrEq",
+         "input": [
+          750
+         ],
+         "metadata": "value"
+        }
+       ]
+      },
+      "summary": "In budget"
+     },
+     {
+      "isDefault": true,
+      "id": "e6d65190-f061-55e1-ae0f-266689ecf7ea",
+      "configuration": {
+       "name": "Default",
+       "output": "DECISIONS ?",
+       "trigger": "all",
+       "criteria": []
+      },
+      "summary": ""
+     }
+    ]
+   }
+  },
+  "48e2dacc-324c-5348-93d3-f1fda110937e": {
+   "identifier": {
+    "key": "48e2dacc-324c-5348-93d3-f1fda110937e",
+    "namespace": ""
+   },
+   "name": "CS jev share",
+   "type": "conditionSet",
+   "composition": [
+    {
+     "key": "~DoomGround~JevShare",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "e6c2cd0f-6d9e-5a16-a288-42093a713c74",
+   "telemetry": {},
+   "configuration": {
+    "conditionTestData": [],
+    "conditionCollection": [
+     {
+      "id": "e67047dd-6559-54ba-beca-864076bed776",
+      "configuration": {
+       "name": "Below floor",
+       "output": "JEV SHARE < 0.70",
+       "trigger": "any",
+       "criteria": [
+        {
+         "id": "9884b865-d90c-553f-bb9f-86594b16457a",
+         "telemetry": {
+          "key": "~DoomGround~JevShare",
+          "namespace": "taxonomy"
+         },
+         "operation": "lessThan",
+         "input": [
+          0.7
+         ],
+         "metadata": "value"
+        }
+       ]
+      },
+      "summary": "Below floor"
+     },
+     {
+      "id": "76175241-97e5-5a62-81d6-36df8c811537",
+      "configuration": {
+       "name": "At floor",
+       "output": "JEV SHARE OK",
+       "trigger": "any",
+       "criteria": [
+        {
+         "id": "6998bcc7-d244-51c5-9635-a0e882f08a05",
+         "telemetry": {
+          "key": "~DoomGround~JevShare",
+          "namespace": "taxonomy"
+         },
+         "operation": "greaterThanOrEq",
+         "input": [
+          0.7
+         ],
+         "metadata": "value"
+        }
+       ]
+      },
+      "summary": "At floor"
+     },
+     {
+      "isDefault": true,
+      "id": "6853ec08-8cf4-5ebd-b697-bd8999b6d84c",
+      "configuration": {
+       "name": "Default",
+       "output": "JEV SHARE ?",
+       "trigger": "all",
+       "criteria": []
+      },
+      "summary": ""
+     }
+    ]
+   }
+  },
+  "778cabdd-2a50-501d-87ff-e19f8dbdafc1": {
+   "identifier": {
+    "key": "778cabdd-2a50-501d-87ff-e19f8dbdafc1",
+    "namespace": ""
+   },
+   "name": "CS Honesty",
+   "type": "conditionSet",
+   "composition": [
+    {
+     "key": "~DoomGround~HonestyStatus",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "e6c2cd0f-6d9e-5a16-a288-42093a713c74",
+   "telemetry": {},
+   "configuration": {
+    "conditionTestData": [],
+    "conditionCollection": [
+     {
+      "id": "5216f002-e9c2-566a-bddc-da0b433fd19b",
+      "configuration": {
+       "name": "Fail",
+       "output": "HONESTY FAIL: VOID",
+       "trigger": "any",
+       "criteria": [
+        {
+         "id": "78656f23-dcf6-5fdb-b1ee-984365633c6d",
+         "telemetry": {
+          "key": "~DoomGround~HonestyStatus",
+          "namespace": "taxonomy"
+         },
+         "operation": "enumValueIs",
+         "input": [
+          "2"
+         ],
+         "metadata": "value"
+        }
+       ]
+      },
+      "summary": "Fail"
+     },
+     {
+      "id": "0c31e1e0-2346-5853-833f-f9e8bbcede9e",
+      "configuration": {
+       "name": "Pass",
+       "output": "HONESTY PASS",
+       "trigger": "any",
+       "criteria": [
+        {
+         "id": "6ccc5e8b-0bfb-5bf1-b05a-8705a9ed83e7",
+         "telemetry": {
+          "key": "~DoomGround~HonestyStatus",
+          "namespace": "taxonomy"
+         },
+         "operation": "enumValueIs",
+         "input": [
+          "1"
+         ],
+         "metadata": "value"
+        }
+       ]
+      },
+      "summary": "Pass"
+     },
+     {
+      "isDefault": true,
+      "id": "3f47570e-21bd-54e6-b91a-9a504e38d204",
+      "configuration": {
+       "name": "Default",
+       "output": "HONESTY UNKNOWN",
+       "trigger": "all",
+       "criteria": []
+      },
+      "summary": ""
+     }
+    ]
+   }
+  },
+  "d0f70a1c-ef14-5b59-b0fc-4b6f3939ea40": {
+   "identifier": {
+    "key": "d0f70a1c-ef14-5b59-b0fc-4b6f3939ea40",
+    "namespace": ""
+   },
+   "name": "CS Intent mode",
+   "type": "conditionSet",
+   "composition": [
+    {
+     "key": "~DoomGround~IntentMode",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "e6c2cd0f-6d9e-5a16-a288-42093a713c74",
+   "telemetry": {},
+   "configuration": {
+    "conditionTestData": [],
+    "conditionCollection": [
+     {
+      "id": "b7b20da4-3f05-5a57-aeb0-c39b33753b29",
+      "configuration": {
+       "name": "EXPLORE",
+       "output": "EXPLORE",
+       "trigger": "any",
+       "criteria": [
+        {
+         "id": "5a204746-7cb7-505a-b76e-5933d9eb9d98",
+         "telemetry": {
+          "key": "~DoomGround~IntentMode",
+          "namespace": "taxonomy"
+         },
+         "operation": "enumValueIs",
+         "input": [
+          "0"
+         ],
+         "metadata": "value"
+        }
+       ]
+      },
+      "summary": "EXPLORE"
+     },
+     {
+      "id": "4aaa4feb-7009-5ad3-8498-1220fba19980",
+      "configuration": {
+       "name": "APPROACH",
+       "output": "APPROACH",
+       "trigger": "any",
+       "criteria": [
+        {
+         "id": "d9486fb6-e583-5ea3-b00d-6287b8684970",
+         "telemetry": {
+          "key": "~DoomGround~IntentMode",
+          "namespace": "taxonomy"
+         },
+         "operation": "enumValueIs",
+         "input": [
+          "1"
+         ],
+         "metadata": "value"
+        }
+       ]
+      },
+      "summary": "APPROACH"
+     },
+     {
+      "id": "03c19fbe-d46e-504e-b0ed-11408abdcd4d",
+      "configuration": {
+       "name": "OPERATE",
+       "output": "OPERATE",
+       "trigger": "any",
+       "criteria": [
+        {
+         "id": "92011458-5add-5327-a05a-786ba20808f6",
+         "telemetry": {
+          "key": "~DoomGround~IntentMode",
+          "namespace": "taxonomy"
+         },
+         "operation": "enumValueIs",
+         "input": [
+          "2"
+         ],
+         "metadata": "value"
+        }
+       ]
+      },
+      "summary": "OPERATE"
+     },
+     {
+      "id": "71d60122-149c-5e77-91b8-68389e09e055",
+      "configuration": {
+       "name": "FIGHT",
+       "output": "FIGHT",
+       "trigger": "any",
+       "criteria": [
+        {
+         "id": "612f22ee-02ac-5e5a-a8ce-2215f9ac2d8d",
+         "telemetry": {
+          "key": "~DoomGround~IntentMode",
+          "namespace": "taxonomy"
+         },
+         "operation": "enumValueIs",
+         "input": [
+          "3"
+         ],
+         "metadata": "value"
+        }
+       ]
+      },
+      "summary": "FIGHT"
+     },
+     {
+      "id": "3d3771f7-7bca-5f68-a3e9-3308e8f64595",
+      "configuration": {
+       "name": "RETREAT",
+       "output": "RETREAT",
+       "trigger": "any",
+       "criteria": [
+        {
+         "id": "9b3d6301-39d3-5540-87e5-b5beeae9dff6",
+         "telemetry": {
+          "key": "~DoomGround~IntentMode",
+          "namespace": "taxonomy"
+         },
+         "operation": "enumValueIs",
+         "input": [
+          "4"
+         ],
+         "metadata": "value"
+        }
+       ]
+      },
+      "summary": "RETREAT"
+     },
+     {
+      "id": "2c5be54c-006e-5c72-aae8-8f3ef216584b",
+      "configuration": {
+       "name": "RECOVER",
+       "output": "RECOVER",
+       "trigger": "any",
+       "criteria": [
+        {
+         "id": "c8ecf27c-7aa2-50e3-b0aa-0c2020cf95d6",
+         "telemetry": {
+          "key": "~DoomGround~IntentMode",
+          "namespace": "taxonomy"
+         },
+         "operation": "enumValueIs",
+         "input": [
+          "5"
+         ],
+         "metadata": "value"
+        }
+       ]
+      },
+      "summary": "RECOVER"
+     },
+     {
+      "isDefault": true,
+      "id": "38da8793-1cf3-5290-901b-5dd32dcabe45",
+      "configuration": {
+       "name": "Default",
+       "output": "NO INTENT",
+       "trigger": "all",
+       "criteria": []
+      },
+      "summary": ""
+     }
+    ]
+   }
+  },
+  "12fda9b3-06ca-5706-85e5-5317bd8db891": {
+   "identifier": {
+    "key": "12fda9b3-06ca-5706-85e5-5317bd8db891",
+    "namespace": ""
+   },
+   "name": "CS Level budget",
+   "type": "conditionSet",
+   "composition": [
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~TIC",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "e6c2cd0f-6d9e-5a16-a288-42093a713c74",
+   "telemetry": {},
+   "configuration": {
+    "conditionTestData": [],
+    "conditionCollection": [
+     {
+      "id": "5b2c4bae-7d60-5ba5-b1cc-b607e2dd00fa",
+      "configuration": {
+       "name": "Over 180 s",
+       "output": "OVER BUDGET",
+       "trigger": "any",
+       "criteria": [
+        {
+         "id": "be5f59b0-d553-5b7d-9406-10b4d2abf8f8",
+         "telemetry": {
+          "key": "~DoomSat_DoomSat~DoomSat~doom~TIC",
+          "namespace": "taxonomy"
+         },
+         "operation": "greaterThan",
+         "input": [
+          6300
+         ],
+         "metadata": "value"
+        }
+       ]
+      },
+      "summary": "Over 180 s"
+     },
+     {
+      "id": "e6fb2483-7369-59a5-a5ee-d47969487854",
+      "configuration": {
+       "name": "Last 30 s",
+       "output": "BUDGET WATCH",
+       "trigger": "any",
+       "criteria": [
+        {
+         "id": "c2b3f122-9493-5b6e-af65-cd8e1df7d554",
+         "telemetry": {
+          "key": "~DoomSat_DoomSat~DoomSat~doom~TIC",
+          "namespace": "taxonomy"
+         },
+         "operation": "greaterThan",
+         "input": [
+          5250
+         ],
+         "metadata": "value"
+        }
+       ]
+      },
+      "summary": "Last 30 s"
+     },
+     {
+      "isDefault": true,
+      "id": "61c5f521-725a-5d14-bb9f-8446da043378",
+      "configuration": {
+       "name": "Default",
+       "output": "IN BUDGET",
+       "trigger": "all",
+       "criteria": []
+      },
+      "summary": ""
+     }
+    ]
+   }
+  },
+  "7b45d490-9e5f-5f8e-b0fc-ff107cf399bd": {
+   "identifier": {
+    "key": "7b45d490-9e5f-5f8e-b0fc-ff107cf399bd",
+    "namespace": ""
+   },
+   "name": "CS Key red",
+   "type": "conditionSet",
+   "composition": [
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~KEYS",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "e6c2cd0f-6d9e-5a16-a288-42093a713c74",
+   "telemetry": {},
+   "configuration": {
+    "conditionTestData": [],
+    "conditionCollection": [
+     {
+      "id": "d308dfec-8752-503c-be8d-c87da44945d8",
+      "configuration": {
+       "name": "Held",
+       "output": "RED KEY",
+       "trigger": "any",
+       "criteria": [
+        {
+         "id": "01726239-6cc0-5dff-9011-44851457f277",
+         "telemetry": {
+          "key": "~DoomSat_DoomSat~DoomSat~doom~KEYS",
+          "namespace": "taxonomy"
+         },
+         "operation": "isOneOf",
+         "input": [
+          "1,3,5,7"
+         ],
+         "metadata": "value"
+        }
+       ]
+      },
+      "summary": "Held"
+     },
+     {
+      "isDefault": true,
+      "id": "41c6e614-5bca-527d-98ef-facbc2d4f202",
+      "configuration": {
+       "name": "Default",
+       "output": "-",
+       "trigger": "all",
+       "criteria": []
+      },
+      "summary": ""
+     }
+    ]
+   }
+  },
+  "54410487-cc05-563d-bba2-bd2b110fa9ec": {
+   "identifier": {
+    "key": "54410487-cc05-563d-bba2-bd2b110fa9ec",
+    "namespace": ""
+   },
+   "name": "CS Key blue",
+   "type": "conditionSet",
+   "composition": [
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~KEYS",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "e6c2cd0f-6d9e-5a16-a288-42093a713c74",
+   "telemetry": {},
+   "configuration": {
+    "conditionTestData": [],
+    "conditionCollection": [
+     {
+      "id": "a4084db9-2916-5033-b854-0c7c872eb47a",
+      "configuration": {
+       "name": "Held",
+       "output": "BLUE KEY",
+       "trigger": "any",
+       "criteria": [
+        {
+         "id": "804ee9a9-ba66-5c43-8399-087bba342a86",
+         "telemetry": {
+          "key": "~DoomSat_DoomSat~DoomSat~doom~KEYS",
+          "namespace": "taxonomy"
+         },
+         "operation": "isOneOf",
+         "input": [
+          "2,3,6,7"
+         ],
+         "metadata": "value"
+        }
+       ]
+      },
+      "summary": "Held"
+     },
+     {
+      "isDefault": true,
+      "id": "115e5dd1-1e62-59f2-be33-4c863e0c4467",
+      "configuration": {
+       "name": "Default",
+       "output": "-",
+       "trigger": "all",
+       "criteria": []
+      },
+      "summary": ""
+     }
+    ]
+   }
+  },
+  "b5d5d920-4d2d-50c0-85ef-9b151b318d5b": {
+   "identifier": {
+    "key": "b5d5d920-4d2d-50c0-85ef-9b151b318d5b",
+    "namespace": ""
+   },
+   "name": "CS Key yellow",
+   "type": "conditionSet",
+   "composition": [
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~KEYS",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "e6c2cd0f-6d9e-5a16-a288-42093a713c74",
+   "telemetry": {},
+   "configuration": {
+    "conditionTestData": [],
+    "conditionCollection": [
+     {
+      "id": "115686b0-98de-5d4a-8ac6-cd8ca174758b",
+      "configuration": {
+       "name": "Held",
+       "output": "YELLOW KEY",
+       "trigger": "any",
+       "criteria": [
+        {
+         "id": "0f6a539f-00d1-52f4-a5f4-ff7d3e53da6b",
+         "telemetry": {
+          "key": "~DoomSat_DoomSat~DoomSat~doom~KEYS",
+          "namespace": "taxonomy"
+         },
+         "operation": "isOneOf",
+         "input": [
+          "4,5,6,7"
+         ],
+         "metadata": "value"
+        }
+       ]
+      },
+      "summary": "Held"
+     },
+     {
+      "isDefault": true,
+      "id": "f1911a29-834d-5769-87d4-b91f8428bb5d",
+      "configuration": {
+       "name": "Default",
+       "output": "-",
+       "trigger": "all",
+       "criteria": []
+      },
+      "summary": ""
+     }
+    ]
+   }
+  },
+  "b272d1dd-f0c2-5d9f-bad2-4594f605e07c": {
+   "identifier": {
+    "key": "b272d1dd-f0c2-5d9f-bad2-4594f605e07c",
+    "namespace": ""
+   },
+   "name": "CS Threat",
+   "type": "conditionSet",
+   "composition": [
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~ENEMY_COUNT",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "e6c2cd0f-6d9e-5a16-a288-42093a713c74",
+   "telemetry": {},
+   "configuration": {
+    "conditionTestData": [],
+    "conditionCollection": [
+     {
+      "id": "bfbf17ac-4eee-53f8-bb94-697ccc73536b",
+      "configuration": {
+       "name": "Swarm",
+       "output": "HAZARDS 4+",
+       "trigger": "any",
+       "criteria": [
+        {
+         "id": "1d720581-876c-5743-8901-720455bf6a3d",
+         "telemetry": {
+          "key": "~DoomSat_DoomSat~DoomSat~doom~ENEMY_COUNT",
+          "namespace": "taxonomy"
+         },
+         "operation": "greaterThan",
+         "input": [
+          3
+         ],
+         "metadata": "value"
+        }
+       ]
+      },
+      "summary": "Swarm"
+     },
+     {
+      "id": "dc2edde9-34a5-5698-8343-6a33e2b24714",
+      "configuration": {
+       "name": "Several",
+       "output": "HAZARDS 2+",
+       "trigger": "any",
+       "criteria": [
+        {
+         "id": "28d8376a-3f9b-54e3-89fe-c63c2cf97c30",
+         "telemetry": {
+          "key": "~DoomSat_DoomSat~DoomSat~doom~ENEMY_COUNT",
+          "namespace": "taxonomy"
+         },
+         "operation": "greaterThan",
+         "input": [
+          1
+         ],
+         "metadata": "value"
+        }
+       ]
+      },
+      "summary": "Several"
+     },
+     {
+      "id": "97ed2f3e-cc9a-50a6-af02-fd3c284e250b",
+      "configuration": {
+       "name": "Contact",
+       "output": "HAZARD CONTACT",
+       "trigger": "any",
+       "criteria": [
+        {
+         "id": "04012dfd-852a-59ed-99e3-783ccd2e6509",
+         "telemetry": {
+          "key": "~DoomSat_DoomSat~DoomSat~doom~ENEMY_COUNT",
+          "namespace": "taxonomy"
+         },
+         "operation": "greaterThanOrEq",
+         "input": [
+          1
+         ],
+         "metadata": "value"
+        }
+       ]
+      },
+      "summary": "Contact"
+     },
+     {
+      "isDefault": true,
+      "id": "634f1ed5-22e0-500d-9f62-23a6cf7ecd9b",
+      "configuration": {
+       "name": "Default",
+       "output": "NO HAZARDS",
+       "trigger": "all",
+       "criteria": []
+      },
+      "summary": ""
+     }
+    ]
+   }
+  },
+  "8336d0b0-b8a9-58d3-9277-9ec7eccbad8a": {
+   "identifier": {
+    "key": "8336d0b0-b8a9-58d3-9277-9ec7eccbad8a",
+    "namespace": ""
+   },
+   "name": "Vitals",
+   "type": "conditionWidget",
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "e6c2cd0f-6d9e-5a16-a288-42093a713c74",
+   "label": "Vitals",
+   "conditionalLabel": "",
+   "url": "",
+   "configuration": {
+    "objectStyles": {
+     "styles": [
+      {
+       "conditionId": "ec525953-8b61-5159-931a-14a5ed429149",
+       "style": {
+        "backgroundColor": "#990000",
+        "color": "#fff",
+        "border": "",
+        "isStyleInvisible": "",
+        "output": ""
+       }
+      },
+      {
+       "conditionId": "afcbf293-fea2-5eb7-b12c-6f70ad788ae8",
+       "style": {
+        "backgroundColor": "#990000",
+        "color": "#fff",
+        "border": "",
+        "isStyleInvisible": "",
+        "output": ""
+       }
+      },
+      {
+       "conditionId": "ea59bb53-bce8-5d54-a525-19a2ee455484",
+       "style": {
+        "backgroundColor": "#b45f06",
+        "color": "#fff",
+        "border": "",
+        "isStyleInvisible": "",
+        "output": ""
+       }
+      },
+      {
+       "conditionId": "e1a8d5f7-9190-56db-b576-8ddab3c35d68",
+       "style": {
+        "backgroundColor": "#bf9000",
+        "color": "#000",
+        "border": "",
+        "isStyleInvisible": "",
+        "output": ""
+       }
+      },
+      {
+       "conditionId": "89c1ff7b-b8bb-5ba1-84fd-9f38ab868bf8",
+       "style": {
+        "backgroundColor": "#38761d",
+        "color": "#fff",
+        "border": "",
+        "isStyleInvisible": "",
+        "output": ""
+       }
+      }
+     ],
+     "staticStyle": {
+      "style": {
+       "backgroundColor": "",
+       "border": "",
+       "color": ""
+      }
+     },
+     "selectedConditionId": "89c1ff7b-b8bb-5ba1-84fd-9f38ab868bf8",
+     "defaultConditionId": "89c1ff7b-b8bb-5ba1-84fd-9f38ab868bf8",
+     "conditionSetIdentifier": {
+      "key": "f5dea75c-3eb2-577a-a43a-d3f16baedb98",
+      "namespace": ""
+     }
+    },
+    "useConditionSetOutputAsLabel": true
+   }
+  },
+  "5e85fe3a-42cb-53e7-af3d-69489ac2ab6f": {
+   "identifier": {
+    "key": "5e85fe3a-42cb-53e7-af3d-69489ac2ab6f",
+    "namespace": ""
+   },
+   "name": "Payload link",
+   "type": "conditionWidget",
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "e6c2cd0f-6d9e-5a16-a288-42093a713c74",
+   "label": "Payload link",
+   "conditionalLabel": "",
+   "url": "",
+   "configuration": {
+    "objectStyles": {
+     "styles": [
+      {
+       "conditionId": "53322833-8b8f-5da1-9cc9-50af9d4baadf",
+       "style": {
+        "backgroundColor": "#990000",
+        "color": "#fff",
+        "border": "",
+        "isStyleInvisible": "",
+        "output": ""
+       }
+      },
+      {
+       "conditionId": "7488de93-9f86-5824-a105-8ded01648b68",
+       "style": {
+        "backgroundColor": "#38761d",
+        "color": "#fff",
+        "border": "",
+        "isStyleInvisible": "",
+        "output": ""
+       }
+      },
+      {
+       "conditionId": "cbe1dd88-dfa5-5a44-b42a-e1701f62c653",
+       "style": {
+        "backgroundColor": "#434343",
+        "color": "#ccc",
+        "border": "",
+        "isStyleInvisible": "",
+        "output": ""
+       }
+      }
+     ],
+     "staticStyle": {
+      "style": {
+       "backgroundColor": "",
+       "border": "",
+       "color": ""
+      }
+     },
+     "selectedConditionId": "cbe1dd88-dfa5-5a44-b42a-e1701f62c653",
+     "defaultConditionId": "cbe1dd88-dfa5-5a44-b42a-e1701f62c653",
+     "conditionSetIdentifier": {
+      "key": "5508ef75-60a1-5add-acf5-ec2db573bf60",
+      "namespace": ""
+     }
+    },
+    "useConditionSetOutputAsLabel": true
+   }
+  },
+  "f3354857-3d9a-572a-8071-ba28a27825ff": {
+   "identifier": {
+    "key": "f3354857-3d9a-572a-8071-ba28a27825ff",
+    "namespace": ""
+   },
+   "name": "Decision timing",
+   "type": "conditionWidget",
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "e6c2cd0f-6d9e-5a16-a288-42093a713c74",
+   "label": "Decision timing",
+   "conditionalLabel": "",
+   "url": "",
+   "configuration": {
+    "objectStyles": {
+     "styles": [
+      {
+       "conditionId": "2ae8e4f2-fa3a-50f1-a8e0-300d794108d0",
+       "style": {
+        "backgroundColor": "#990000",
+        "color": "#fff",
+        "border": "",
+        "isStyleInvisible": "",
+        "output": ""
+       }
+      },
+      {
+       "conditionId": "d3e3c609-a609-56f8-b054-e5de6c8901c8",
+       "style": {
+        "backgroundColor": "#b45f06",
+        "color": "#fff",
+        "border": "",
+        "isStyleInvisible": "",
+        "output": ""
+       }
+      },
+      {
+       "conditionId": "e666dc15-2cf2-5a37-9ae8-5b03cf9f2111",
+       "style": {
+        "backgroundColor": "#bf9000",
+        "color": "#000",
+        "border": "",
+        "isStyleInvisible": "",
+        "output": ""
+       }
+      },
+      {
+       "conditionId": "5a7496ac-a6d7-5089-9b35-81fd53bf19ad",
+       "style": {
+        "backgroundColor": "#38761d",
+        "color": "#fff",
+        "border": "",
+        "isStyleInvisible": "",
+        "output": ""
+       }
+      },
+      {
+       "conditionId": "e6d65190-f061-55e1-ae0f-266689ecf7ea",
+       "style": {
+        "backgroundColor": "#434343",
+        "color": "#ccc",
+        "border": "",
+        "isStyleInvisible": "",
+        "output": ""
+       }
+      }
+     ],
+     "staticStyle": {
+      "style": {
+       "backgroundColor": "",
+       "border": "",
+       "color": ""
+      }
+     },
+     "selectedConditionId": "e6d65190-f061-55e1-ae0f-266689ecf7ea",
+     "defaultConditionId": "e6d65190-f061-55e1-ae0f-266689ecf7ea",
+     "conditionSetIdentifier": {
+      "key": "035a72a1-e368-54b5-bf37-cda25735e46a",
+      "namespace": ""
+     }
+    },
+    "useConditionSetOutputAsLabel": true
+   }
+  },
+  "2191fbe6-a3c4-5098-aa96-6acb74a3696f": {
+   "identifier": {
+    "key": "2191fbe6-a3c4-5098-aa96-6acb74a3696f",
+    "namespace": ""
+   },
+   "name": "jev share",
+   "type": "conditionWidget",
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "e6c2cd0f-6d9e-5a16-a288-42093a713c74",
+   "label": "jev share",
+   "conditionalLabel": "",
+   "url": "",
+   "configuration": {
+    "objectStyles": {
+     "styles": [
+      {
+       "conditionId": "e67047dd-6559-54ba-beca-864076bed776",
+       "style": {
+        "backgroundColor": "#b45f06",
+        "color": "#fff",
+        "border": "",
+        "isStyleInvisible": "",
+        "output": ""
+       }
+      },
+      {
+       "conditionId": "76175241-97e5-5a62-81d6-36df8c811537",
+       "style": {
+        "backgroundColor": "#38761d",
+        "color": "#fff",
+        "border": "",
+        "isStyleInvisible": "",
+        "output": ""
+       }
+      },
+      {
+       "conditionId": "6853ec08-8cf4-5ebd-b697-bd8999b6d84c",
+       "style": {
+        "backgroundColor": "#434343",
+        "color": "#ccc",
+        "border": "",
+        "isStyleInvisible": "",
+        "output": ""
+       }
+      }
+     ],
+     "staticStyle": {
+      "style": {
+       "backgroundColor": "",
+       "border": "",
+       "color": ""
+      }
+     },
+     "selectedConditionId": "6853ec08-8cf4-5ebd-b697-bd8999b6d84c",
+     "defaultConditionId": "6853ec08-8cf4-5ebd-b697-bd8999b6d84c",
+     "conditionSetIdentifier": {
+      "key": "48e2dacc-324c-5348-93d3-f1fda110937e",
+      "namespace": ""
+     }
+    },
+    "useConditionSetOutputAsLabel": true
+   }
+  },
+  "bb8a56dd-46b5-567f-9119-b85edef98220": {
+   "identifier": {
+    "key": "bb8a56dd-46b5-567f-9119-b85edef98220",
+    "namespace": ""
+   },
+   "name": "Honesty",
+   "type": "conditionWidget",
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "e6c2cd0f-6d9e-5a16-a288-42093a713c74",
+   "label": "HONESTY (preflight)",
+   "conditionalLabel": "",
+   "url": "",
+   "configuration": {
+    "objectStyles": {
+     "styles": [
+      {
+       "conditionId": "5216f002-e9c2-566a-bddc-da0b433fd19b",
+       "style": {
+        "backgroundColor": "#990000",
+        "color": "#fff",
+        "border": "",
+        "isStyleInvisible": "",
+        "output": ""
+       }
+      },
+      {
+       "conditionId": "0c31e1e0-2346-5853-833f-f9e8bbcede9e",
+       "style": {
+        "backgroundColor": "#38761d",
+        "color": "#fff",
+        "border": "",
+        "isStyleInvisible": "",
+        "output": ""
+       }
+      },
+      {
+       "conditionId": "3f47570e-21bd-54e6-b91a-9a504e38d204",
+       "style": {
+        "backgroundColor": "#434343",
+        "color": "#ccc",
+        "border": "",
+        "isStyleInvisible": "",
+        "output": ""
+       }
+      }
+     ],
+     "staticStyle": {
+      "style": {
+       "backgroundColor": "",
+       "border": "",
+       "color": ""
+      }
+     },
+     "selectedConditionId": "3f47570e-21bd-54e6-b91a-9a504e38d204",
+     "defaultConditionId": "3f47570e-21bd-54e6-b91a-9a504e38d204",
+     "conditionSetIdentifier": {
+      "key": "778cabdd-2a50-501d-87ff-e19f8dbdafc1",
+      "namespace": ""
+     }
+    },
+    "useConditionSetOutputAsLabel": false
+   }
+  },
+  "787d76b9-01ec-5574-bc44-f1173f30724c": {
+   "identifier": {
+    "key": "787d76b9-01ec-5574-bc44-f1173f30724c",
+    "namespace": ""
+   },
+   "name": "Intent mode",
+   "type": "conditionWidget",
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "e6c2cd0f-6d9e-5a16-a288-42093a713c74",
+   "label": "Intent mode",
+   "conditionalLabel": "",
+   "url": "",
+   "configuration": {
+    "objectStyles": {
+     "styles": [
+      {
+       "conditionId": "b7b20da4-3f05-5a57-aeb0-c39b33753b29",
+       "style": {
+        "backgroundColor": "#0b5394",
+        "color": "#fff",
+        "border": "",
+        "isStyleInvisible": "",
+        "output": ""
+       }
+      },
+      {
+       "conditionId": "4aaa4feb-7009-5ad3-8498-1220fba19980",
+       "style": {
+        "backgroundColor": "#134f5c",
+        "color": "#fff",
+        "border": "",
+        "isStyleInvisible": "",
+        "output": ""
+       }
+      },
+      {
+       "conditionId": "03c19fbe-d46e-504e-b0ed-11408abdcd4d",
+       "style": {
+        "backgroundColor": "#351c75",
+        "color": "#fff",
+        "border": "",
+        "isStyleInvisible": "",
+        "output": ""
+       }
+      },
+      {
+       "conditionId": "71d60122-149c-5e77-91b8-68389e09e055",
+       "style": {
+        "backgroundColor": "#990000",
+        "color": "#fff",
+        "border": "",
+        "isStyleInvisible": "",
+        "output": ""
+       }
+      },
+      {
+       "conditionId": "3d3771f7-7bca-5f68-a3e9-3308e8f64595",
+       "style": {
+        "backgroundColor": "#b45f06",
+        "color": "#fff",
+        "border": "",
+        "isStyleInvisible": "",
+        "output": ""
+       }
+      },
+      {
+       "conditionId": "2c5be54c-006e-5c72-aae8-8f3ef216584b",
+       "style": {
+        "backgroundColor": "#7f6000",
+        "color": "#fff",
+        "border": "",
+        "isStyleInvisible": "",
+        "output": ""
+       }
+      },
+      {
+       "conditionId": "38da8793-1cf3-5290-901b-5dd32dcabe45",
+       "style": {
+        "backgroundColor": "#434343",
+        "color": "#ccc",
+        "border": "",
+        "isStyleInvisible": "",
+        "output": ""
+       }
+      }
+     ],
+     "staticStyle": {
+      "style": {
+       "backgroundColor": "",
+       "border": "",
+       "color": ""
+      }
+     },
+     "selectedConditionId": "38da8793-1cf3-5290-901b-5dd32dcabe45",
+     "defaultConditionId": "38da8793-1cf3-5290-901b-5dd32dcabe45",
+     "conditionSetIdentifier": {
+      "key": "d0f70a1c-ef14-5b59-b0fc-4b6f3939ea40",
+      "namespace": ""
+     }
+    },
+    "useConditionSetOutputAsLabel": true
+   }
+  },
+  "63681a1b-446a-5fb5-89bc-2fa16fd93506": {
+   "identifier": {
+    "key": "63681a1b-446a-5fb5-89bc-2fa16fd93506",
+    "namespace": ""
+   },
+   "name": "Hazards",
+   "type": "conditionWidget",
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "e6c2cd0f-6d9e-5a16-a288-42093a713c74",
+   "label": "Hazards",
+   "conditionalLabel": "",
+   "url": "",
+   "configuration": {
+    "objectStyles": {
+     "styles": [
+      {
+       "conditionId": "bfbf17ac-4eee-53f8-bb94-697ccc73536b",
+       "style": {
+        "backgroundColor": "#b45f06",
+        "color": "#fff",
+        "border": "",
+        "isStyleInvisible": "",
+        "output": ""
+       }
+      },
+      {
+       "conditionId": "dc2edde9-34a5-5698-8343-6a33e2b24714",
+       "style": {
+        "backgroundColor": "#bf9000",
+        "color": "#000",
+        "border": "",
+        "isStyleInvisible": "",
+        "output": ""
+       }
+      },
+      {
+       "conditionId": "97ed2f3e-cc9a-50a6-af02-fd3c284e250b",
+       "style": {
+        "backgroundColor": "#38761d",
+        "color": "#fff",
+        "border": "",
+        "isStyleInvisible": "",
+        "output": ""
+       }
+      },
+      {
+       "conditionId": "634f1ed5-22e0-500d-9f62-23a6cf7ecd9b",
+       "style": {
+        "backgroundColor": "#38761d",
+        "color": "#fff",
+        "border": "",
+        "isStyleInvisible": "",
+        "output": ""
+       }
+      }
+     ],
+     "staticStyle": {
+      "style": {
+       "backgroundColor": "",
+       "border": "",
+       "color": ""
+      }
+     },
+     "selectedConditionId": "634f1ed5-22e0-500d-9f62-23a6cf7ecd9b",
+     "defaultConditionId": "634f1ed5-22e0-500d-9f62-23a6cf7ecd9b",
+     "conditionSetIdentifier": {
+      "key": "b272d1dd-f0c2-5d9f-bad2-4594f605e07c",
+      "namespace": ""
+     }
+    },
+    "useConditionSetOutputAsLabel": true
+   }
+  },
+  "4fb44c43-fb9c-5a81-9f17-d69ef98bf4f5": {
+   "identifier": {
+    "key": "4fb44c43-fb9c-5a81-9f17-d69ef98bf4f5",
+    "namespace": ""
+   },
+   "name": "Red key",
+   "type": "conditionWidget",
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "e6c2cd0f-6d9e-5a16-a288-42093a713c74",
+   "label": "Red key",
+   "conditionalLabel": "",
+   "url": "",
+   "configuration": {
+    "objectStyles": {
+     "styles": [
+      {
+       "conditionId": "d308dfec-8752-503c-be8d-c87da44945d8",
+       "style": {
+        "backgroundColor": "#cc0000",
+        "color": "#000",
+        "border": "",
+        "isStyleInvisible": "",
+        "output": ""
+       }
+      },
+      {
+       "conditionId": "41c6e614-5bca-527d-98ef-facbc2d4f202",
+       "style": {
+        "backgroundColor": "#434343",
+        "color": "#888",
+        "border": "",
+        "isStyleInvisible": "",
+        "output": ""
+       }
+      }
+     ],
+     "staticStyle": {
+      "style": {
+       "backgroundColor": "",
+       "border": "",
+       "color": ""
+      }
+     },
+     "selectedConditionId": "41c6e614-5bca-527d-98ef-facbc2d4f202",
+     "defaultConditionId": "41c6e614-5bca-527d-98ef-facbc2d4f202",
+     "conditionSetIdentifier": {
+      "key": "7b45d490-9e5f-5f8e-b0fc-ff107cf399bd",
+      "namespace": ""
+     }
+    },
+    "useConditionSetOutputAsLabel": true
+   }
+  },
+  "9832746d-898e-5e82-a0eb-f6e253957c48": {
+   "identifier": {
+    "key": "9832746d-898e-5e82-a0eb-f6e253957c48",
+    "namespace": ""
+   },
+   "name": "Blue key",
+   "type": "conditionWidget",
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "e6c2cd0f-6d9e-5a16-a288-42093a713c74",
+   "label": "Blue key",
+   "conditionalLabel": "",
+   "url": "",
+   "configuration": {
+    "objectStyles": {
+     "styles": [
+      {
+       "conditionId": "a4084db9-2916-5033-b854-0c7c872eb47a",
+       "style": {
+        "backgroundColor": "#1155cc",
+        "color": "#000",
+        "border": "",
+        "isStyleInvisible": "",
+        "output": ""
+       }
+      },
+      {
+       "conditionId": "115e5dd1-1e62-59f2-be33-4c863e0c4467",
+       "style": {
+        "backgroundColor": "#434343",
+        "color": "#888",
+        "border": "",
+        "isStyleInvisible": "",
+        "output": ""
+       }
+      }
+     ],
+     "staticStyle": {
+      "style": {
+       "backgroundColor": "",
+       "border": "",
+       "color": ""
+      }
+     },
+     "selectedConditionId": "115e5dd1-1e62-59f2-be33-4c863e0c4467",
+     "defaultConditionId": "115e5dd1-1e62-59f2-be33-4c863e0c4467",
+     "conditionSetIdentifier": {
+      "key": "54410487-cc05-563d-bba2-bd2b110fa9ec",
+      "namespace": ""
+     }
+    },
+    "useConditionSetOutputAsLabel": true
+   }
+  },
+  "fe285423-854d-55a4-b1bc-c72f4a583c8a": {
+   "identifier": {
+    "key": "fe285423-854d-55a4-b1bc-c72f4a583c8a",
+    "namespace": ""
+   },
+   "name": "Yellow key",
+   "type": "conditionWidget",
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "e6c2cd0f-6d9e-5a16-a288-42093a713c74",
+   "label": "Yellow key",
+   "conditionalLabel": "",
+   "url": "",
+   "configuration": {
+    "objectStyles": {
+     "styles": [
+      {
+       "conditionId": "115686b0-98de-5d4a-8ac6-cd8ca174758b",
+       "style": {
+        "backgroundColor": "#f1c232",
+        "color": "#000",
+        "border": "",
+        "isStyleInvisible": "",
+        "output": ""
+       }
+      },
+      {
+       "conditionId": "f1911a29-834d-5769-87d4-b91f8428bb5d",
+       "style": {
+        "backgroundColor": "#434343",
+        "color": "#888",
+        "border": "",
+        "isStyleInvisible": "",
+        "output": ""
+       }
+      }
+     ],
+     "staticStyle": {
+      "style": {
+       "backgroundColor": "",
+       "border": "",
+       "color": ""
+      }
+     },
+     "selectedConditionId": "f1911a29-834d-5769-87d4-b91f8428bb5d",
+     "defaultConditionId": "f1911a29-834d-5769-87d4-b91f8428bb5d",
+     "conditionSetIdentifier": {
+      "key": "b5d5d920-4d2d-50c0-85ef-9b151b318d5b",
+      "namespace": ""
+     }
+    },
+    "useConditionSetOutputAsLabel": true
+   }
+  },
+  "5ead5696-1f14-5c09-a861-c17f23380547": {
+   "identifier": {
+    "key": "5ead5696-1f14-5c09-a861-c17f23380547",
+    "namespace": ""
+   },
+   "name": "Sector radar",
+   "type": "doomsat.sectors",
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "48b13011-3b32-570f-a9a2-fc8b9e4a6153",
+   "configuration": {}
+  },
+  "8a81bad8-7eec-5ab8-860e-79dce4cec232": {
+   "identifier": {
+    "key": "8a81bad8-7eec-5ab8-860e-79dce4cec232",
+    "namespace": ""
+   },
+   "name": "Candidate board",
+   "type": "doomsat.candidates",
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "48b13011-3b32-570f-a9a2-fc8b9e4a6153",
+   "configuration": {}
+  },
+  "720075c5-92a2-5dce-98c9-58163fd73b8f": {
+   "identifier": {
+    "key": "720075c5-92a2-5dce-98c9-58163fd73b8f",
+    "namespace": ""
+   },
+   "name": "UTC",
+   "type": "clock",
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "48b13011-3b32-570f-a9a2-fc8b9e4a6153",
+   "configuration": {
+    "baseFormat": "YYYY/MM/DD hh:mm:ss",
+    "use24": "clock24",
+    "timezone": "UTC"
+   }
+  },
+  "f205c669-ea3f-5f93-ab12-63bf2cb52dbd": {
+   "identifier": {
+    "key": "f205c669-ea3f-5f93-ab12-63bf2cb52dbd",
+    "namespace": ""
+   },
+   "name": "Mission status strip",
+   "type": "layout",
+   "composition": [
+    {
+     "key": "720075c5-92a2-5dce-98c9-58163fd73b8f",
+     "namespace": ""
+    },
+    {
+     "key": "8336d0b0-b8a9-58d3-9277-9ec7eccbad8a",
+     "namespace": ""
+    },
+    {
+     "key": "5e85fe3a-42cb-53e7-af3d-69489ac2ab6f",
+     "namespace": ""
+    },
+    {
+     "key": "f3354857-3d9a-572a-8071-ba28a27825ff",
+     "namespace": ""
+    },
+    {
+     "key": "2191fbe6-a3c4-5098-aa96-6acb74a3696f",
+     "namespace": ""
+    },
+    {
+     "key": "bb8a56dd-46b5-567f-9119-b85edef98220",
+     "namespace": ""
+    },
+    {
+     "key": "787d76b9-01ec-5574-bc44-f1173f30724c",
+     "namespace": ""
+    },
+    {
+     "key": "63681a1b-446a-5fb5-89bc-2fa16fd93506",
+     "namespace": ""
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~LEVEL",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomGround~Attempt",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "bbd1d17e-0bf9-578a-ba62-68967000f175",
+     "namespace": ""
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~KILLS",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~INTENT_ID",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~EXPLORED_CELLS",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "4fb44c43-fb9c-5a81-9f17-d69ef98bf4f5",
+     "namespace": ""
+    },
+    {
+     "key": "9832746d-898e-5e82-a0eb-f6e253957c48",
+     "namespace": ""
+    },
+    {
+     "key": "fe285423-854d-55a4-b1bc-c72f4a583c8a",
+     "namespace": ""
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "6abe9eeb-9bbc-5350-994b-5fa2367fb5aa",
+   "configuration": {
+    "items": [
+     {
+      "type": "text-view",
+      "x": 0,
+      "y": 0,
+      "width": 26,
+      "height": 3,
+      "text": "DOOMSAT",
+      "fontSize": "28",
+      "font": "default",
+      "fill": "",
+      "stroke": "",
+      "color": "#ffffff",
+      "id": "028ce283-74c9-5fc4-8769-16893df9e97b"
+     },
+     {
+      "type": "text-view",
+      "x": 0,
+      "y": 3,
+      "width": 26,
+      "height": 2,
+      "text": "payload Doom · flight F´ · CCSDS · Yamcs · ground jev + Sonnet",
+      "fontSize": "10",
+      "font": "default",
+      "fill": "",
+      "stroke": "",
+      "color": "#9fc5e8",
+      "id": "807c37fe-715f-55b9-9e6f-955a5f3917c4"
+     },
+     {
+      "type": "subobject-view",
+      "x": 0,
+      "y": 5,
+      "width": 26,
+      "height": 3,
+      "identifier": {
+       "key": "720075c5-92a2-5dce-98c9-58163fd73b8f",
+       "namespace": ""
+      },
+      "hasFrame": false,
+      "fontSize": "default",
+      "font": "default",
+      "id": "7f4cbc3c-bbc1-52b0-aa90-544b87c601c7"
+     },
+     {
+      "type": "subobject-view",
+      "x": 27,
+      "y": 0,
+      "width": 16,
+      "height": 4,
+      "identifier": {
+       "key": "8336d0b0-b8a9-58d3-9277-9ec7eccbad8a",
+       "namespace": ""
+      },
+      "hasFrame": false,
+      "fontSize": "default",
+      "font": "default",
+      "id": "a8670f7f-e161-5e3a-84aa-3114bf06d5f5"
+     },
+     {
+      "type": "subobject-view",
+      "x": 44,
+      "y": 0,
+      "width": 16,
+      "height": 4,
+      "identifier": {
+       "key": "5e85fe3a-42cb-53e7-af3d-69489ac2ab6f",
+       "namespace": ""
+      },
+      "hasFrame": false,
+      "fontSize": "default",
+      "font": "default",
+      "id": "e8829c44-74c5-5e52-9fa0-84240ebe1cb6"
+     },
+     {
+      "type": "subobject-view",
+      "x": 61,
+      "y": 0,
+      "width": 18,
+      "height": 4,
+      "identifier": {
+       "key": "f3354857-3d9a-572a-8071-ba28a27825ff",
+       "namespace": ""
+      },
+      "hasFrame": false,
+      "fontSize": "default",
+      "font": "default",
+      "id": "21a4bd13-847f-5f71-82d3-9d7b4a1ae9c1"
+     },
+     {
+      "type": "subobject-view",
+      "x": 80,
+      "y": 0,
+      "width": 18,
+      "height": 4,
+      "identifier": {
+       "key": "2191fbe6-a3c4-5098-aa96-6acb74a3696f",
+       "namespace": ""
+      },
+      "hasFrame": false,
+      "fontSize": "default",
+      "font": "default",
+      "id": "374f8afe-ad6e-575a-8600-820602ce014f"
+     },
+     {
+      "type": "subobject-view",
+      "x": 99,
+      "y": 0,
+      "width": 20,
+      "height": 4,
+      "identifier": {
+       "key": "bb8a56dd-46b5-567f-9119-b85edef98220",
+       "namespace": ""
+      },
+      "hasFrame": false,
+      "fontSize": "default",
+      "font": "default",
+      "id": "aea58e3e-f679-5626-9920-633da6214a1d"
+     },
+     {
+      "type": "subobject-view",
+      "x": 120,
+      "y": 0,
+      "width": 16,
+      "height": 4,
+      "identifier": {
+       "key": "787d76b9-01ec-5574-bc44-f1173f30724c",
+       "namespace": ""
+      },
+      "hasFrame": false,
+      "fontSize": "default",
+      "font": "default",
+      "id": "be23bb66-046f-566f-bc86-c213edda8d05"
+     },
+     {
+      "type": "subobject-view",
+      "x": 137,
+      "y": 0,
+      "width": 18,
+      "height": 4,
+      "identifier": {
+       "key": "63681a1b-446a-5fb5-89bc-2fa16fd93506",
+       "namespace": ""
+      },
+      "hasFrame": false,
+      "fontSize": "default",
+      "font": "default",
+      "id": "dde4c6fe-4ddd-5a78-a28c-49a31abcad95"
+     },
+     {
+      "type": "text-view",
+      "x": 27,
+      "y": 5,
+      "width": 9,
+      "height": 3,
+      "text": "LEVEL",
+      "fontSize": "11",
+      "font": "default",
+      "fill": "",
+      "stroke": "",
+      "color": "#aaaaaa",
+      "id": "572690e6-39bb-5ebd-8c0e-124cd6537439"
+     },
+     {
+      "type": "telemetry-view",
+      "identifier": {
+       "key": "~DoomSat_DoomSat~DoomSat~doom~LEVEL",
+       "namespace": "taxonomy"
+      },
+      "x": 36,
+      "y": 5,
+      "width": 6,
+      "height": 3,
+      "displayMode": "value",
+      "value": "value",
+      "stroke": "",
+      "fill": "",
+      "color": "",
+      "fontSize": "20",
+      "font": "default",
+      "id": "6a3861c3-25c2-5b8c-8a00-41aeb4aef6ee"
+     },
+     {
+      "type": "text-view",
+      "x": 43,
+      "y": 5,
+      "width": 10,
+      "height": 3,
+      "text": "ATTEMPT",
+      "fontSize": "11",
+      "font": "default",
+      "fill": "",
+      "stroke": "",
+      "color": "#aaaaaa",
+      "id": "f0743bc5-d95b-54fe-bbd8-2640765c9ef2"
+     },
+     {
+      "type": "telemetry-view",
+      "identifier": {
+       "key": "~DoomGround~Attempt",
+       "namespace": "taxonomy"
+      },
+      "x": 53,
+      "y": 5,
+      "width": 6,
+      "height": 3,
+      "displayMode": "value",
+      "value": "value",
+      "stroke": "",
+      "fill": "",
+      "color": "",
+      "fontSize": "20",
+      "font": "default",
+      "id": "fc1750f9-bc92-56a0-9f84-7ff30007f978"
+     },
+     {
+      "type": "text-view",
+      "x": 60,
+      "y": 5,
+      "width": 12,
+      "height": 3,
+      "text": "GAME TIME s",
+      "fontSize": "11",
+      "font": "default",
+      "fill": "",
+      "stroke": "",
+      "color": "#aaaaaa",
+      "id": "3b9307e4-c5bd-538e-9a84-31d603c14dd2"
+     },
+     {
+      "type": "telemetry-view",
+      "identifier": {
+       "key": "bbd1d17e-0bf9-578a-ba62-68967000f175",
+       "namespace": ""
+      },
+      "x": 72,
+      "y": 5,
+      "width": 9,
+      "height": 3,
+      "displayMode": "value",
+      "value": "value",
+      "stroke": "",
+      "fill": "",
+      "color": "",
+      "fontSize": "20",
+      "font": "default",
+      "format": "%.1f",
+      "id": "809c5144-2919-55ec-b25d-e67fb7812a10"
+     },
+     {
+      "type": "text-view",
+      "x": 82,
+      "y": 5,
+      "width": 7,
+      "height": 3,
+      "text": "/ 180",
+      "fontSize": "11",
+      "font": "default",
+      "fill": "",
+      "stroke": "",
+      "color": "#aaaaaa",
+      "id": "b8da02f4-f40e-5851-b1ea-cb124253bbdc"
+     },
+     {
+      "type": "text-view",
+      "x": 90,
+      "y": 5,
+      "width": 8,
+      "height": 3,
+      "text": "KILLS",
+      "fontSize": "11",
+      "font": "default",
+      "fill": "",
+      "stroke": "",
+      "color": "#aaaaaa",
+      "id": "ba6cfc18-9b36-58d2-b361-f6d8520755c9"
+     },
+     {
+      "type": "telemetry-view",
+      "identifier": {
+       "key": "~DoomSat_DoomSat~DoomSat~doom~KILLS",
+       "namespace": "taxonomy"
+      },
+      "x": 98,
+      "y": 5,
+      "width": 6,
+      "height": 3,
+      "displayMode": "value",
+      "value": "value",
+      "stroke": "",
+      "fill": "",
+      "color": "",
+      "fontSize": "20",
+      "font": "default",
+      "id": "87f7468d-3bb0-5fd4-b6c2-3e887a7bf542"
+     },
+     {
+      "type": "text-view",
+      "x": 105,
+      "y": 5,
+      "width": 9,
+      "height": 3,
+      "text": "INTENT",
+      "fontSize": "11",
+      "font": "default",
+      "fill": "",
+      "stroke": "",
+      "color": "#aaaaaa",
+      "id": "48a557dd-c644-5dfb-8c94-c15a166abc18"
+     },
+     {
+      "type": "telemetry-view",
+      "identifier": {
+       "key": "~DoomSat_DoomSat~DoomSat~doom~INTENT_ID",
+       "namespace": "taxonomy"
+      },
+      "x": 114,
+      "y": 5,
+      "width": 8,
+      "height": 3,
+      "displayMode": "value",
+      "value": "value",
+      "stroke": "",
+      "fill": "",
+      "color": "",
+      "fontSize": "20",
+      "font": "default",
+      "id": "4b334b1c-c062-51ec-a13c-6ff93a194673"
+     },
+     {
+      "type": "text-view",
+      "x": 123,
+      "y": 5,
+      "width": 11,
+      "height": 3,
+      "text": "CELLS SEEN",
+      "fontSize": "11",
+      "font": "default",
+      "fill": "",
+      "stroke": "",
+      "color": "#aaaaaa",
+      "id": "c1ea1a72-be85-55f0-ba2e-2e551be63f75"
+     },
+     {
+      "type": "telemetry-view",
+      "identifier": {
+       "key": "~DoomSat_DoomSat~DoomSat~doom~EXPLORED_CELLS",
+       "namespace": "taxonomy"
+      },
+      "x": 134,
+      "y": 5,
+      "width": 8,
+      "height": 3,
+      "displayMode": "value",
+      "value": "value",
+      "stroke": "",
+      "fill": "",
+      "color": "",
+      "fontSize": "20",
+      "font": "default",
+      "id": "5774a35b-9bf2-581e-8610-5ca7caee5712"
+     },
+     {
+      "type": "subobject-view",
+      "x": 143,
+      "y": 5,
+      "width": 4,
+      "height": 3,
+      "identifier": {
+       "key": "4fb44c43-fb9c-5a81-9f17-d69ef98bf4f5",
+       "namespace": ""
+      },
+      "hasFrame": false,
+      "fontSize": "default",
+      "font": "default",
+      "id": "e27e9b17-0aa9-5b3a-aefb-8f207cc2f089"
+     },
+     {
+      "type": "subobject-view",
+      "x": 147,
+      "y": 5,
+      "width": 4,
+      "height": 3,
+      "identifier": {
+       "key": "9832746d-898e-5e82-a0eb-f6e253957c48",
+       "namespace": ""
+      },
+      "hasFrame": false,
+      "fontSize": "default",
+      "font": "default",
+      "id": "22cd56b7-9183-521d-816a-cc09bc9b4b48"
+     },
+     {
+      "type": "subobject-view",
+      "x": 151,
+      "y": 5,
+      "width": 4,
+      "height": 3,
+      "identifier": {
+       "key": "fe285423-854d-55a4-b1bc-c72f4a583c8a",
+       "namespace": ""
+      },
+      "hasFrame": false,
+      "fontSize": "default",
+      "font": "default",
+      "id": "ddfacf7c-7183-544b-bd2a-b32df1c65840"
+     }
+    ],
+    "layoutGrid": [
+     10,
+     10
+    ],
+    "objectStyles": {
+     "3b9307e4-c5bd-538e-9a84-31d603c14dd2": {
+      "styles": [
+       {
+        "conditionId": "5b2c4bae-7d60-5ba5-b1cc-b607e2dd00fa",
+        "style": {
+         "backgroundColor": "#990000",
+         "color": "#fff",
+         "border": "",
+         "isStyleInvisible": "",
+         "output": ""
+        }
+       },
+       {
+        "conditionId": "e6fb2483-7369-59a5-a5ee-d47969487854",
+        "style": {
+         "backgroundColor": "#bf9000",
+         "color": "#000",
+         "border": "",
+         "isStyleInvisible": "",
+         "output": ""
+        }
+       },
+       {
+        "conditionId": "61c5f521-725a-5d14-bb9f-8446da043378",
+        "style": {
+         "backgroundColor": "",
+         "color": "",
+         "border": "",
+         "isStyleInvisible": "",
+         "output": ""
+        }
+       }
+      ],
+      "staticStyle": {
+       "style": {
+        "backgroundColor": "",
+        "border": "",
+        "color": ""
+       }
+      },
+      "selectedConditionId": "61c5f521-725a-5d14-bb9f-8446da043378",
+      "defaultConditionId": "61c5f521-725a-5d14-bb9f-8446da043378",
+      "conditionSetIdentifier": {
+       "key": "12fda9b3-06ca-5706-85e5-5317bd8db891",
+       "namespace": ""
+      }
+     },
+     "809c5144-2919-55ec-b25d-e67fb7812a10": {
+      "styles": [
+       {
+        "conditionId": "5b2c4bae-7d60-5ba5-b1cc-b607e2dd00fa",
+        "style": {
+         "backgroundColor": "#990000",
+         "color": "#fff",
+         "border": "",
+         "isStyleInvisible": "",
+         "output": ""
+        }
+       },
+       {
+        "conditionId": "e6fb2483-7369-59a5-a5ee-d47969487854",
+        "style": {
+         "backgroundColor": "#bf9000",
+         "color": "#000",
+         "border": "",
+         "isStyleInvisible": "",
+         "output": ""
+        }
+       },
+       {
+        "conditionId": "61c5f521-725a-5d14-bb9f-8446da043378",
+        "style": {
+         "backgroundColor": "",
+         "color": "",
+         "border": "",
+         "isStyleInvisible": "",
+         "output": ""
+        }
+       }
+      ],
+      "staticStyle": {
+       "style": {
+        "backgroundColor": "",
+        "border": "",
+        "color": ""
+       }
+      },
+      "selectedConditionId": "61c5f521-725a-5d14-bb9f-8446da043378",
+      "defaultConditionId": "61c5f521-725a-5d14-bb9f-8446da043378",
+      "conditionSetIdentifier": {
+       "key": "12fda9b3-06ca-5706-85e5-5317bd8db891",
+       "namespace": ""
+      }
+     }
+    }
+   }
+  },
+  "dacecd42-3293-5835-987f-decfec6f9e8e": {
+   "identifier": {
+    "key": "dacecd42-3293-5835-987f-decfec6f9e8e",
+    "namespace": ""
+   },
+   "name": "Hull integrity (HEALTH)",
+   "type": "gauge",
+   "composition": [
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~HEALTH",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "48b13011-3b32-570f-a9a2-fc8b9e4a6153",
+   "configuration": {
+    "gaugeController": {
+     "gaugeType": "dial-filled",
+     "isDisplayMinMax": true,
+     "isDisplayCurVal": true,
+     "isDisplayUnits": true,
+     "isUseTelemetryLimits": false,
+     "limitLow": 25,
+     "limitHigh": "",
+     "max": 200,
+     "min": 0,
+     "precision": 0
+    }
+   }
+  },
+  "7a1fd28d-9496-525e-863d-3d6a36da54fd": {
+   "identifier": {
+    "key": "7a1fd28d-9496-525e-863d-3d6a36da54fd",
+    "namespace": ""
+   },
+   "name": "Shielding (ARMOR)",
+   "type": "gauge",
+   "composition": [
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~ARMOR",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "e73532a0-7627-5da1-b2b1-6badc9b1c02f",
+   "configuration": {
+    "gaugeController": {
+     "gaugeType": "meter-vertical",
+     "isDisplayMinMax": true,
+     "isDisplayCurVal": true,
+     "isDisplayUnits": true,
+     "isUseTelemetryLimits": false,
+     "limitLow": "",
+     "limitHigh": "",
+     "max": 200,
+     "min": 0,
+     "precision": 0
+    }
+   }
+  },
+  "47b2347d-463a-5404-9b72-8d6001a3cf32": {
+   "identifier": {
+    "key": "47b2347d-463a-5404-9b72-8d6001a3cf32",
+    "namespace": ""
+   },
+   "name": "Consumables: shells",
+   "type": "gauge",
+   "composition": [
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~SHELLS",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "e73532a0-7627-5da1-b2b1-6badc9b1c02f",
+   "configuration": {
+    "gaugeController": {
+     "gaugeType": "meter-vertical",
+     "isDisplayMinMax": true,
+     "isDisplayCurVal": true,
+     "isDisplayUnits": true,
+     "isUseTelemetryLimits": false,
+     "limitLow": 4,
+     "limitHigh": "",
+     "max": 50,
+     "min": 0,
+     "precision": 0
+    }
+   }
+  },
+  "7ee7347a-9217-57d7-a529-0e68ca05cee4": {
+   "identifier": {
+    "key": "7ee7347a-9217-57d7-a529-0e68ca05cee4",
+    "namespace": ""
+   },
+   "name": "Consumables: bullets",
+   "type": "gauge",
+   "composition": [
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~BULLETS",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "e73532a0-7627-5da1-b2b1-6badc9b1c02f",
+   "configuration": {
+    "gaugeController": {
+     "gaugeType": "meter-vertical",
+     "isDisplayMinMax": true,
+     "isDisplayCurVal": true,
+     "isDisplayUnits": true,
+     "isUseTelemetryLimits": false,
+     "limitLow": 10,
+     "limitHigh": "",
+     "max": 200,
+     "min": 0,
+     "precision": 0
+    }
+   }
+  },
+  "e73532a0-7627-5da1-b2b1-6badc9b1c02f": {
+   "identifier": {
+    "key": "e73532a0-7627-5da1-b2b1-6badc9b1c02f",
+    "namespace": ""
+   },
+   "name": "Vitals",
+   "type": "layout",
+   "composition": [
+    {
+     "key": "dacecd42-3293-5835-987f-decfec6f9e8e",
+     "namespace": ""
+    },
+    {
+     "key": "7a1fd28d-9496-525e-863d-3d6a36da54fd",
+     "namespace": ""
+    },
+    {
+     "key": "47b2347d-463a-5404-9b72-8d6001a3cf32",
+     "namespace": ""
+    },
+    {
+     "key": "7ee7347a-9217-57d7-a529-0e68ca05cee4",
+     "namespace": ""
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~WEAPON",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~ENEMY_COUNT",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~ENEMY_DIST",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~EXIT_DIST",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~AHEAD_KIND",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "6abe9eeb-9bbc-5350-994b-5fa2367fb5aa",
+   "configuration": {
+    "items": [
+     {
+      "type": "text-view",
+      "x": 0,
+      "y": 0,
+      "width": 38,
+      "height": 2,
+      "text": "PAYLOAD VITALS: the player, read as a spacecraft",
+      "fontSize": "10",
+      "font": "default",
+      "fill": "",
+      "stroke": "",
+      "color": "#9fc5e8",
+      "id": "98338378-9cbb-5111-a795-72318889c3a2"
+     },
+     {
+      "type": "subobject-view",
+      "x": 0,
+      "y": 2,
+      "width": 19,
+      "height": 15,
+      "identifier": {
+       "key": "dacecd42-3293-5835-987f-decfec6f9e8e",
+       "namespace": ""
+      },
+      "hasFrame": false,
+      "fontSize": "default",
+      "font": "default",
+      "id": "77e78ada-ddbe-5e45-8b9b-c157d8c29471"
+     },
+     {
+      "type": "subobject-view",
+      "x": 20,
+      "y": 2,
+      "width": 6,
+      "height": 13,
+      "identifier": {
+       "key": "7a1fd28d-9496-525e-863d-3d6a36da54fd",
+       "namespace": ""
+      },
+      "hasFrame": false,
+      "fontSize": "default",
+      "font": "default",
+      "id": "a867deb1-cc54-5932-baf7-5dfaf35d3d36"
+     },
+     {
+      "type": "subobject-view",
+      "x": 26,
+      "y": 2,
+      "width": 6,
+      "height": 13,
+      "identifier": {
+       "key": "47b2347d-463a-5404-9b72-8d6001a3cf32",
+       "namespace": ""
+      },
+      "hasFrame": false,
+      "fontSize": "default",
+      "font": "default",
+      "id": "9937add6-cebe-57cc-a8f7-72d596b84905"
+     },
+     {
+      "type": "subobject-view",
+      "x": 32,
+      "y": 2,
+      "width": 6,
+      "height": 13,
+      "identifier": {
+       "key": "7ee7347a-9217-57d7-a529-0e68ca05cee4",
+       "namespace": ""
+      },
+      "hasFrame": false,
+      "fontSize": "default",
+      "font": "default",
+      "id": "eb7a3d59-9968-5ccd-9d50-44ddae35c72f"
+     },
+     {
+      "type": "text-view",
+      "x": 0,
+      "y": 16,
+      "width": 19,
+      "height": 2,
+      "text": "HULL (HEALTH)",
+      "fontSize": "10",
+      "font": "default",
+      "fill": "",
+      "stroke": "",
+      "color": "#aaaaaa",
+      "id": "fef7e08b-764a-56e9-9f19-0ffb517bbfa4"
+     },
+     {
+      "type": "text-view",
+      "x": 20,
+      "y": 15,
+      "width": 6,
+      "height": 2,
+      "text": "ARMOR",
+      "fontSize": "9",
+      "font": "default",
+      "fill": "",
+      "stroke": "",
+      "color": "#aaaaaa",
+      "id": "e577e2c5-30bf-5f26-bc18-5c5042e52037"
+     },
+     {
+      "type": "text-view",
+      "x": 26,
+      "y": 15,
+      "width": 6,
+      "height": 2,
+      "text": "SHELLS",
+      "fontSize": "9",
+      "font": "default",
+      "fill": "",
+      "stroke": "",
+      "color": "#aaaaaa",
+      "id": "18e59054-450d-56cd-a16f-edc0c98b0503"
+     },
+     {
+      "type": "text-view",
+      "x": 32,
+      "y": 15,
+      "width": 6,
+      "height": 2,
+      "text": "BULLETS",
+      "fontSize": "9",
+      "font": "default",
+      "fill": "",
+      "stroke": "",
+      "color": "#aaaaaa",
+      "id": "d273f283-6cfc-5b80-a9a8-b5e217b8402b"
+     },
+     {
+      "type": "text-view",
+      "x": 0,
+      "y": 19,
+      "width": 10,
+      "height": 3,
+      "text": "WEAPON",
+      "fontSize": "11",
+      "font": "default",
+      "fill": "",
+      "stroke": "",
+      "color": "#aaaaaa",
+      "id": "3726b149-9d20-5774-906f-146a71363469"
+     },
+     {
+      "type": "telemetry-view",
+      "identifier": {
+       "key": "~DoomSat_DoomSat~DoomSat~doom~WEAPON",
+       "namespace": "taxonomy"
+      },
+      "x": 10,
+      "y": 19,
+      "width": 12,
+      "height": 3,
+      "displayMode": "value",
+      "value": "value",
+      "stroke": "",
+      "fill": "",
+      "color": "",
+      "fontSize": "15",
+      "font": "default",
+      "id": "0ad76d59-68c8-5e2d-95a6-f1faec1d5032"
+     },
+     {
+      "type": "text-view",
+      "x": 23,
+      "y": 19,
+      "width": 9,
+      "height": 3,
+      "text": "HAZARDS",
+      "fontSize": "11",
+      "font": "default",
+      "fill": "",
+      "stroke": "",
+      "color": "#aaaaaa",
+      "id": "c2e75d29-3c35-55c8-9fb4-897a50d55ddd"
+     },
+     {
+      "type": "telemetry-view",
+      "identifier": {
+       "key": "~DoomSat_DoomSat~DoomSat~doom~ENEMY_COUNT",
+       "namespace": "taxonomy"
+      },
+      "x": 32,
+      "y": 19,
+      "width": 6,
+      "height": 3,
+      "displayMode": "value",
+      "value": "value",
+      "stroke": "",
+      "fill": "",
+      "color": "",
+      "fontSize": "15",
+      "font": "default",
+      "id": "82625eb0-fe61-504e-8033-f48e7b031cb2"
+     },
+     {
+      "type": "text-view",
+      "x": 0,
+      "y": 23,
+      "width": 10,
+      "height": 3,
+      "text": "RANGE u",
+      "fontSize": "11",
+      "font": "default",
+      "fill": "",
+      "stroke": "",
+      "color": "#aaaaaa",
+      "id": "6f64e8a4-4588-5f5c-8f85-9e8ad73735be"
+     },
+     {
+      "type": "telemetry-view",
+      "identifier": {
+       "key": "~DoomSat_DoomSat~DoomSat~doom~ENEMY_DIST",
+       "namespace": "taxonomy"
+      },
+      "x": 10,
+      "y": 23,
+      "width": 12,
+      "height": 3,
+      "displayMode": "value",
+      "value": "value",
+      "stroke": "",
+      "fill": "",
+      "color": "",
+      "fontSize": "15",
+      "font": "default",
+      "id": "fac47521-27e0-563a-a7b1-87365d840156"
+     },
+     {
+      "type": "text-view",
+      "x": 23,
+      "y": 23,
+      "width": 9,
+      "height": 3,
+      "text": "EXIT u",
+      "fontSize": "11",
+      "font": "default",
+      "fill": "",
+      "stroke": "",
+      "color": "#aaaaaa",
+      "id": "55b2fa74-04d4-554f-b758-05902b7929f4"
+     },
+     {
+      "type": "telemetry-view",
+      "identifier": {
+       "key": "~DoomSat_DoomSat~DoomSat~doom~EXIT_DIST",
+       "namespace": "taxonomy"
+      },
+      "x": 32,
+      "y": 23,
+      "width": 6,
+      "height": 3,
+      "displayMode": "value",
+      "value": "value",
+      "stroke": "",
+      "fill": "",
+      "color": "",
+      "fontSize": "15",
+      "font": "default",
+      "id": "c1e98954-6388-5076-86b7-ef2083c05521"
+     },
+     {
+      "type": "text-view",
+      "x": 0,
+      "y": 27,
+      "width": 10,
+      "height": 3,
+      "text": "AHEAD",
+      "fontSize": "11",
+      "font": "default",
+      "fill": "",
+      "stroke": "",
+      "color": "#aaaaaa",
+      "id": "89b078de-e11f-5c4d-a617-b4979216cf3b"
+     },
+     {
+      "type": "telemetry-view",
+      "identifier": {
+       "key": "~DoomSat_DoomSat~DoomSat~doom~AHEAD_KIND",
+       "namespace": "taxonomy"
+      },
+      "x": 10,
+      "y": 27,
+      "width": 16,
+      "height": 3,
+      "displayMode": "value",
+      "value": "value",
+      "stroke": "",
+      "fill": "",
+      "color": "",
+      "fontSize": "15",
+      "font": "default",
+      "id": "a3f65e91-d1c4-52a4-8058-8f71655905ae"
+     }
+    ],
+    "layoutGrid": [
+     10,
+     10
+    ],
+    "objectStyles": {}
+   }
+  },
+  "aa6b1a35-c385-5694-8e11-9e70bd414c51": {
+   "identifier": {
+    "key": "aa6b1a35-c385-5694-8e11-9e70bd414c51",
+    "namespace": ""
+   },
+   "name": "Ground brain (latest)",
+   "type": "LadTable",
+   "composition": [
+    {
+     "key": "~DoomGround~Controls",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomGround~EngageAnswer",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomGround~Plan",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomGround~SystemTwoHint",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomGround~DecisionSource",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomGround~PickKind",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomGround~PickGap",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomGround~PickConfidence",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomGround~SystemOneLatencyMs",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomGround~DecisionAgeMs",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomGround~JevShare",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomGround~GraphVersion",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "7dc61158-49d7-51f6-beaa-46903de5b760",
+   "configuration": {
+    "hiddenColumns": {
+     "timestamp": true,
+     "type": true,
+     "WATCH": true,
+     "WARNING": true,
+     "DISTRESS": true,
+     "CRITICAL": true,
+     "SEVERE": true
+    },
+    "isFixedLayout": false
+   }
+  },
+  "67b0d1bd-1d2c-5d4f-8ff1-302ddd81cc10": {
+   "identifier": {
+    "key": "67b0d1bd-1d2c-5d4f-8ff1-302ddd81cc10",
+    "namespace": ""
+   },
+   "name": "F´ and ground events",
+   "type": "table",
+   "composition": [
+    {
+     "key": "yamcs.events",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "dc714afc-7b07-57de-ad49-cd3104c3411c",
+   "configuration": {
+    "columnWidths": {},
+    "hiddenColumns": {
+     "name": true
+    },
+    "telemetryMode": "performance",
+    "persistModeChange": true,
+    "rowLimit": 200,
+    "columnOrder": [],
+    "cellFormat": {},
+    "autosize": true
+   }
+  },
+  "6abe9eeb-9bbc-5350-994b-5fa2367fb5aa": {
+   "identifier": {
+    "key": "6abe9eeb-9bbc-5350-994b-5fa2367fb5aa",
+    "namespace": ""
+   },
+   "name": "00 Mission overview",
+   "type": "flexible-layout",
+   "composition": [
+    {
+     "key": "f205c669-ea3f-5f93-ab12-63bf2cb52dbd",
+     "namespace": ""
+    },
+    {
+     "key": "~DoomGround~DoomFrame",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "e73532a0-7627-5da1-b2b1-6badc9b1c02f",
+     "namespace": ""
+    },
+    {
+     "key": "5ead5696-1f14-5c09-a861-c17f23380547",
+     "namespace": ""
+    },
+    {
+     "key": "67b0d1bd-1d2c-5d4f-8ff1-302ddd81cc10",
+     "namespace": ""
+    },
+    {
+     "key": "8a81bad8-7eec-5ab8-860e-79dce4cec232",
+     "namespace": ""
+    },
+    {
+     "key": "aa6b1a35-c385-5694-8e11-9e70bd414c51",
+     "namespace": ""
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "f992953d-4399-5c94-82e0-d010c07241ae",
+   "configuration": {
+    "containers": [
+     {
+      "id": "952040a2-0f31-5f96-874b-61b3fa04d03f",
+      "size": 12,
+      "frames": [
+       {
+        "id": "184383fa-8782-5cd9-ba50-dc0b4a84d299",
+        "domainObjectIdentifier": {
+         "key": "f205c669-ea3f-5f93-ab12-63bf2cb52dbd",
+         "namespace": ""
+        },
+        "size": 100,
+        "noFrame": true
+       }
+      ]
+     },
+     {
+      "id": "78690a16-b4f2-536f-af29-ff15cb96c432",
+      "size": 55,
+      "frames": [
+       {
+        "id": "cfbd60c3-e96e-5884-9e2a-72f2129de442",
+        "domainObjectIdentifier": {
+         "key": "~DoomGround~DoomFrame",
+         "namespace": "taxonomy"
+        },
+        "size": 42,
+        "noFrame": false
+       },
+       {
+        "id": "4e18e3f7-3e94-5aba-bcb0-f02dcfdb6881",
+        "domainObjectIdentifier": {
+         "key": "e73532a0-7627-5da1-b2b1-6badc9b1c02f",
+         "namespace": ""
+        },
+        "size": 30,
+        "noFrame": false
+       },
+       {
+        "id": "900e1555-d98e-58f9-b834-d728a5644c94",
+        "domainObjectIdentifier": {
+         "key": "5ead5696-1f14-5c09-a861-c17f23380547",
+         "namespace": ""
+        },
+        "size": 28,
+        "noFrame": false
+       }
+      ]
+     },
+     {
+      "id": "e80d6035-cdd9-508c-8471-36f76b7cf87b",
+      "size": 33,
+      "frames": [
+       {
+        "id": "008256c6-a866-5ca3-82ff-902e6af46d6f",
+        "domainObjectIdentifier": {
+         "key": "67b0d1bd-1d2c-5d4f-8ff1-302ddd81cc10",
+         "namespace": ""
+        },
+        "size": 34,
+        "noFrame": false
+       },
+       {
+        "id": "aea1a327-4314-58f2-95d5-ce6004941328",
+        "domainObjectIdentifier": {
+         "key": "8a81bad8-7eec-5ab8-860e-79dce4cec232",
+         "namespace": ""
+        },
+        "size": 42,
+        "noFrame": false
+       },
+       {
+        "id": "fc8c35bd-86ef-5666-a5ce-e18decafb988",
+        "domainObjectIdentifier": {
+         "key": "aa6b1a35-c385-5694-8e11-9e70bd414c51",
+         "namespace": ""
+        },
+        "size": 24,
+        "noFrame": false
+       }
+      ]
+     }
+    ],
+    "rowsLayout": true
+   }
+  },
+  "b77609a4-0ffc-5845-8376-4bb5597a755d": {
+   "identifier": {
+    "key": "b77609a4-0ffc-5845-8376-4bb5597a755d",
+    "namespace": ""
+   },
+   "name": "Vitals over time",
+   "type": "telemetry.plot.stacked",
+   "composition": [
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~HEALTH",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~ARMOR",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~SHELLS",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~BULLETS",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "fd3d14a2-9415-56d7-91d5-13f977c4e332",
+   "configuration": {
+    "series": [],
+    "yAxis": {},
+    "xAxis": {}
+   }
+  },
+  "1a2c3e2e-4b1d-5147-9fda-f25ee8935a2b": {
+   "identifier": {
+    "key": "1a2c3e2e-4b1d-5147-9fda-f25ee8935a2b",
+    "namespace": ""
+   },
+   "name": "Surroundings",
+   "type": "LadTable",
+   "composition": [
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~ENEMY_COUNT",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~ENEMY_DIST",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~ENEMY_BEARING",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~THREAT_CLASS",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~THREAT_COUNT",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~EXIT_DIST",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~EXIT_BEARING",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~KEY_DIST",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~KEY_BEARING",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~HEALTH_ITEM_DIST",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~AMMO_ITEM_DIST",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~ARMOR_ITEM_DIST",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~AHEAD_KIND",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~AHEAD_DIST",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~DOOR_AHEAD",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "fd3d14a2-9415-56d7-91d5-13f977c4e332",
+   "configuration": {
+    "hiddenColumns": {
+     "timestamp": true,
+     "type": true,
+     "WATCH": true,
+     "WARNING": true,
+     "DISTRESS": true,
+     "CRITICAL": true,
+     "SEVERE": true
+    },
+    "isFixedLayout": false
+   }
+  },
+  "5c1f4e0b-9314-557d-96a2-da5980ed95ea": {
+   "identifier": {
+    "key": "5c1f4e0b-9314-557d-96a2-da5980ed95ea",
+    "namespace": ""
+   },
+   "name": "Inventory and progress",
+   "type": "LadTable",
+   "composition": [
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~WEAPON",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~OWN_SHOTGUN",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~SHELLS",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~BULLETS",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~ARMOR",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~KEYS",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~KILLS",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~LEVEL",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~EPISODE",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~LEVEL_DONE",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~DEAD",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~EXPLORED_CELLS",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "fd3d14a2-9415-56d7-91d5-13f977c4e332",
+   "configuration": {
+    "hiddenColumns": {
+     "timestamp": true,
+     "type": true,
+     "WATCH": true,
+     "WARNING": true,
+     "DISTRESS": true,
+     "CRITICAL": true,
+     "SEVERE": true
+    },
+    "isFixedLayout": false
+   }
+  },
+  "fd3d14a2-9415-56d7-91d5-13f977c4e332": {
+   "identifier": {
+    "key": "fd3d14a2-9415-56d7-91d5-13f977c4e332",
+    "namespace": ""
+   },
+   "name": "10 GAME · the payload",
+   "type": "flexible-layout",
+   "composition": [
+    {
+     "key": "~DoomGround~DoomFrame",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "b77609a4-0ffc-5845-8376-4bb5597a755d",
+     "namespace": ""
+    },
+    {
+     "key": "5ead5696-1f14-5c09-a861-c17f23380547",
+     "namespace": ""
+    },
+    {
+     "key": "1a2c3e2e-4b1d-5147-9fda-f25ee8935a2b",
+     "namespace": ""
+    },
+    {
+     "key": "~DoomGround~DoomMap",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "5c1f4e0b-9314-557d-96a2-da5980ed95ea",
+     "namespace": ""
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "f992953d-4399-5c94-82e0-d010c07241ae",
+   "configuration": {
+    "containers": [
+     {
+      "id": "b3df87f8-df21-5630-8cca-7b6a5c440c78",
+      "size": 50,
+      "frames": [
+       {
+        "id": "8051054f-5820-5f79-91e0-f5bc39c9cb57",
+        "domainObjectIdentifier": {
+         "key": "~DoomGround~DoomFrame",
+         "namespace": "taxonomy"
+        },
+        "size": 64,
+        "noFrame": false
+       },
+       {
+        "id": "718358e1-55f6-5527-9431-87c663912fb4",
+        "domainObjectIdentifier": {
+         "key": "b77609a4-0ffc-5845-8376-4bb5597a755d",
+         "namespace": ""
+        },
+        "size": 36,
+        "noFrame": false
+       }
+      ]
+     },
+     {
+      "id": "2f59218a-8fc2-55fe-b8bc-762326c768eb",
+      "size": 25,
+      "frames": [
+       {
+        "id": "c87438be-5427-54d8-be9a-a309352130f1",
+        "domainObjectIdentifier": {
+         "key": "5ead5696-1f14-5c09-a861-c17f23380547",
+         "namespace": ""
+        },
+        "size": 55,
+        "noFrame": false
+       },
+       {
+        "id": "ada02953-536c-5bb5-8e4c-719787ca0ec6",
+        "domainObjectIdentifier": {
+         "key": "1a2c3e2e-4b1d-5147-9fda-f25ee8935a2b",
+         "namespace": ""
+        },
+        "size": 45,
+        "noFrame": false
+       }
+      ]
+     },
+     {
+      "id": "ea589c21-4edb-59f6-97dd-5146cf152443",
+      "size": 25,
+      "frames": [
+       {
+        "id": "ccf7de9d-f9e7-55f2-b717-70d7669a9308",
+        "domainObjectIdentifier": {
+         "key": "~DoomGround~DoomMap",
+         "namespace": "taxonomy"
+        },
+        "size": 45,
+        "noFrame": false
+       },
+       {
+        "id": "4ef20083-04d1-5ff1-9141-ee70d9a0ac3e",
+        "domainObjectIdentifier": {
+         "key": "5c1f4e0b-9314-557d-96a2-da5980ed95ea",
+         "namespace": ""
+        },
+        "size": 55,
+        "noFrame": false
+       }
+      ]
+     }
+    ],
+    "rowsLayout": false
+   }
+  },
+  "306cc20d-1141-5918-974b-1f04b82c0668": {
+   "identifier": {
+    "key": "306cc20d-1141-5918-974b-1f04b82c0668",
+    "namespace": ""
+   },
+   "name": "Map rays: open way per direction (u)",
+   "type": "LadTable",
+   "composition": [
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~CLEAR_FWD",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~CLEAR_AL",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~CLEAR_LEFT",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~CLEAR_BL",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~CLEAR_BACK",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~CLEAR_BR",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~CLEAR_RIGHT",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~CLEAR_AR",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~CLEAR_MAP_FWD",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~CLEAR_FL",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~CLEAR_FR",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "48b13011-3b32-570f-a9a2-fc8b9e4a6153",
+   "configuration": {
+    "hiddenColumns": {
+     "timestamp": true,
+     "type": true,
+     "WATCH": true,
+     "WARNING": true,
+     "DISTRESS": true,
+     "CRITICAL": true,
+     "SEVERE": true
+    },
+    "isFixedLayout": false
+   }
+  },
+  "ad9bdeb9-cdc3-5848-b284-7a6153d6c6e8": {
+   "identifier": {
+    "key": "ad9bdeb9-cdc3-5848-b284-7a6153d6c6e8",
+    "namespace": ""
+   },
+   "name": "New ground and doors per direction",
+   "type": "LadTable",
+   "composition": [
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~NEW_FWD",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~NEW_AL",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~NEW_LEFT",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~NEW_BL",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~NEW_BACK",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~NEW_BR",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~NEW_RIGHT",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~NEW_AR",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~DOOR_FWD",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~DOOR_AL",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~DOOR_LEFT",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~DOOR_BL",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~DOOR_BACK",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~DOOR_BR",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~DOOR_RIGHT",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~DOOR_AR",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "48b13011-3b32-570f-a9a2-fc8b9e4a6153",
+   "configuration": {
+    "hiddenColumns": {
+     "timestamp": true,
+     "type": true,
+     "WATCH": true,
+     "WARNING": true,
+     "DISTRESS": true,
+     "CRITICAL": true,
+     "SEVERE": true
+    },
+    "isFixedLayout": false
+   }
+  },
+  "88187ddb-7ffe-5371-8b14-825be6727481": {
+   "identifier": {
+    "key": "88187ddb-7ffe-5371-8b14-825be6727481",
+    "namespace": ""
+   },
+   "name": "Cells seen this attempt",
+   "type": "telemetry.plot.overlay",
+   "composition": [
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~EXPLORED_CELLS",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "c9e52ec3-85e9-570e-8fc8-85055561c908",
+   "configuration": {
+    "series": [
+     {
+      "identifier": {
+       "key": "~DoomSat_DoomSat~DoomSat~doom~EXPLORED_CELLS",
+       "namespace": "taxonomy"
+      },
+      "yAxisId": 1
+     }
+    ],
+    "yAxis": {},
+    "xAxis": {},
+    "legend": {
+     "position": "top",
+     "expandByDefault": false,
+     "showValueWhenExpanded": true,
+     "showLegendsForChildren": true
+    }
+   }
+  },
+  "5cac12f1-39f3-5b70-b8c7-5ef1ee191a0a": {
+   "identifier": {
+    "key": "5cac12f1-39f3-5b70-b8c7-5ef1ee191a0a",
+    "namespace": ""
+   },
+   "name": "Executor and world model",
+   "type": "LadTable",
+   "composition": [
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~INTENT_ID",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~GOAL",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~CAND_COUNT",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~STUCK",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~WATCHDOG_TRIPS",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~DOOR_PRESSES",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~DOOR_OPENS",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~HINT_ACTIVE",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~HINT_REL",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~TIC",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "0cff5c85-fb44-5a3c-8552-d24739f774e6",
+   "configuration": {
+    "hiddenColumns": {
+     "timestamp": true,
+     "type": true,
+     "WATCH": true,
+     "WARNING": true,
+     "DISTRESS": true,
+     "CRITICAL": true,
+     "SEVERE": true
+    },
+    "isFixedLayout": false
+   }
+  },
+  "88171805-80a8-5e21-b7c8-614f8dbadee1": {
+   "identifier": {
+    "key": "88171805-80a8-5e21-b7c8-614f8dbadee1",
+    "namespace": ""
+   },
+   "name": "Door precision (derived)",
+   "type": "gauge",
+   "composition": [
+    {
+     "key": "05f683bd-8f14-554a-8d11-527aa85f3040",
+     "namespace": ""
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "7dc61158-49d7-51f6-beaa-46903de5b760",
+   "configuration": {
+    "gaugeController": {
+     "gaugeType": "dial-needle",
+     "isDisplayMinMax": true,
+     "isDisplayCurVal": true,
+     "isDisplayUnits": false,
+     "isUseTelemetryLimits": false,
+     "limitLow": 0.1,
+     "limitHigh": "",
+     "max": 1,
+     "min": 0,
+     "precision": 2
+    }
+   }
+  },
+  "0cff5c85-fb44-5a3c-8552-d24739f774e6": {
+   "identifier": {
+    "key": "0cff5c85-fb44-5a3c-8552-d24739f774e6",
+    "namespace": ""
+   },
+   "name": "World model and executor",
+   "type": "flexible-layout",
+   "composition": [
+    {
+     "key": "8a81bad8-7eec-5ab8-860e-79dce4cec232",
+     "namespace": ""
+    },
+    {
+     "key": "3a206f8a-f907-524f-a4bf-38b47b4bdef1",
+     "namespace": ""
+    },
+    {
+     "key": "5ead5696-1f14-5c09-a861-c17f23380547",
+     "namespace": ""
+    },
+    {
+     "key": "5cac12f1-39f3-5b70-b8c7-5ef1ee191a0a",
+     "namespace": ""
+    },
+    {
+     "key": "306cc20d-1141-5918-974b-1f04b82c0668",
+     "namespace": ""
+    },
+    {
+     "key": "ad9bdeb9-cdc3-5848-b284-7a6153d6c6e8",
+     "namespace": ""
+    },
+    {
+     "key": "88187ddb-7ffe-5371-8b14-825be6727481",
+     "namespace": ""
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "84ed7f83-64d1-5c54-aed7-4e24ab21532a",
+   "configuration": {
+    "containers": [
+     {
+      "id": "cf316bc6-dc51-51ba-859a-f22a3e94711b",
+      "size": 50,
+      "frames": [
+       {
+        "id": "ea1e9c09-fb87-5c5e-8bf2-b492489cf568",
+        "domainObjectIdentifier": {
+         "key": "8a81bad8-7eec-5ab8-860e-79dce4cec232",
+         "namespace": ""
+        },
+        "size": 58,
+        "noFrame": false
+       },
+       {
+        "id": "973dec8c-0450-5819-9e78-7376801775b1",
+        "domainObjectIdentifier": {
+         "key": "3a206f8a-f907-524f-a4bf-38b47b4bdef1",
+         "namespace": ""
+        },
+        "size": 42,
+        "noFrame": false
+       }
+      ]
+     },
+     {
+      "id": "12a6b68f-e80c-5869-9df5-675f3710fb6c",
+      "size": 25,
+      "frames": [
+       {
+        "id": "7024ebe3-db3c-55c6-8483-5312124be452",
+        "domainObjectIdentifier": {
+         "key": "5ead5696-1f14-5c09-a861-c17f23380547",
+         "namespace": ""
+        },
+        "size": 50,
+        "noFrame": false
+       },
+       {
+        "id": "96f788bd-7d7b-5952-ad23-471b5899cecf",
+        "domainObjectIdentifier": {
+         "key": "5cac12f1-39f3-5b70-b8c7-5ef1ee191a0a",
+         "namespace": ""
+        },
+        "size": 50,
+        "noFrame": false
+       }
+      ]
+     },
+     {
+      "id": "de224c5b-50e0-5dc2-ba48-d03a65629f27",
+      "size": 25,
+      "frames": [
+       {
+        "id": "341c7d2e-0b6a-5871-9080-01d57f56bb1a",
+        "domainObjectIdentifier": {
+         "key": "306cc20d-1141-5918-974b-1f04b82c0668",
+         "namespace": ""
+        },
+        "size": 30,
+        "noFrame": false
+       },
+       {
+        "id": "59e8b7bb-f780-5cc0-8a08-028b8161c27f",
+        "domainObjectIdentifier": {
+         "key": "ad9bdeb9-cdc3-5848-b284-7a6153d6c6e8",
+         "namespace": ""
+        },
+        "size": 40,
+        "noFrame": false
+       },
+       {
+        "id": "a604f783-e968-5dbd-8c07-c70040528108",
+        "domainObjectIdentifier": {
+         "key": "88187ddb-7ffe-5371-8b14-825be6727481",
+         "namespace": ""
+        },
+        "size": 30,
+        "noFrame": false
+       }
+      ]
+     }
+    ],
+    "rowsLayout": false
+   }
+  },
+  "c83ffb20-f7bb-5a24-a0fa-f9b416743de4": {
+   "identifier": {
+    "key": "c83ffb20-f7bb-5a24-a0fa-f9b416743de4",
+    "namespace": ""
+   },
+   "name": "Rate group max time (us)",
+   "type": "telemetry.plot.overlay",
+   "composition": [
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~rateGroup_20Hz~RgMaxTime",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~rateGroup_1Hz~RgMaxTime",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~rateGroup_0_25Hz~RgMaxTime",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "c009234b-0f79-56d1-b44a-9e9eb37bdb59",
+   "configuration": {
+    "series": [
+     {
+      "identifier": {
+       "key": "~DoomSat_DoomSat~DoomSat~rateGroup_20Hz~RgMaxTime",
+       "namespace": "taxonomy"
+      },
+      "yAxisId": 1
+     },
+     {
+      "identifier": {
+       "key": "~DoomSat_DoomSat~DoomSat~rateGroup_1Hz~RgMaxTime",
+       "namespace": "taxonomy"
+      },
+      "yAxisId": 1
+     },
+     {
+      "identifier": {
+       "key": "~DoomSat_DoomSat~DoomSat~rateGroup_0_25Hz~RgMaxTime",
+       "namespace": "taxonomy"
+      },
+      "yAxisId": 1
+     }
+    ],
+    "yAxis": {},
+    "xAxis": {},
+    "legend": {
+     "position": "top",
+     "expandByDefault": false,
+     "showValueWhenExpanded": true,
+     "showLegendsForChildren": true
+    }
+   }
+  },
+  "150457ea-2ec0-5077-b35d-844bd4b1045c": {
+   "identifier": {
+    "key": "150457ea-2ec0-5077-b35d-844bd4b1045c",
+    "namespace": ""
+   },
+   "name": "Rate group cycle slips",
+   "type": "telemetry.plot.overlay",
+   "composition": [
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~rateGroup_20Hz~RgCycleSlips",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~rateGroup_1Hz~RgCycleSlips",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~rateGroup_0_25Hz~RgCycleSlips",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "c009234b-0f79-56d1-b44a-9e9eb37bdb59",
+   "configuration": {
+    "series": [
+     {
+      "identifier": {
+       "key": "~DoomSat_DoomSat~DoomSat~rateGroup_20Hz~RgCycleSlips",
+       "namespace": "taxonomy"
+      },
+      "yAxisId": 1
+     },
+     {
+      "identifier": {
+       "key": "~DoomSat_DoomSat~DoomSat~rateGroup_1Hz~RgCycleSlips",
+       "namespace": "taxonomy"
+      },
+      "yAxisId": 1
+     },
+     {
+      "identifier": {
+       "key": "~DoomSat_DoomSat~DoomSat~rateGroup_0_25Hz~RgCycleSlips",
+       "namespace": "taxonomy"
+      },
+      "yAxisId": 1
+     }
+    ],
+    "yAxis": {},
+    "xAxis": {},
+    "legend": {
+     "position": "top",
+     "expandByDefault": false,
+     "showValueWhenExpanded": true,
+     "showLegendsForChildren": true
+    }
+   }
+  },
+  "96bafc94-c196-59f1-890c-05d743f585a7": {
+   "identifier": {
+    "key": "96bafc94-c196-59f1-890c-05d743f585a7",
+    "namespace": ""
+   },
+   "name": "CPU (%)",
+   "type": "gauge",
+   "composition": [
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~systemResources~CPU",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "c009234b-0f79-56d1-b44a-9e9eb37bdb59",
+   "configuration": {
+    "gaugeController": {
+     "gaugeType": "dial-filled",
+     "isDisplayMinMax": true,
+     "isDisplayCurVal": true,
+     "isDisplayUnits": true,
+     "isUseTelemetryLimits": false,
+     "limitLow": "",
+     "limitHigh": 90,
+     "max": 100,
+     "min": 0,
+     "precision": 0
+    }
+   }
+  },
+  "183986fb-7ba7-5b54-8e45-d5260df21226": {
+   "identifier": {
+    "key": "183986fb-7ba7-5b54-8e45-d5260df21226",
+    "namespace": ""
+   },
+   "name": "Memory used (derived %)",
+   "type": "gauge",
+   "composition": [
+    {
+     "key": "327d8963-7c50-5eea-afe0-e07dcda71008",
+     "namespace": ""
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "c009234b-0f79-56d1-b44a-9e9eb37bdb59",
+   "configuration": {
+    "gaugeController": {
+     "gaugeType": "dial-filled",
+     "isDisplayMinMax": true,
+     "isDisplayCurVal": true,
+     "isDisplayUnits": true,
+     "isUseTelemetryLimits": false,
+     "limitLow": "",
+     "limitHigh": 90,
+     "max": 100,
+     "min": 0,
+     "precision": 1
+    }
+   }
+  },
+  "a7141d8f-1fbb-52c5-9286-a40f6b4d1986": {
+   "identifier": {
+    "key": "a7141d8f-1fbb-52c5-9286-a40f6b4d1986",
+    "namespace": ""
+   },
+   "name": "Command, event and buffer health",
+   "type": "LadTable",
+   "composition": [
+    {
+     "key": "~DoomSat_DoomSat~CdhCore~cmdDisp~CommandsDispatched",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~CdhCore~cmdDisp~CommandErrors",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~CdhCore~cmdDisp~CommandsDropped",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~CdhCore~events~EventsDropped",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~CdhCore~health~PingLateWarnings",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~ComCcsds~commsBufferManager~CurrBuffs",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~ComCcsds~commsBufferManager~HiBuffs",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~ComCcsds~commsBufferManager~NoBuffs",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~ComCcsds~commsBufferManager~EmptyBuffs",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~PAYLOAD_LINK",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~CMDS_RECEIVED",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~CdhCore~version~FrameworkVersion",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~CdhCore~version~ProjectVersion",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "c009234b-0f79-56d1-b44a-9e9eb37bdb59",
+   "configuration": {
+    "hiddenColumns": {
+     "timestamp": true,
+     "type": true,
+     "WATCH": true,
+     "WARNING": true,
+     "DISTRESS": true,
+     "CRITICAL": true,
+     "SEVERE": true
+    },
+    "isFixedLayout": false
+   }
+  },
+  "c009234b-0f79-56d1-b44a-9e9eb37bdb59": {
+   "identifier": {
+    "key": "c009234b-0f79-56d1-b44a-9e9eb37bdb59",
+    "namespace": ""
+   },
+   "name": "Flight software (F´)",
+   "type": "flexible-layout",
+   "composition": [
+    {
+     "key": "c83ffb20-f7bb-5a24-a0fa-f9b416743de4",
+     "namespace": ""
+    },
+    {
+     "key": "150457ea-2ec0-5077-b35d-844bd4b1045c",
+     "namespace": ""
+    },
+    {
+     "key": "96bafc94-c196-59f1-890c-05d743f585a7",
+     "namespace": ""
+    },
+    {
+     "key": "183986fb-7ba7-5b54-8e45-d5260df21226",
+     "namespace": ""
+    },
+    {
+     "key": "a7141d8f-1fbb-52c5-9286-a40f6b4d1986",
+     "namespace": ""
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "84ed7f83-64d1-5c54-aed7-4e24ab21532a",
+   "configuration": {
+    "containers": [
+     {
+      "id": "be6be0d5-2459-5a54-85fe-f43481a0dfbf",
+      "size": 50,
+      "frames": [
+       {
+        "id": "30ef55cd-26e9-57ea-82f0-e72a575437cf",
+        "domainObjectIdentifier": {
+         "key": "c83ffb20-f7bb-5a24-a0fa-f9b416743de4",
+         "namespace": ""
+        },
+        "size": 50,
+        "noFrame": false
+       },
+       {
+        "id": "6c766e63-9ac8-5bcc-8d8e-f58c665a754a",
+        "domainObjectIdentifier": {
+         "key": "150457ea-2ec0-5077-b35d-844bd4b1045c",
+         "namespace": ""
+        },
+        "size": 50,
+        "noFrame": false
+       }
+      ]
+     },
+     {
+      "id": "ad63643f-d568-59ff-b9f8-d7e5ac3aeb47",
+      "size": 20,
+      "frames": [
+       {
+        "id": "0c888310-5de3-59b9-b041-87dc8d67c0ca",
+        "domainObjectIdentifier": {
+         "key": "96bafc94-c196-59f1-890c-05d743f585a7",
+         "namespace": ""
+        },
+        "size": 50,
+        "noFrame": false
+       },
+       {
+        "id": "abc24811-c88a-5614-b566-41d96af58806",
+        "domainObjectIdentifier": {
+         "key": "183986fb-7ba7-5b54-8e45-d5260df21226",
+         "namespace": ""
+        },
+        "size": 50,
+        "noFrame": false
+       }
+      ]
+     },
+     {
+      "id": "617ce123-674d-5d7f-a554-c6e0424c0684",
+      "size": 30,
+      "frames": [
+       {
+        "id": "45d9463d-e483-57f3-a48e-10fb9c95d58e",
+        "domainObjectIdentifier": {
+         "key": "a7141d8f-1fbb-52c5-9286-a40f6b4d1986",
+         "namespace": ""
+        },
+        "size": 100,
+        "noFrame": false
+       }
+      ]
+     }
+    ],
+    "rowsLayout": false
+   }
+  },
+  "7051eaf6-5fd0-5455-9c7e-d50f9996ec8f": {
+   "identifier": {
+    "key": "7051eaf6-5fd0-5455-9c7e-d50f9996ec8f",
+    "namespace": ""
+   },
+   "name": "Image products sent",
+   "type": "telemetry.plot.overlay",
+   "composition": [
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~FRAMES_SENT",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~CHUNKS_SENT",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "21d3e933-3a97-5651-b26a-bc3eaf20ff0c",
+   "configuration": {
+    "series": [
+     {
+      "identifier": {
+       "key": "~DoomSat_DoomSat~DoomSat~doom~FRAMES_SENT",
+       "namespace": "taxonomy"
+      },
+      "yAxisId": 1
+     },
+     {
+      "identifier": {
+       "key": "~DoomSat_DoomSat~DoomSat~doom~CHUNKS_SENT",
+       "namespace": "taxonomy"
+      },
+      "yAxisId": 1
+     }
+    ],
+    "yAxis": {},
+    "xAxis": {},
+    "legend": {
+     "position": "top",
+     "expandByDefault": false,
+     "showValueWhenExpanded": true,
+     "showLegendsForChildren": true
+    }
+   }
+  },
+  "369077a3-bff6-556e-aa65-30cc7f206775": {
+   "identifier": {
+    "key": "369077a3-bff6-556e-aa65-30cc7f206775",
+    "namespace": ""
+   },
+   "name": "Bytes in the last frame",
+   "type": "telemetry.plot.overlay",
+   "composition": [
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~FRAME_BYTES",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "21d3e933-3a97-5651-b26a-bc3eaf20ff0c",
+   "configuration": {
+    "series": [
+     {
+      "identifier": {
+       "key": "~DoomSat_DoomSat~DoomSat~doom~FRAME_BYTES",
+       "namespace": "taxonomy"
+      },
+      "yAxisId": 1
+     }
+    ],
+    "yAxis": {},
+    "xAxis": {},
+    "legend": {
+     "position": "top",
+     "expandByDefault": false,
+     "showValueWhenExpanded": true,
+     "showLegendsForChildren": true
+    }
+   }
+  },
+  "9634edd0-a17b-5885-91c3-beea881bbfdb": {
+   "identifier": {
+    "key": "9634edd0-a17b-5885-91c3-beea881bbfdb",
+    "namespace": ""
+   },
+   "name": "Downlink products (latest)",
+   "type": "LadTable",
+   "composition": [
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~FRAMES_SENT",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~CHUNKS_SENT",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~FRAME_BYTES",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~PAYLOAD_LINK",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "21d3e933-3a97-5651-b26a-bc3eaf20ff0c",
+   "configuration": {
+    "hiddenColumns": {
+     "timestamp": true,
+     "type": true,
+     "WATCH": true,
+     "WARNING": true,
+     "DISTRESS": true,
+     "CRITICAL": true,
+     "SEVERE": true
+    },
+    "isFixedLayout": false
+   }
+  },
+  "17363791-6113-5ba7-bbea-99e9d4517bfe": {
+   "identifier": {
+    "key": "17363791-6113-5ba7-bbea-99e9d4517bfe",
+    "namespace": ""
+   },
+   "name": "Chunks per frame (derived)",
+   "type": "LadTable",
+   "composition": [
+    {
+     "key": "d825b799-142b-5cbc-94db-7f94bca198c2",
+     "namespace": ""
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "21d3e933-3a97-5651-b26a-bc3eaf20ff0c",
+   "configuration": {
+    "hiddenColumns": {
+     "timestamp": true,
+     "type": true,
+     "WATCH": true,
+     "WARNING": true,
+     "DISTRESS": true,
+     "CRITICAL": true,
+     "SEVERE": true
+    },
+    "isFixedLayout": false
+   }
+  },
+  "21d3e933-3a97-5651-b26a-bc3eaf20ff0c": {
+   "identifier": {
+    "key": "21d3e933-3a97-5651-b26a-bc3eaf20ff0c",
+    "namespace": ""
+   },
+   "name": "Downlink products",
+   "type": "flexible-layout",
+   "composition": [
+    {
+     "key": "7051eaf6-5fd0-5455-9c7e-d50f9996ec8f",
+     "namespace": ""
+    },
+    {
+     "key": "369077a3-bff6-556e-aa65-30cc7f206775",
+     "namespace": ""
+    },
+    {
+     "key": "9634edd0-a17b-5885-91c3-beea881bbfdb",
+     "namespace": ""
+    },
+    {
+     "key": "17363791-6113-5ba7-bbea-99e9d4517bfe",
+     "namespace": ""
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "84ed7f83-64d1-5c54-aed7-4e24ab21532a",
+   "configuration": {
+    "containers": [
+     {
+      "id": "2a63d8bd-cc0d-5b6f-8837-4f0f558d7ddc",
+      "size": 60,
+      "frames": [
+       {
+        "id": "221cf84c-9588-51cc-95d6-374acb9350ba",
+        "domainObjectIdentifier": {
+         "key": "7051eaf6-5fd0-5455-9c7e-d50f9996ec8f",
+         "namespace": ""
+        },
+        "size": 50,
+        "noFrame": false
+       },
+       {
+        "id": "4f99dea0-9b85-5122-a39a-2481d06efaed",
+        "domainObjectIdentifier": {
+         "key": "369077a3-bff6-556e-aa65-30cc7f206775",
+         "namespace": ""
+        },
+        "size": 50,
+        "noFrame": false
+       }
+      ]
+     },
+     {
+      "id": "c47028f0-f5d3-5d22-bd38-89541c6d7969",
+      "size": 40,
+      "frames": [
+       {
+        "id": "c72b538d-46ef-53d8-9272-0c26601aea72",
+        "domainObjectIdentifier": {
+         "key": "9634edd0-a17b-5885-91c3-beea881bbfdb",
+         "namespace": ""
+        },
+        "size": 50,
+        "noFrame": false
+       },
+       {
+        "id": "252befab-ea7e-5930-9f8c-565c3b53cbfb",
+        "domainObjectIdentifier": {
+         "key": "17363791-6113-5ba7-bbea-99e9d4517bfe",
+         "namespace": ""
+        },
+        "size": 50,
+        "noFrame": false
+       }
+      ]
+     }
+    ],
+    "rowsLayout": false
+   }
+  },
+  "84ed7f83-64d1-5c54-aed7-4e24ab21532a": {
+   "identifier": {
+    "key": "84ed7f83-64d1-5c54-aed7-4e24ab21532a",
+    "namespace": ""
+   },
+   "name": "20 ONBOARD · flight side",
+   "type": "tabs",
+   "composition": [
+    {
+     "key": "0cff5c85-fb44-5a3c-8552-d24739f774e6",
+     "namespace": ""
+    },
+    {
+     "key": "c009234b-0f79-56d1-b44a-9e9eb37bdb59",
+     "namespace": ""
+    },
+    {
+     "key": "21d3e933-3a97-5651-b26a-bc3eaf20ff0c",
+     "namespace": ""
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "f992953d-4399-5c94-82e0-d010c07241ae",
+   "keep_alive": false,
+   "currentTabIndex": 0
+  },
+  "45284142-ca63-5f22-b278-8f14d9c9d2c4": {
+   "identifier": {
+    "key": "45284142-ca63-5f22-b278-8f14d9c9d2c4",
+    "namespace": ""
+   },
+   "name": "Decision timing (ms): jev round trip, decision age",
+   "type": "telemetry.plot.overlay",
+   "composition": [
+    {
+     "key": "~DoomGround~SystemOneLatencyMs",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomGround~DecisionAgeMs",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "c9e52ec3-85e9-570e-8fc8-85055561c908",
+   "configuration": {
+    "series": [
+     {
+      "identifier": {
+       "key": "~DoomGround~SystemOneLatencyMs",
+       "namespace": "taxonomy"
+      },
+      "yAxisId": 1
+     },
+     {
+      "identifier": {
+       "key": "~DoomGround~DecisionAgeMs",
+       "namespace": "taxonomy"
+      },
+      "yAxisId": 1
+     }
+    ],
+    "yAxis": {},
+    "xAxis": {},
+    "legend": {
+     "position": "top",
+     "expandByDefault": false,
+     "showValueWhenExpanded": true,
+     "showLegendsForChildren": true
+    }
+   }
+  },
+  "7c8089b9-fcd8-58f4-a39d-aa0a88f8366b": {
+   "identifier": {
+    "key": "7c8089b9-fcd8-58f4-a39d-aa0a88f8366b",
+    "namespace": ""
+   },
+   "name": "jev target scores by slot (nine-level rubric)",
+   "type": "telemetry.plot.overlay",
+   "composition": [
+    {
+     "key": "~DoomGround~Score0",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomGround~Score1",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomGround~Score2",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomGround~Score3",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomGround~Score4",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomGround~Score5",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomGround~Score6",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomGround~Score7",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "48b13011-3b32-570f-a9a2-fc8b9e4a6153",
+   "configuration": {
+    "series": [
+     {
+      "identifier": {
+       "key": "~DoomGround~Score0",
+       "namespace": "taxonomy"
+      },
+      "yAxisId": 1
+     },
+     {
+      "identifier": {
+       "key": "~DoomGround~Score1",
+       "namespace": "taxonomy"
+      },
+      "yAxisId": 1
+     },
+     {
+      "identifier": {
+       "key": "~DoomGround~Score2",
+       "namespace": "taxonomy"
+      },
+      "yAxisId": 1
+     },
+     {
+      "identifier": {
+       "key": "~DoomGround~Score3",
+       "namespace": "taxonomy"
+      },
+      "yAxisId": 1
+     },
+     {
+      "identifier": {
+       "key": "~DoomGround~Score4",
+       "namespace": "taxonomy"
+      },
+      "yAxisId": 1
+     },
+     {
+      "identifier": {
+       "key": "~DoomGround~Score5",
+       "namespace": "taxonomy"
+      },
+      "yAxisId": 1
+     },
+     {
+      "identifier": {
+       "key": "~DoomGround~Score6",
+       "namespace": "taxonomy"
+      },
+      "yAxisId": 1
+     },
+     {
+      "identifier": {
+       "key": "~DoomGround~Score7",
+       "namespace": "taxonomy"
+      },
+      "yAxisId": 1
+     }
+    ],
+    "yAxis": {},
+    "xAxis": {},
+    "legend": {
+     "position": "top",
+     "expandByDefault": false,
+     "showValueWhenExpanded": true,
+     "showLegendsForChildren": true
+    }
+   }
+  },
+  "ec43e466-f01e-5254-9e24-b13301893089": {
+   "identifier": {
+    "key": "ec43e466-f01e-5254-9e24-b13301893089",
+    "namespace": ""
+   },
+   "name": "jev share and fallback rate (rolling)",
+   "type": "telemetry.plot.overlay",
+   "composition": [
+    {
+     "key": "~DoomGround~JevShare",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomGround~FallbackRate",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "7dc61158-49d7-51f6-beaa-46903de5b760",
+   "configuration": {
+    "series": [
+     {
+      "identifier": {
+       "key": "~DoomGround~JevShare",
+       "namespace": "taxonomy"
+      },
+      "yAxisId": 1
+     },
+     {
+      "identifier": {
+       "key": "~DoomGround~FallbackRate",
+       "namespace": "taxonomy"
+      },
+      "yAxisId": 1
+     }
+    ],
+    "yAxis": {},
+    "xAxis": {},
+    "legend": {
+     "position": "top",
+     "expandByDefault": false,
+     "showValueWhenExpanded": true,
+     "showLegendsForChildren": true
+    }
+   }
+  },
+  "61a2bd49-c496-5943-b493-ab58ca8874a0": {
+   "identifier": {
+    "key": "61a2bd49-c496-5943-b493-ab58ca8874a0",
+    "namespace": ""
+   },
+   "name": "Pick gap and confidence",
+   "type": "telemetry.plot.overlay",
+   "composition": [
+    {
+     "key": "~DoomGround~PickGap",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomGround~PickConfidence",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "7dc61158-49d7-51f6-beaa-46903de5b760",
+   "configuration": {
+    "series": [
+     {
+      "identifier": {
+       "key": "~DoomGround~PickGap",
+       "namespace": "taxonomy"
+      },
+      "yAxisId": 1
+     },
+     {
+      "identifier": {
+       "key": "~DoomGround~PickConfidence",
+       "namespace": "taxonomy"
+      },
+      "yAxisId": 1
+     }
+    ],
+    "yAxis": {},
+    "xAxis": {},
+    "legend": {
+     "position": "top",
+     "expandByDefault": false,
+     "showValueWhenExpanded": true,
+     "showLegendsForChildren": true
+    }
+   }
+  },
+  "7dc61158-49d7-51f6-beaa-46903de5b760": {
+   "identifier": {
+    "key": "7dc61158-49d7-51f6-beaa-46903de5b760",
+    "namespace": ""
+   },
+   "name": "Autonomy: jev and Sonnet",
+   "type": "flexible-layout",
+   "composition": [
+    {
+     "key": "45284142-ca63-5f22-b278-8f14d9c9d2c4",
+     "namespace": ""
+    },
+    {
+     "key": "ec43e466-f01e-5254-9e24-b13301893089",
+     "namespace": ""
+    },
+    {
+     "key": "8a81bad8-7eec-5ab8-860e-79dce4cec232",
+     "namespace": ""
+    },
+    {
+     "key": "61a2bd49-c496-5943-b493-ab58ca8874a0",
+     "namespace": ""
+    },
+    {
+     "key": "aa6b1a35-c385-5694-8e11-9e70bd414c51",
+     "namespace": ""
+    },
+    {
+     "key": "88171805-80a8-5e21-b7c8-614f8dbadee1",
+     "namespace": ""
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "25d971af-d0a7-58d7-84ac-41aae1687746",
+   "configuration": {
+    "containers": [
+     {
+      "id": "67288349-54d5-538f-a433-2cb8553da549",
+      "size": 45,
+      "frames": [
+       {
+        "id": "a33c94e8-9ee2-5777-a8e4-cdb348ecaf66",
+        "domainObjectIdentifier": {
+         "key": "45284142-ca63-5f22-b278-8f14d9c9d2c4",
+         "namespace": ""
+        },
+        "size": 50,
+        "noFrame": false
+       },
+       {
+        "id": "1d4fbe0e-3cc4-59a4-9413-7c93ad7ab19e",
+        "domainObjectIdentifier": {
+         "key": "ec43e466-f01e-5254-9e24-b13301893089",
+         "namespace": ""
+        },
+        "size": 50,
+        "noFrame": false
+       }
+      ]
+     },
+     {
+      "id": "adae6ed0-a940-53ea-b2b2-4858b884c4da",
+      "size": 35,
+      "frames": [
+       {
+        "id": "4ff75574-b918-5485-aff1-0de135723342",
+        "domainObjectIdentifier": {
+         "key": "8a81bad8-7eec-5ab8-860e-79dce4cec232",
+         "namespace": ""
+        },
+        "size": 55,
+        "noFrame": false
+       },
+       {
+        "id": "c08491be-ae20-5e3f-ba19-dc8e703cb593",
+        "domainObjectIdentifier": {
+         "key": "61a2bd49-c496-5943-b493-ab58ca8874a0",
+         "namespace": ""
+        },
+        "size": 45,
+        "noFrame": false
+       }
+      ]
+     },
+     {
+      "id": "adc8f6a7-72ab-5394-828b-b3a4bda3404e",
+      "size": 20,
+      "frames": [
+       {
+        "id": "4dccca99-0a47-5b32-abcf-0a94765199aa",
+        "domainObjectIdentifier": {
+         "key": "aa6b1a35-c385-5694-8e11-9e70bd414c51",
+         "namespace": ""
+        },
+        "size": 65,
+        "noFrame": false
+       },
+       {
+        "id": "9dbca846-7af9-5377-9677-86e1d6c73ea4",
+        "domainObjectIdentifier": {
+         "key": "88171805-80a8-5e21-b7c8-614f8dbadee1",
+         "namespace": ""
+        },
+        "size": 35,
+        "noFrame": false
+       }
+      ]
+     }
+    ],
+    "rowsLayout": false
+   }
+  },
+  "fafe4c80-f847-5011-85b5-30545f8c18b6": {
+   "identifier": {
+    "key": "fafe4c80-f847-5011-85b5-30545f8c18b6",
+    "namespace": ""
+   },
+   "name": "Ground reassembly: frames complete and incomplete",
+   "type": "telemetry.plot.overlay",
+   "composition": [
+    {
+     "key": "~DoomGround~FramesComplete",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomGround~FramesIncomplete",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "82d6da71-fd18-54c6-ab7b-bc04256cc829",
+   "configuration": {
+    "series": [
+     {
+      "identifier": {
+       "key": "~DoomGround~FramesComplete",
+       "namespace": "taxonomy"
+      },
+      "yAxisId": 1
+     },
+     {
+      "identifier": {
+       "key": "~DoomGround~FramesIncomplete",
+       "namespace": "taxonomy"
+      },
+      "yAxisId": 1
+     }
+    ],
+    "yAxis": {},
+    "xAxis": {},
+    "legend": {
+     "position": "top",
+     "expandByDefault": false,
+     "showValueWhenExpanded": true,
+     "showLegendsForChildren": true
+    }
+   }
+  },
+  "8857e5bc-3d15-54bc-97d2-f272e01ca279": {
+   "identifier": {
+    "key": "8857e5bc-3d15-54bc-97d2-f272e01ca279",
+    "namespace": ""
+   },
+   "name": "Frame loss (derived %)",
+   "type": "telemetry.plot.overlay",
+   "composition": [
+    {
+     "key": "8940ce97-fae4-54ae-8b6a-bbc6ab56d987",
+     "namespace": ""
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "82d6da71-fd18-54c6-ab7b-bc04256cc829",
+   "configuration": {
+    "series": [
+     {
+      "identifier": {
+       "key": "8940ce97-fae4-54ae-8b6a-bbc6ab56d987",
+       "namespace": ""
+      },
+      "yAxisId": 1
+     }
+    ],
+    "yAxis": {},
+    "xAxis": {}
+   }
+  },
+  "d674c8f3-78fa-53c4-a402-cd54a1da1867": {
+   "identifier": {
+    "key": "d674c8f3-78fa-53c4-a402-cd54a1da1867",
+    "namespace": ""
+   },
+   "name": "Uplink: commands issued by the pilot",
+   "type": "telemetry.plot.overlay",
+   "composition": [
+    {
+     "key": "~DoomGround~ControlCommands",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "82d6da71-fd18-54c6-ab7b-bc04256cc829",
+   "configuration": {
+    "series": [
+     {
+      "identifier": {
+       "key": "~DoomGround~ControlCommands",
+       "namespace": "taxonomy"
+      },
+      "yAxisId": 1
+     }
+    ],
+    "yAxis": {},
+    "xAxis": {},
+    "legend": {
+     "position": "top",
+     "expandByDefault": false,
+     "showValueWhenExpanded": true,
+     "showLegendsForChildren": true
+    }
+   }
+  },
+  "a514cb05-eece-5481-8732-6b58ad082978": {
+   "identifier": {
+    "key": "a514cb05-eece-5481-8732-6b58ad082978",
+    "namespace": ""
+   },
+   "name": "Ground data system (latest)",
+   "type": "LadTable",
+   "composition": [
+    {
+     "key": "~DoomGround~FrameSeq",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomGround~FramesComplete",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomGround~FramesIncomplete",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomGround~ControlCommands",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomGround~SystemTwoLatencyMs",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "82d6da71-fd18-54c6-ab7b-bc04256cc829",
+   "configuration": {
+    "hiddenColumns": {
+     "timestamp": true,
+     "type": true,
+     "WATCH": true,
+     "WARNING": true,
+     "DISTRESS": true,
+     "CRITICAL": true,
+     "SEVERE": true
+    },
+    "isFixedLayout": false
+   }
+  },
+  "82d6da71-fd18-54c6-ab7b-bc04256cc829": {
+   "identifier": {
+    "key": "82d6da71-fd18-54c6-ab7b-bc04256cc829",
+    "namespace": ""
+   },
+   "name": "Ground data system",
+   "type": "flexible-layout",
+   "composition": [
+    {
+     "key": "fafe4c80-f847-5011-85b5-30545f8c18b6",
+     "namespace": ""
+    },
+    {
+     "key": "8857e5bc-3d15-54bc-97d2-f272e01ca279",
+     "namespace": ""
+    },
+    {
+     "key": "d674c8f3-78fa-53c4-a402-cd54a1da1867",
+     "namespace": ""
+    },
+    {
+     "key": "a514cb05-eece-5481-8732-6b58ad082978",
+     "namespace": ""
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "25d971af-d0a7-58d7-84ac-41aae1687746",
+   "configuration": {
+    "containers": [
+     {
+      "id": "3daffb3b-a740-5c45-8d19-0ff95a7e2565",
+      "size": 50,
+      "frames": [
+       {
+        "id": "fcd988f0-0f74-5e50-a800-08d0431b76e7",
+        "domainObjectIdentifier": {
+         "key": "fafe4c80-f847-5011-85b5-30545f8c18b6",
+         "namespace": ""
+        },
+        "size": 50,
+        "noFrame": false
+       },
+       {
+        "id": "bffe477e-4a8f-5d08-9c45-fe3e48607893",
+        "domainObjectIdentifier": {
+         "key": "8857e5bc-3d15-54bc-97d2-f272e01ca279",
+         "namespace": ""
+        },
+        "size": 50,
+        "noFrame": false
+       }
+      ]
+     },
+     {
+      "id": "d02e511d-035f-57c4-a7b8-3ec5dc305ae3",
+      "size": 50,
+      "frames": [
+       {
+        "id": "70418b5f-ef0a-52f6-ac93-0633891bb47b",
+        "domainObjectIdentifier": {
+         "key": "d674c8f3-78fa-53c4-a402-cd54a1da1867",
+         "namespace": ""
+        },
+        "size": 50,
+        "noFrame": false
+       },
+       {
+        "id": "b1899535-5c66-5b2c-9f1a-849761a680e7",
+        "domainObjectIdentifier": {
+         "key": "a514cb05-eece-5481-8732-6b58ad082978",
+         "namespace": ""
+        },
+        "size": 50,
+        "noFrame": false
+       }
+      ]
+     }
+    ],
+    "rowsLayout": false
+   }
+  },
+  "496ead1f-f753-5b23-8de0-12817d3cc20a": {
+   "identifier": {
+    "key": "496ead1f-f753-5b23-8de0-12817d3cc20a",
+    "namespace": ""
+   },
+   "name": "Command history (Yamcs)",
+   "type": "table",
+   "composition": [
+    {
+     "key": "yamcs.commands",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "dc714afc-7b07-57de-ad49-cd3104c3411c",
+   "configuration": {
+    "columnWidths": {},
+    "hiddenColumns": {
+     "name": true
+    },
+    "telemetryMode": "performance",
+    "persistModeChange": true,
+    "rowLimit": 100,
+    "columnOrder": [],
+    "cellFormat": {},
+    "autosize": true
+   }
+  },
+  "478d39a1-0847-5671-ace1-0d2f717041bf": {
+   "identifier": {
+    "key": "478d39a1-0847-5671-ace1-0d2f717041bf",
+    "namespace": ""
+   },
+   "name": "Events: warning and above",
+   "type": "table",
+   "composition": [
+    {
+     "key": "yamcs.events.severity.warning",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "dc714afc-7b07-57de-ad49-cd3104c3411c",
+   "configuration": {
+    "columnWidths": {},
+    "hiddenColumns": {
+     "name": true
+    },
+    "telemetryMode": "performance",
+    "persistModeChange": true,
+    "rowLimit": 100,
+    "columnOrder": [],
+    "cellFormat": {},
+    "autosize": true
+   }
+  },
+  "dc714afc-7b07-57de-ad49-cd3104c3411c": {
+   "identifier": {
+    "key": "dc714afc-7b07-57de-ad49-cd3104c3411c",
+    "namespace": ""
+   },
+   "name": "Command and event history",
+   "type": "flexible-layout",
+   "composition": [
+    {
+     "key": "496ead1f-f753-5b23-8de0-12817d3cc20a",
+     "namespace": ""
+    },
+    {
+     "key": "67b0d1bd-1d2c-5d4f-8ff1-302ddd81cc10",
+     "namespace": ""
+    },
+    {
+     "key": "478d39a1-0847-5671-ace1-0d2f717041bf",
+     "namespace": ""
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "25d971af-d0a7-58d7-84ac-41aae1687746",
+   "configuration": {
+    "containers": [
+     {
+      "id": "9c040876-942c-51b0-b707-426c51708dd8",
+      "size": 50,
+      "frames": [
+       {
+        "id": "4c9fa921-d1ea-5476-b2c0-d5394fe3206f",
+        "domainObjectIdentifier": {
+         "key": "496ead1f-f753-5b23-8de0-12817d3cc20a",
+         "namespace": ""
+        },
+        "size": 100,
+        "noFrame": false
+       }
+      ]
+     },
+     {
+      "id": "63937d97-041f-5193-b12b-da749edb5df7",
+      "size": 50,
+      "frames": [
+       {
+        "id": "8bd46db2-67ce-506d-be76-65a372aa007b",
+        "domainObjectIdentifier": {
+         "key": "67b0d1bd-1d2c-5d4f-8ff1-302ddd81cc10",
+         "namespace": ""
+        },
+        "size": 55,
+        "noFrame": false
+       },
+       {
+        "id": "b44950c1-a0c9-5fec-96ae-4d6ffff95079",
+        "domainObjectIdentifier": {
+         "key": "478d39a1-0847-5671-ace1-0d2f717041bf",
+         "namespace": ""
+        },
+        "size": 45,
+        "noFrame": false
+       }
+      ]
+     }
+    ],
+    "rowsLayout": false
+   }
+  },
+  "25d971af-d0a7-58d7-84ac-41aae1687746": {
+   "identifier": {
+    "key": "25d971af-d0a7-58d7-84ac-41aae1687746",
+    "namespace": ""
+   },
+   "name": "30 GROUND · the other half of the loop",
+   "type": "tabs",
+   "composition": [
+    {
+     "key": "7dc61158-49d7-51f6-beaa-46903de5b760",
+     "namespace": ""
+    },
+    {
+     "key": "82d6da71-fd18-54c6-ab7b-bc04256cc829",
+     "namespace": ""
+    },
+    {
+     "key": "dc714afc-7b07-57de-ad49-cd3104c3411c",
+     "namespace": ""
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "f992953d-4399-5c94-82e0-d010c07241ae",
+   "keep_alive": false,
+   "currentTabIndex": 0
+  },
+  "bc36619d-3032-59f8-a0a7-6141aa8d2dbe": {
+   "identifier": {
+    "key": "bc36619d-3032-59f8-a0a7-6141aa8d2dbe",
+    "namespace": ""
+   },
+   "name": "E1 campaign plan",
+   "type": "plan",
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "c21421ef-abf7-57b6-86ce-b43c15d82a4e",
+   "selectFile": {
+    "name": "e1-campaign.json",
+    "body": "{\"E1 campaign: 180 s budget per level\": [{\"name\": \"E1M1\", \"id\": \"e1m1\", \"start\": 1790000000000, \"end\": 1790000180000, \"type\": \"level\", \"color\": \"#0b5394\", \"textColor\": \"#ffffff\", \"properties\": {\"budget_s\": 180}}, {\"name\": \"E1M2\", \"id\": \"e1m2\", \"start\": 1790000180000, \"end\": 1790000360000, \"type\": \"level\", \"color\": \"#0b5394\", \"textColor\": \"#ffffff\", \"properties\": {\"budget_s\": 180}}, {\"name\": \"E1M3\", \"id\": \"e1m3\", \"start\": 1790000360000, \"end\": 1790000540000, \"type\": \"level\", \"color\": \"#0b5394\", \"textColor\": \"#ffffff\", \"properties\": {\"budget_s\": 180}}, {\"name\": \"E1M4\", \"id\": \"e1m4\", \"start\": 1790000540000, \"end\": 1790000720000, \"type\": \"level\", \"color\": \"#0b5394\", \"textColor\": \"#ffffff\", \"properties\": {\"budget_s\": 180}}, {\"name\": \"E1M5\", \"id\": \"e1m5\", \"start\": 1790000720000, \"end\": 1790000900000, \"type\": \"level\", \"color\": \"#0b5394\", \"textColor\": \"#ffffff\", \"properties\": {\"budget_s\": 180}}, {\"name\": \"E1M6\", \"id\": \"e1m6\", \"start\": 1790000900000, \"end\": 1790001080000, \"type\": \"level\", \"color\": \"#0b5394\", \"textColor\": \"#ffffff\", \"properties\": {\"budget_s\": 180}}, {\"name\": \"E1M7\", \"id\": \"e1m7\", \"start\": 1790001080000, \"end\": 1790001260000, \"type\": \"level\", \"color\": \"#0b5394\", \"textColor\": \"#ffffff\", \"properties\": {\"budget_s\": 180}}, {\"name\": \"E1M8\", \"id\": \"e1m8\", \"start\": 1790001260000, \"end\": 1790001440000, \"type\": \"level\", \"color\": \"#0b5394\", \"textColor\": \"#ffffff\", \"properties\": {\"budget_s\": 180}}], \"Sonnet checkpoints (every 60 s)\": [{\"name\": \"bump\", \"id\": \"bump1\", \"start\": 1790000060000, \"end\": 1790000063000, \"type\": \"review\", \"color\": \"#741b47\", \"textColor\": \"#ffffff\"}, {\"name\": \"bump\", \"id\": \"bump2\", \"start\": 1790000120000, \"end\": 1790000123000, \"type\": \"review\", \"color\": \"#741b47\", \"textColor\": \"#ffffff\"}, {\"name\": \"bump\", \"id\": \"bump3\", \"start\": 1790000180000, \"end\": 1790000183000, \"type\": \"review\", \"color\": \"#741b47\", \"textColor\": \"#ffffff\"}, {\"name\": \"bump\", \"id\": \"bump4\", \"start\": 1790000240000, \"end\": 1790000243000, \"type\": \"review\", \"color\": \"#741b47\", \"textColor\": \"#ffffff\"}, {\"name\": \"bump\", \"id\": \"bump5\", \"start\": 1790000300000, \"end\": 1790000303000, \"type\": \"review\", \"color\": \"#741b47\", \"textColor\": \"#ffffff\"}, {\"name\": \"bump\", \"id\": \"bump6\", \"start\": 1790000360000, \"end\": 1790000363000, \"type\": \"review\", \"color\": \"#741b47\", \"textColor\": \"#ffffff\"}, {\"name\": \"bump\", \"id\": \"bump7\", \"start\": 1790000420000, \"end\": 1790000423000, \"type\": \"review\", \"color\": \"#741b47\", \"textColor\": \"#ffffff\"}, {\"name\": \"bump\", \"id\": \"bump8\", \"start\": 1790000480000, \"end\": 1790000483000, \"type\": \"review\", \"color\": \"#741b47\", \"textColor\": \"#ffffff\"}, {\"name\": \"bump\", \"id\": \"bump9\", \"start\": 1790000540000, \"end\": 1790000543000, \"type\": \"review\", \"color\": \"#741b47\", \"textColor\": \"#ffffff\"}, {\"name\": \"bump\", \"id\": \"bump10\", \"start\": 1790000600000, \"end\": 1790000603000, \"type\": \"review\", \"color\": \"#741b47\", \"textColor\": \"#ffffff\"}, {\"name\": \"bump\", \"id\": \"bump11\", \"start\": 1790000660000, \"end\": 1790000663000, \"type\": \"review\", \"color\": \"#741b47\", \"textColor\": \"#ffffff\"}, {\"name\": \"bump\", \"id\": \"bump12\", \"start\": 1790000720000, \"end\": 1790000723000, \"type\": \"review\", \"color\": \"#741b47\", \"textColor\": \"#ffffff\"}, {\"name\": \"bump\", \"id\": \"bump13\", \"start\": 1790000780000, \"end\": 1790000783000, \"type\": \"review\", \"color\": \"#741b47\", \"textColor\": \"#ffffff\"}, {\"name\": \"bump\", \"id\": \"bump14\", \"start\": 1790000840000, \"end\": 1790000843000, \"type\": \"review\", \"color\": \"#741b47\", \"textColor\": \"#ffffff\"}, {\"name\": \"bump\", \"id\": \"bump15\", \"start\": 1790000900000, \"end\": 1790000903000, \"type\": \"review\", \"color\": \"#741b47\", \"textColor\": \"#ffffff\"}, {\"name\": \"bump\", \"id\": \"bump16\", \"start\": 1790000960000, \"end\": 1790000963000, \"type\": \"review\", \"color\": \"#741b47\", \"textColor\": \"#ffffff\"}, {\"name\": \"bump\", \"id\": \"bump17\", \"start\": 1790001020000, \"end\": 1790001023000, \"type\": \"review\", \"color\": \"#741b47\", \"textColor\": \"#ffffff\"}, {\"name\": \"bump\", \"id\": \"bump18\", \"start\": 1790001080000, \"end\": 1790001083000, \"type\": \"review\", \"color\": \"#741b47\", \"textColor\": \"#ffffff\"}, {\"name\": \"bump\", \"id\": \"bump19\", \"start\": 1790001140000, \"end\": 1790001143000, \"type\": \"review\", \"color\": \"#741b47\", \"textColor\": \"#ffffff\"}, {\"name\": \"bump\", \"id\": \"bump20\", \"start\": 1790001200000, \"end\": 1790001203000, \"type\": \"review\", \"color\": \"#741b47\", \"textColor\": \"#ffffff\"}, {\"name\": \"bump\", \"id\": \"bump21\", \"start\": 1790001260000, \"end\": 1790001263000, \"type\": \"review\", \"color\": \"#741b47\", \"textColor\": \"#ffffff\"}, {\"name\": \"bump\", \"id\": \"bump22\", \"start\": 1790001320000, \"end\": 1790001323000, \"type\": \"review\", \"color\": \"#741b47\", \"textColor\": \"#ffffff\"}, {\"name\": \"bump\", \"id\": \"bump23\", \"start\": 1790001380000, \"end\": 1790001383000, \"type\": \"review\", \"color\": \"#741b47\", \"textColor\": \"#ffffff\"}]}"
+   },
+   "configuration": {
+    "clipActivityNames": true,
+    "aheadBehind": {
+     "duration": 0,
+     "isBehind": false
+    },
+    "swimlaneVisibility": {
+     "E1 campaign: 180 s budget per level": true,
+     "Sonnet checkpoints (every 60 s)": true
+    }
+   }
+  },
+  "c21421ef-abf7-57b6-86ce-b43c15d82a4e": {
+   "identifier": {
+    "key": "c21421ef-abf7-57b6-86ce-b43c15d82a4e",
+    "namespace": ""
+   },
+   "name": "E1 campaign timelist",
+   "type": "timelist",
+   "composition": [
+    {
+     "key": "bc36619d-3032-59f8-a0a7-6141aa8d2dbe",
+     "namespace": ""
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "29c631e0-3b41-558f-b775-523fbf077805",
+   "configuration": {
+    "sortOrderIndex": 0,
+    "currentEventsIndex": 1,
+    "filter": "",
+    "filterMetadata": "",
+    "isCompact": false
+   }
+  },
+  "e631da12-a554-5d06-a22c-1238be2f97b2": {
+   "identifier": {
+    "key": "e631da12-a554-5d06-a22c-1238be2f97b2",
+    "namespace": ""
+   },
+   "name": "Hull and consumables",
+   "type": "telemetry.plot.overlay",
+   "composition": [
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~HEALTH",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~ARMOR",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~SHELLS",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "c9e52ec3-85e9-570e-8fc8-85055561c908",
+   "configuration": {
+    "series": [
+     {
+      "identifier": {
+       "key": "~DoomSat_DoomSat~DoomSat~doom~HEALTH",
+       "namespace": "taxonomy"
+      },
+      "yAxisId": 1
+     },
+     {
+      "identifier": {
+       "key": "~DoomSat_DoomSat~DoomSat~doom~ARMOR",
+       "namespace": "taxonomy"
+      },
+      "yAxisId": 1
+     },
+     {
+      "identifier": {
+       "key": "~DoomSat_DoomSat~DoomSat~doom~SHELLS",
+       "namespace": "taxonomy"
+      },
+      "yAxisId": 1
+     }
+    ],
+    "yAxis": {},
+    "xAxis": {},
+    "legend": {
+     "position": "top",
+     "expandByDefault": false,
+     "showValueWhenExpanded": true,
+     "showLegendsForChildren": true
+    }
+   }
+  },
+  "c9e52ec3-85e9-570e-8fc8-85055561c908": {
+   "identifier": {
+    "key": "c9e52ec3-85e9-570e-8fc8-85055561c908",
+    "namespace": ""
+   },
+   "name": "40 TIME STRIP · one clock for everything",
+   "type": "time-strip",
+   "composition": [
+    {
+     "key": "bc36619d-3032-59f8-a0a7-6141aa8d2dbe",
+     "namespace": ""
+    },
+    {
+     "key": "~DoomGround~DoomFrame",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "e631da12-a554-5d06-a22c-1238be2f97b2",
+     "namespace": ""
+    },
+    {
+     "key": "45284142-ca63-5f22-b278-8f14d9c9d2c4",
+     "namespace": ""
+    },
+    {
+     "key": "yamcs.events.severity.info",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "88187ddb-7ffe-5371-8b14-825be6727481",
+     "namespace": ""
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "f992953d-4399-5c94-82e0-d010c07241ae",
+   "configuration": {
+    "useIndependentTime": false,
+    "containers": [],
+    "swimLaneLabelWidth": 200
+   }
+  },
+  "cfe8243f-af81-532d-8964-e61e035aee5a": {
+   "identifier": {
+    "key": "cfe8243f-af81-532d-8964-e61e035aee5a",
+    "namespace": ""
+   },
+   "name": "E1M1: every attempt (research ledger chart)",
+   "type": "webPage",
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "29c631e0-3b41-558f-b775-523fbf077805",
+   "url": "/aar/e1m1-progress.html"
+  },
+  "58d50cea-27ca-5a79-bad6-6f85def0754f": {
+   "identifier": {
+    "key": "58d50cea-27ca-5a79-bad6-6f85def0754f",
+    "namespace": ""
+   },
+   "name": "Yamcs web UI",
+   "type": "hyperlink",
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "29c631e0-3b41-558f-b775-523fbf077805",
+   "url": "http://localhost:8090/",
+   "displayText": "Yamcs web UI",
+   "displayFormat": "button",
+   "linkTarget": "_blank"
+  },
+  "c1388abe-3b2e-5172-acd0-54e8f40904f2": {
+   "identifier": {
+    "key": "c1388abe-3b2e-5172-acd0-54e8f40904f2",
+    "namespace": ""
+   },
+   "name": "Charter (knowledge boundary, metrics)",
+   "type": "hyperlink",
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "29c631e0-3b41-558f-b775-523fbf077805",
+   "url": "https://github.com/Devonance/DoomSat/blob/main/docs/CHARTER.md",
+   "displayText": "Charter (knowledge boundary, metrics)",
+   "displayFormat": "button",
+   "linkTarget": "_blank"
+  },
+  "1370ce50-b5cd-551c-96b3-959e71cb8fc2": {
+   "identifier": {
+    "key": "1370ce50-b5cd-551c-96b3-959e71cb8fc2",
+    "namespace": ""
+   },
+   "name": "E1M1 finish decision log",
+   "type": "hyperlink",
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "29c631e0-3b41-558f-b775-523fbf077805",
+   "url": "https://github.com/Devonance/DoomSat/blob/main/docs/results/e1m1-finished-decision-log.md",
+   "displayText": "E1M1 finish decision log",
+   "displayFormat": "button",
+   "linkTarget": "_blank"
+  },
+  "7b1deff6-9a4a-5585-8249-05a6c18f407b": {
+   "identifier": {
+    "key": "7b1deff6-9a4a-5585-8249-05a6c18f407b",
+    "namespace": ""
+   },
+   "name": "Grader wall (post-flight only)",
+   "type": "layout",
+   "composition": [],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "29c631e0-3b41-558f-b775-523fbf077805",
+   "configuration": {
+    "items": [
+     {
+      "type": "box-view",
+      "x": 0,
+      "y": 0,
+      "width": 60,
+      "height": 6,
+      "fill": "#990000",
+      "stroke": "",
+      "id": "7575a101-3c30-5340-b469-482a40ca07bb"
+     },
+     {
+      "type": "text-view",
+      "x": 1,
+      "y": 0,
+      "width": 58,
+      "height": 6,
+      "text": "GRADER WALL: post-flight only. WAD-derived. Never in a live display, never read by the pilot, jev or Sonnet (charter 2.4, honesty test 6).",
+      "fontSize": "12",
+      "font": "default",
+      "fill": "",
+      "stroke": "",
+      "color": "#ffffff",
+      "id": "33cafc1d-affc-51cf-8f8e-683148126ff9"
+     }
+    ],
+    "layoutGrid": [
+     10,
+     10
+    ],
+    "objectStyles": {}
+   }
+  },
+  "29c631e0-3b41-558f-b775-523fbf077805": {
+   "identifier": {
+    "key": "29c631e0-3b41-558f-b775-523fbf077805",
+    "namespace": ""
+   },
+   "name": "50 AFTER-ACTION",
+   "type": "folder",
+   "composition": [
+    {
+     "key": "cfe8243f-af81-532d-8964-e61e035aee5a",
+     "namespace": ""
+    },
+    {
+     "key": "c21421ef-abf7-57b6-86ce-b43c15d82a4e",
+     "namespace": ""
+    },
+    {
+     "key": "7b1deff6-9a4a-5585-8249-05a6c18f407b",
+     "namespace": ""
+    },
+    {
+     "key": "58d50cea-27ca-5a79-bad6-6f85def0754f",
+     "namespace": ""
+    },
+    {
+     "key": "c1388abe-3b2e-5172-acd0-54e8f40904f2",
+     "namespace": ""
+    },
+    {
+     "key": "1370ce50-b5cd-551c-96b3-959e71cb8fc2",
+     "namespace": ""
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "f992953d-4399-5c94-82e0-d010c07241ae"
+  },
+  "cf5af81c-235d-5472-bf45-cffd10720f86": {
+   "identifier": {
+    "key": "cf5af81c-235d-5472-bf45-cffd10720f86",
+    "namespace": ""
+   },
+   "name": "Pocket status",
+   "type": "layout",
+   "composition": [
+    {
+     "key": "8336d0b0-b8a9-58d3-9277-9ec7eccbad8a",
+     "namespace": ""
+    },
+    {
+     "key": "787d76b9-01ec-5574-bc44-f1173f30724c",
+     "namespace": ""
+    },
+    {
+     "key": "f3354857-3d9a-572a-8071-ba28a27825ff",
+     "namespace": ""
+    },
+    {
+     "key": "5e85fe3a-42cb-53e7-af3d-69489ac2ab6f",
+     "namespace": ""
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "a82f4a73-8c96-5f65-b569-0e2ea1bf0d8a",
+   "configuration": {
+    "items": [
+     {
+      "type": "subobject-view",
+      "x": 0,
+      "y": 0,
+      "width": 16,
+      "height": 4,
+      "identifier": {
+       "key": "8336d0b0-b8a9-58d3-9277-9ec7eccbad8a",
+       "namespace": ""
+      },
+      "hasFrame": false,
+      "fontSize": "default",
+      "font": "default",
+      "id": "b508953a-3b3d-5ce9-84d7-48a52119da30"
+     },
+     {
+      "type": "subobject-view",
+      "x": 17,
+      "y": 0,
+      "width": 16,
+      "height": 4,
+      "identifier": {
+       "key": "787d76b9-01ec-5574-bc44-f1173f30724c",
+       "namespace": ""
+      },
+      "hasFrame": false,
+      "fontSize": "default",
+      "font": "default",
+      "id": "f2a66440-039c-58dd-84b0-91b7abf6bbb0"
+     },
+     {
+      "type": "subobject-view",
+      "x": 0,
+      "y": 5,
+      "width": 16,
+      "height": 4,
+      "identifier": {
+       "key": "f3354857-3d9a-572a-8071-ba28a27825ff",
+       "namespace": ""
+      },
+      "hasFrame": false,
+      "fontSize": "default",
+      "font": "default",
+      "id": "5da91a14-97f3-5f1c-9739-2bf70ac048b0"
+     },
+     {
+      "type": "subobject-view",
+      "x": 17,
+      "y": 5,
+      "width": 16,
+      "height": 4,
+      "identifier": {
+       "key": "5e85fe3a-42cb-53e7-af3d-69489ac2ab6f",
+       "namespace": ""
+      },
+      "hasFrame": false,
+      "fontSize": "default",
+      "font": "default",
+      "id": "2923b0d2-97a7-5a09-865e-246568b25b22"
+     }
+    ],
+    "layoutGrid": [
+     10,
+     10
+    ],
+    "objectStyles": {}
+   }
+  },
+  "70f7ddd7-ddb9-54a9-b1b0-333e6a7f6cd3": {
+   "identifier": {
+    "key": "70f7ddd7-ddb9-54a9-b1b0-333e6a7f6cd3",
+    "namespace": ""
+   },
+   "name": "Pocket numbers",
+   "type": "LadTable",
+   "composition": [
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~HEALTH",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~ARMOR",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~SHELLS",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~KILLS",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomSat_DoomSat~DoomSat~doom~LEVEL",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomGround~DecisionAgeMs",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "~DoomGround~JevShare",
+     "namespace": "taxonomy"
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "a82f4a73-8c96-5f65-b569-0e2ea1bf0d8a",
+   "configuration": {
+    "hiddenColumns": {
+     "timestamp": true,
+     "type": true,
+     "WATCH": true,
+     "WARNING": true,
+     "DISTRESS": true,
+     "CRITICAL": true,
+     "SEVERE": true
+    },
+    "isFixedLayout": false
+   }
+  },
+  "a82f4a73-8c96-5f65-b569-0e2ea1bf0d8a": {
+   "identifier": {
+    "key": "a82f4a73-8c96-5f65-b569-0e2ea1bf0d8a",
+    "namespace": ""
+   },
+   "name": "60 POCKET · phone view",
+   "type": "flexible-layout",
+   "composition": [
+    {
+     "key": "cf5af81c-235d-5472-bf45-cffd10720f86",
+     "namespace": ""
+    },
+    {
+     "key": "~DoomGround~DoomFrame",
+     "namespace": "taxonomy"
+    },
+    {
+     "key": "70f7ddd7-ddb9-54a9-b1b0-333e6a7f6cd3",
+     "namespace": ""
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "f992953d-4399-5c94-82e0-d010c07241ae",
+   "configuration": {
+    "containers": [
+     {
+      "id": "1c6411b1-5984-5034-bbdb-040560e54e55",
+      "size": 18,
+      "frames": [
+       {
+        "id": "81f785b5-0e7a-5e6d-ab68-8a63fc460513",
+        "domainObjectIdentifier": {
+         "key": "cf5af81c-235d-5472-bf45-cffd10720f86",
+         "namespace": ""
+        },
+        "size": 100,
+        "noFrame": true
+       }
+      ]
+     },
+     {
+      "id": "398049ca-b3e3-5865-8125-b0606de7bb95",
+      "size": 50,
+      "frames": [
+       {
+        "id": "68e0f10e-1a57-5618-8a2e-98409b2e3bfa",
+        "domainObjectIdentifier": {
+         "key": "~DoomGround~DoomFrame",
+         "namespace": "taxonomy"
+        },
+        "size": 100,
+        "noFrame": false
+       }
+      ]
+     },
+     {
+      "id": "7fbd75e5-7679-5d56-bd5e-1b30ad5dfaae",
+      "size": 32,
+      "frames": [
+       {
+        "id": "27da70e0-cf18-50b4-8d7a-89812fa997d4",
+        "domainObjectIdentifier": {
+         "key": "70f7ddd7-ddb9-54a9-b1b0-333e6a7f6cd3",
+         "namespace": ""
+        },
+        "size": 100,
+        "noFrame": false
+       }
+      ]
+     }
+    ],
+    "rowsLayout": true
+   }
+  },
+  "e6c2cd0f-6d9e-5a16-a288-42093a713c74": {
+   "identifier": {
+    "key": "e6c2cd0f-6d9e-5a16-a288-42093a713c74",
+    "namespace": ""
+   },
+   "name": "Conditions",
+   "type": "folder",
+   "composition": [
+    {
+     "key": "f5dea75c-3eb2-577a-a43a-d3f16baedb98",
+     "namespace": ""
+    },
+    {
+     "key": "5508ef75-60a1-5add-acf5-ec2db573bf60",
+     "namespace": ""
+    },
+    {
+     "key": "035a72a1-e368-54b5-bf37-cda25735e46a",
+     "namespace": ""
+    },
+    {
+     "key": "48e2dacc-324c-5348-93d3-f1fda110937e",
+     "namespace": ""
+    },
+    {
+     "key": "778cabdd-2a50-501d-87ff-e19f8dbdafc1",
+     "namespace": ""
+    },
+    {
+     "key": "d0f70a1c-ef14-5b59-b0fc-4b6f3939ea40",
+     "namespace": ""
+    },
+    {
+     "key": "12fda9b3-06ca-5706-85e5-5317bd8db891",
+     "namespace": ""
+    },
+    {
+     "key": "7b45d490-9e5f-5f8e-b0fc-ff107cf399bd",
+     "namespace": ""
+    },
+    {
+     "key": "54410487-cc05-563d-bba2-bd2b110fa9ec",
+     "namespace": ""
+    },
+    {
+     "key": "b5d5d920-4d2d-50c0-85ef-9b151b318d5b",
+     "namespace": ""
+    },
+    {
+     "key": "b272d1dd-f0c2-5d9f-bad2-4594f605e07c",
+     "namespace": ""
+    },
+    {
+     "key": "8336d0b0-b8a9-58d3-9277-9ec7eccbad8a",
+     "namespace": ""
+    },
+    {
+     "key": "5e85fe3a-42cb-53e7-af3d-69489ac2ab6f",
+     "namespace": ""
+    },
+    {
+     "key": "f3354857-3d9a-572a-8071-ba28a27825ff",
+     "namespace": ""
+    },
+    {
+     "key": "2191fbe6-a3c4-5098-aa96-6acb74a3696f",
+     "namespace": ""
+    },
+    {
+     "key": "bb8a56dd-46b5-567f-9119-b85edef98220",
+     "namespace": ""
+    },
+    {
+     "key": "787d76b9-01ec-5574-bc44-f1173f30724c",
+     "namespace": ""
+    },
+    {
+     "key": "63681a1b-446a-5fb5-89bc-2fa16fd93506",
+     "namespace": ""
+    },
+    {
+     "key": "4fb44c43-fb9c-5a81-9f17-d69ef98bf4f5",
+     "namespace": ""
+    },
+    {
+     "key": "9832746d-898e-5e82-a0eb-f6e253957c48",
+     "namespace": ""
+    },
+    {
+     "key": "fe285423-854d-55a4-b1bc-c72f4a583c8a",
+     "namespace": ""
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "f992953d-4399-5c94-82e0-d010c07241ae"
+  },
+  "630edbad-b38d-5b0b-9893-92c067e7e460": {
+   "identifier": {
+    "key": "630edbad-b38d-5b0b-9893-92c067e7e460",
+    "namespace": ""
+   },
+   "name": "Derived telemetry",
+   "type": "folder",
+   "composition": [
+    {
+     "key": "bbd1d17e-0bf9-578a-ba62-68967000f175",
+     "namespace": ""
+    },
+    {
+     "key": "05f683bd-8f14-554a-8d11-527aa85f3040",
+     "namespace": ""
+    },
+    {
+     "key": "8940ce97-fae4-54ae-8b6a-bbc6ab56d987",
+     "namespace": ""
+    },
+    {
+     "key": "d825b799-142b-5cbc-94db-7f94bca198c2",
+     "namespace": ""
+    },
+    {
+     "key": "327d8963-7c50-5eea-afe0-e07dcda71008",
+     "namespace": ""
+    },
+    {
+     "key": "5d26c3e3-f46b-5483-b8c8-5f57525cc601",
+     "namespace": ""
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "f992953d-4399-5c94-82e0-d010c07241ae"
+  },
+  "48b13011-3b32-570f-a9a2-fc8b9e4a6153": {
+   "identifier": {
+    "key": "48b13011-3b32-570f-a9a2-fc8b9e4a6153",
+    "namespace": ""
+   },
+   "name": "Parts (duplicate into My Items to build new screens)",
+   "type": "folder",
+   "composition": [
+    {
+     "key": "5ead5696-1f14-5c09-a861-c17f23380547",
+     "namespace": ""
+    },
+    {
+     "key": "8a81bad8-7eec-5ab8-860e-79dce4cec232",
+     "namespace": ""
+    },
+    {
+     "key": "3a206f8a-f907-524f-a4bf-38b47b4bdef1",
+     "namespace": ""
+    },
+    {
+     "key": "306cc20d-1141-5918-974b-1f04b82c0668",
+     "namespace": ""
+    },
+    {
+     "key": "ad9bdeb9-cdc3-5848-b284-7a6153d6c6e8",
+     "namespace": ""
+    },
+    {
+     "key": "7c8089b9-fcd8-58f4-a39d-aa0a88f8366b",
+     "namespace": ""
+    },
+    {
+     "key": "dacecd42-3293-5835-987f-decfec6f9e8e",
+     "namespace": ""
+    },
+    {
+     "key": "720075c5-92a2-5dce-98c9-58163fd73b8f",
+     "namespace": ""
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "f992953d-4399-5c94-82e0-d010c07241ae"
+  },
+  "f992953d-4399-5c94-82e0-d010c07241ae": {
+   "identifier": {
+    "key": "f992953d-4399-5c94-82e0-d010c07241ae",
+    "namespace": ""
+   },
+   "name": "DoomSat Displays",
+   "type": "folder",
+   "composition": [
+    {
+     "key": "6abe9eeb-9bbc-5350-994b-5fa2367fb5aa",
+     "namespace": ""
+    },
+    {
+     "key": "fd3d14a2-9415-56d7-91d5-13f977c4e332",
+     "namespace": ""
+    },
+    {
+     "key": "84ed7f83-64d1-5c54-aed7-4e24ab21532a",
+     "namespace": ""
+    },
+    {
+     "key": "25d971af-d0a7-58d7-84ac-41aae1687746",
+     "namespace": ""
+    },
+    {
+     "key": "c9e52ec3-85e9-570e-8fc8-85055561c908",
+     "namespace": ""
+    },
+    {
+     "key": "29c631e0-3b41-558f-b775-523fbf077805",
+     "namespace": ""
+    },
+    {
+     "key": "a82f4a73-8c96-5f65-b569-0e2ea1bf0d8a",
+     "namespace": ""
+    },
+    {
+     "key": "e6c2cd0f-6d9e-5a16-a288-42093a713c74",
+     "namespace": ""
+    },
+    {
+     "key": "630edbad-b38d-5b0b-9893-92c067e7e460",
+     "namespace": ""
+    },
+    {
+     "key": "48b13011-3b32-570f-a9a2-fc8b9e4a6153",
+     "namespace": ""
+    }
+   ],
+   "modified": 1790000000000,
+   "created": 1790000000000,
+   "persisted": 1790000000000,
+   "createdBy": "build_displays",
+   "modifiedBy": "build_displays",
+   "location": "ROOT"
+  }
+ },
+ "rootId": "f992953d-4399-5c94-82e0-d010c07241ae"
+}

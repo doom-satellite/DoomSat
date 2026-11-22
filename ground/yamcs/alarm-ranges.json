@@ -1,0 +1,23 @@
+{
+  "_comment": "Flight-parameter alarm ranges, applied at runtime by tools/set_yamcs_alarms.py through the Yamcs MDB override API (fprime-xtce emits no alarms). Each level is the ALLOWED range [low, high], both ends included; null is open. Ground-parameter alarms live in doom-ground.xtce.xml. 'enum' entries cannot be set through the override API; Open MCT condition sets cover them live, and the replay provider evaluates them so the two look the same.",
+  "/DoomSat_DoomSat/DoomSat/doom/HEALTH":        {"watch": [50, null], "warning": [25, null], "critical": [11, null]},
+  "/DoomSat_DoomSat/DoomSat/doom/SHELLS":        {"watch": [4, null]},
+  "/DoomSat_DoomSat/DoomSat/doom/BULLETS":       {"watch": [10, null], "warning": [1, null]},
+  "/DoomSat_DoomSat/DoomSat/doom/ENEMY_COUNT":   {"watch": [null, 1], "warning": [null, 3]},
+  "/DoomSat_DoomSat/DoomSat/doom/WATCHDOG_TRIPS":{"watch": [null, 0]},
+  "/DoomSat_DoomSat/DoomSat/doom/STUCK":         {"enum": {"watch": ["True"]}},
+  "/DoomSat_DoomSat/DoomSat/doom/DEAD":          {"enum": {"critical": ["True"]}},
+  "/DoomSat_DoomSat/DoomSat/doom/PAYLOAD_LINK":  {"enum": {"critical": ["False"]}},
+  "/DoomSat_DoomSat/DoomSat/rateGroup_20Hz/RgMaxTime":   {"watch": [null, 25000], "warning": [null, 40000], "critical": [null, 50000]},
+  "/DoomSat_DoomSat/DoomSat/rateGroup_1Hz/RgMaxTime":    {"warning": [null, 800000], "critical": [null, 1000000]},
+  "/DoomSat_DoomSat/DoomSat/rateGroup_0_25Hz/RgMaxTime": {"warning": [null, 3200000], "critical": [null, 4000000]},
+  "/DoomSat_DoomSat/DoomSat/rateGroup_20Hz/RgCycleSlips":   {"warning": [null, 0]},
+  "/DoomSat_DoomSat/DoomSat/rateGroup_1Hz/RgCycleSlips":    {"warning": [null, 0]},
+  "/DoomSat_DoomSat/DoomSat/rateGroup_0_25Hz/RgCycleSlips": {"warning": [null, 0]},
+  "/DoomSat_DoomSat/DoomSat/systemResources/CPU": {"watch": [null, 70], "warning": [null, 90]},
+  "/DoomSat_DoomSat/CdhCore/cmdDisp/CommandErrors":   {"warning": [null, 0]},
+  "/DoomSat_DoomSat/CdhCore/cmdDisp/CommandsDropped": {"warning": [null, 0]},
+  "/DoomSat_DoomSat/CdhCore/events/EventsDropped":    {"watch": [null, 0]},
+  "/DoomSat_DoomSat/CdhCore/health/PingLateWarnings": {"warning": [null, 0]},
+  "/DoomSat_DoomSat/ComCcsds/commsBufferManager/NoBuffs": {"warning": [null, 0]}
+}

@@ -5,9 +5,15 @@ Y=http://localhost:8090
 echo "=== processes ==="; ps aux | grep -E "doom_payloa[d]|fprime_yamc[s]|YamcsServe[r]|bin/DoomSa[t]" | awk '{print $11, $12}' | sort | uniq -c
 echo "=== payload ==="; tail -2 "$RUN/payload.log"
 echo "=== yamcs log ==="; grep -i -E "error|exception|XTCE file parsing|Shutting|Traceback|Instance .* failed" "$RUN/yamcs.log" | grep -v "sun.misc\|loadLibrary" | tail -6
-echo "=== params ==="
-for c in HEALTH ENEMY_COUNT TARGET_KIND ROUTE_BEARING CLEAR_FWD GOAL FRAMES_SENT CHUNKS_SENT FRAME_BYTES PAYLOAD_LINK CMDS_RECEIVED; do
-  curl -s "$Y/api/processors/fprime-project/realtime/parameters/DoomSat_DoomSat/DoomSat/doom/$c" | python3 -c "import sys,json; d=json.load(sys.stdin); print('$c', d.get('engValue'), d.get('generationTime','')[11:23])" 2>/dev/null
+echo "=== params ==="   # a channel Yamcs does not know comes back as an error ({code, type, msg}): MISSING
+for c in HEALTH ENEMY_COUNT AHEAD_KIND CLEAR_FWD GOAL TIC FRAMES_SENT CHUNKS_SENT FRAME_BYTES PAYLOAD_LINK CMDS_RECEIVED EPISODE WAD_LOADS; do
+  curl -s "$Y/api/processors/fprime-project/realtime/parameters/DoomSat_DoomSat/DoomSat/doom/$c" | python3 -c "import sys,json; d=json.load(sys.stdin); print('$c', 'MISSING: ' + d['msg'] if 'msg' in d else d.get('engValue'), d.get('generationTime','')[11:23])" 2>/dev/null
+done
+echo "=== WAD (LOAD_WAD) ==="   # names travel as zero-padded bytes: F' string telemetry does not survive fprime-xtce
+for c in WAD_IWAD WAD_PWAD; do
+  curl -s "$Y/api/processors/fprime-project/realtime/parameters/DoomSat_DoomSat/DoomSat/doom/$c" | python3 -c "
+import sys,json,base64; d=json.load(sys.stdin); v=d.get('engValue',{}).get('binaryValue')
+print('$c', repr(base64.b64decode(v).rstrip(b'\\0').decode('ascii','replace')) if v else 'MISSING: ' + d['msg'] if 'msg' in d else None, d.get('generationTime','')[11:23])" 2>/dev/null
 done
 echo "=== FRAME_CHUNK type ==="; curl -s "$Y/api/mdb/fprime-project/parameters/DoomSat_DoomSat/DoomSat/doom/FRAME_CHUNK" | python3 -c "
 import sys,json; d=json.load(sys.stdin); t=d.get('type',{}); print(t.get('engType'), [(m['name'], m['type']['engType']) for m in t.get('member',[])])" 2>/dev/null

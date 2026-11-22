@@ -37,6 +37,10 @@ TAIL_CHANNELS = {"THREAT_CLASS", "THREAT_COUNT", "DOOR_PRESSES", "DOOR_OPENS"}
 # The candidate targets ride in their own block rather than as named fields, so they are checked by shape
 # (below) rather than by name.
 CAND_CHANNELS = {"CAND%d" % i for i in range(8)}
+# Which level file the game is running. The payload sends these in its WAD report (record kind 3, see
+# payload/wad_uplink.py and tests/test_wad_uplink.py), not in the status the bench models: the bench never
+# switches WAD in flight.
+WAD_CHANNELS = {"WAD_IWAD", "WAD_PWAD", "WAD_LOADS"}
 
 
 def fpp_channels():
@@ -53,7 +57,8 @@ def packed_keys():
 class TestTheBenchSpeaksTheSameLanguageAsFlight(unittest.TestCase):
     def test_every_packed_field_becomes_the_channel_the_flight_software_declares(self):
         declared = [c for c in fpp_channels()
-                    if c not in FLIGHT_ONLY and c not in CAND_CHANNELS and c not in TAIL_CHANNELS]
+                    if c not in FLIGHT_ONLY and c not in CAND_CHANNELS and c not in TAIL_CHANNELS
+                    and c not in WAD_CHANNELS]
         mapped = [runner.RENAME.get(k, k.upper()) for k in packed_keys()]
         self.assertEqual(sorted(mapped), sorted(declared),
                          "the bench's channel names have drifted from Doom.fpp")

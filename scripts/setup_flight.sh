@@ -40,6 +40,8 @@ fprime() {
   . fprime-venv/bin/activate
   say "fprime-yamcs 0.2.1 (Yamcs 5.12.8 + JRE) and fprime-xtce with the !binary annotation (PR #8)"
   pip install -q fprime-yamcs==0.2.1
+  # it stamps F´ packets 1 s in the future (38 s where Yamcs adds TAI-UTC, 37): patch that one constant
+  python "$DOOMSAT_REPO/tools/yamcs_time_patch.py" || say "fprime-yamcs not patched: F´ times in Yamcs stay 1 s ahead"
   pip install -q "fprime-xtce @ git+https://github.com/FarkasJoseph/fprime-xtce@feature/binary-annotation-combined"
   if [ ! -d "$PROJ/DoomSat" ]; then
     say "the DoomSat deployment"

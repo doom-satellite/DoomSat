@@ -149,6 +149,59 @@ class TestThePilotModes(unittest.TestCase):
         self.assertFalse(p.announce_ok)
         self.assertEqual(err.getvalue().count("PilotMode"), 1)
 
+    # The level budget. It once lived behind the System Two check, so `--system-two none` (play.sh --autopilot,
+    # night_flight.sh) never reset: one code-autopilot attempt ran for hours.
+    def budget_pilot(self, budget, elapsed, system_two=None, manual=False):
+        p = pilot.Pilot.__new__(pilot.Pilot)
+        p.args = mock.Mock(level_budget=budget, bump_every=60.0)
+        p.manual, p.system_two = manual, system_two
+        p.telemetry = {"EXPLORED_CELLS": 40, "LEVEL": 1}
+        p.progress, p.level, p.attempt, p.episode_outcome, p.bump_busy = [], 1, 1, None, False
+        p.level_start_t = time.time() - elapsed
+        p.last_hint_t = time.time() - 600.0          # a bump is long overdue
+        p.processor = mock.Mock()
+        return p
+
+    def check_stall(self, p):
+        with mock.patch("pilot.threading.Thread") as thread, mock.patch.object(sys, "stdout", io.StringIO()):
+            p.check_stall()
+        sent = [c.args[0].rsplit("/", 1)[-1] for c in p.processor.issue_command.call_args_list]
+        return sent, thread
+
+    def test_the_level_budget_holds_without_system_two(self):
+        p = self.budget_pilot(180.0, 200.0)
+        sent, thread = self.check_stall(p)
+        self.assertEqual(sent, ["RESET_GAME"], "a code flight past its budget is reset, System Two or not")
+        self.assertEqual(p.attempt, 2)
+        self.assertIn("within the 180 s budget", p.episode_outcome)
+        self.assertLess(time.time() - p.level_start_t, 5.0, "the next attempt starts a fresh budget")
+        thread.assert_not_called()
+
+    def test_the_level_budget_with_system_two_is_unchanged(self):
+        p = self.budget_pilot(180.0, 200.0, system_two=mock.Mock())
+        sent, thread = self.check_stall(p)
+        self.assertEqual(sent, ["RESET_GAME"])
+        self.assertEqual(p.attempt, 2)
+        self.assertIn("within the 180 s budget", p.episode_outcome)
+        thread.assert_not_called()                   # the reset is this check's whole turn: no bump with it
+
+    def test_inside_the_budget_only_system_two_bumps(self):
+        for two in (None, mock.Mock()):
+            p = self.budget_pilot(180.0, 30.0, system_two=two)
+            sent, thread = self.check_stall(p)
+            self.assertEqual(sent, [])
+            self.assertEqual((p.attempt, p.episode_outcome), (1, None))
+            self.assertEqual(thread.call_count, 0 if two is None else 1)
+            self.assertEqual(thread.return_value.start.call_count, 0 if two is None else 1)   # and it runs
+
+    def test_no_budget_and_a_person_driving_never_reset(self):
+        for p in (self.budget_pilot(0.0, 3600.0),                 # --level-budget 0 keeps the old open-ended flight
+                  self.budget_pilot(180.0, 3600.0, manual=True)):  # a person's drive is theirs to end
+            sent, thread = self.check_stall(p)
+            self.assertEqual(sent, [])
+            self.assertEqual((p.attempt, p.episode_outcome), (1, None))
+            thread.assert_not_called()
+
 
 class TestTheDashboardSpeaksTheCommandsLanguage(unittest.TestCase):
     def test_the_drive_keys_fill_exactly_the_control_arguments(self):

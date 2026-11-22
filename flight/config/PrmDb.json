@@ -1,0 +1,19 @@
+{
+  "DoomSat.cfdpManager": {
+    "LocalEid": 42,
+    "OutgoingFileChunkSize": 981,
+    "RxCrcCalcBytesPerCycle": 16777216,
+    "PostInactivitySendRetries": 3,
+    "FileInDefaultChannel": 0,
+    "FileInDefaultDestEntityId": 100,
+    "FileInDefaultClass": "CLASS_2",
+    "FileInDefaultKeep": "KEEP",
+    "FileInDefaultPriority": 0,
+    "ChannelConfig": [
+      {"ack_limit": 10, "nack_limit": 10, "ack_timer": 2, "inactivity_timer": 120, "dequeue_enabled": "ENABLED",
+       "move_dir": "", "max_outgoing_pdus_per_cycle": 64, "tmp_dir": "@UPLINK@/.cfdp-tmp", "fail_dir": ""},
+      {"ack_limit": 10, "nack_limit": 10, "ack_timer": 2, "inactivity_timer": 120, "dequeue_enabled": "ENABLED",
+       "move_dir": "", "max_outgoing_pdus_per_cycle": 64, "tmp_dir": "@UPLINK@/.cfdp-tmp", "fail_dir": ""}
+    ]
+  }
+}

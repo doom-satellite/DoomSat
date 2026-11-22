@@ -129,6 +129,23 @@ def explored_cells(yamcs="http://localhost:8090", instance="fprime-project", tim
 
 
 # ---------------------------------------------------------------- the run lock
+def publish_honesty(ok, yamcs="http://localhost:8090", instance="fprime-project", timeout=5):
+    """Tell the Open MCT displays (docs/OPENMCT.md, the HONESTY indicator) what preflight found.
+
+    Best effort: /DoomGround/HonestyStatus is a display value, not a gate. The gate is this script's exit code.
+    """
+    url = "%s/api/processors/%s/realtime/parameters/DoomGround/HonestyStatus" % (yamcs.rstrip("/"), instance)
+    # the body is the yamcs.protobuf.Value itself; wrapping it in {"value": ...} is a 400 on Yamcs 5.12
+    body = json.dumps({"type": "STRING", "stringValue": "PASS" if ok else "FAIL"}).encode()
+    req = urllib.request.Request(url, data=body, method="PUT", headers={"Content-Type": "application/json"})
+    try:
+        urllib.request.urlopen(req, timeout=timeout).read()
+        return True
+    except Exception as e:
+        print("  (HonestyStatus not published to Yamcs: %s)" % e)
+        return False
+
+
 class RunLock:
     """One writer per run directory. Trap 2 was two pilots appending to one log for an hour."""
 
@@ -200,6 +217,7 @@ def main(argv=None):
             print("  FAIL %s -- %s" % (f.test, f.detail))
             bad.append(f.test)
     print("  canaries: %d planted leaks, all caught" % len(honesty.CANARIES) if not bad else "")
+    honesty_ok = not bad
 
     print("\norphans (trap 2: a stale pilot appending to the same log)")
     orphans = find_orphans(a.distro, a.expect)
@@ -227,6 +245,8 @@ def main(argv=None):
               "`scripts/flight.sh payload`" % cells)
         if a.require_fresh_payload:
             bad.append("the payload is not fresh (EXPLORED_CELLS = %d)" % cells)
+    if cells is not None:
+        publish_honesty(honesty_ok and cells <= 1, a.yamcs, a.instance)
 
     if a.run_dir:
         lock = RunLock(a.run_dir)

@@ -99,6 +99,11 @@ module DoomMission {
         data: ChunkBytes
     }
 
+    @ !binary
+    @ A WAD file name in ASCII, padded with zeros. Bytes rather than a string: fprime-xtce gives F' string
+    @ telemetry a fixed size while F' sends it length-prefixed, and Yamcs then rejects the whole packet.
+    array WadName = [40] U8
+
     @ Payload interface component: bridges the Doom game process (payload) to F Prime commands and telemetry.
     active component Doom {
 
@@ -111,6 +116,12 @@ module DoomMission {
 
         @ Image product packets (FrameChunk telemetry records) sent straight to the com queue
         output port frameOut: Fw.Com
+
+        @ An uplinked WAD known to be whole: it arrives as NAME.wad.<anything>.part in the uplink directory and
+        @ becomes NAME.wad here. On the CFDP build cfdpGuard announces it when the receiver's FIN says the transfer
+        @ ended with no error and the file retained; on the native build FileUplink announces each file whose
+        @ checksum it has verified. A path outside the uplink directory is refused.
+        sync input port fileAnnounce: Svc.FileAnnounce
 
         # ----------------------------------------------------------------------
         # Commands (uplink)
@@ -162,6 +173,35 @@ module DoomMission {
             hz: U8        @< frames per second (0 disables frames)
             quality: U8   @< JPEG quality 10-95
         ) opcode 0x03
+
+        @ Switch the game to another level file without restarting anything (an uplinked WAD, or one already
+        @ installed). Names are bare file names ending in .wad, found in the uplink directory or the installed
+        @ WAD directory. The payload proves the game starts on them in a separate process before it rebuilds
+        @ its own game and starts a fresh episode; the outcome comes back as WadLoaded or WadLoadFailed, and on
+        @ failure the game carries on with the WAD it had. Safe to send again: one for the files and map already
+        @ flying changes nothing and answers WadAlreadyFlying (RESET_GAME restarts the level), and one that repeats
+        @ the load being proven gets that load's answer.
+        async command LOAD_WAD(
+            iwad: string size 40  @< the IWAD (freedoom2.wad, doom1.wad, ...)
+            pwad: string size 40  @< a PWAD to load over it; empty for none
+            $map: string size 10  @< the map to start on (Yamcs counts the length tag, so 10 carries 8)
+        ) opcode 0x06
+
+        @ Put an uplinked WAD in place: rename UPLINK/NAME.wad.<nonce>.part to UPLINK/NAME.wad, where UPLINK is
+        @ $DOOMSAT_HOME/wads/uplink. fileAnnounce does this by itself for a Class 2 upload (cfdpGuard) or a native
+        @ one; this command is for the rest (a Class 1 upload, or a commit by hand), once the transfer has finished.
+        @ The file is renamed only if its size and CFDP checksum are the ones the ground sent: a commit sent before
+        @ the whole file is on board, or after a damaged Class 1 upload, leaves it a .part (WadCommitRefused) and
+        @ LOAD_WAD cannot use it. Safe to send again: with no .part, a commit of an upload already put in place as
+        @ NAME.wad (since start, by this command or cfdpGuard; the record holds eight names), NAME.wad still with that
+        @ size and checksum, answers WadUplinked as the first commit did; anything else is WadUplinkFailed. Wait for
+        @ the FIN: a commit between the last byte and cfdpManager's CRC pass renames the whole file, but the transfer
+        @ then ends with a file-size error.
+        async command COMMIT_WAD(
+            part: string size 40  @< the bare name it was uplinked under: NAME.wad.<nonce>.part
+            fileSize: U32  @< the size the ground sent, in bytes
+            checksum: U32  @< the CFDP modular checksum of what the ground sent (the one its EOF carries)
+        ) opcode 0x07
 
         # ----------------------------------------------------------------------
         # Telemetry (downlink)
@@ -263,6 +303,11 @@ module DoomMission {
         telemetry DOOR_PRESSES: U16 id 83
         telemetry DOOR_OPENS: U16 id 84
 
+        # The level file the game is running on (LOAD_WAD)
+        telemetry WAD_IWAD: WadName id 85 @< the IWAD
+        telemetry WAD_PWAD: WadName id 86 @< the PWAD loaded over it; zeros for none
+        telemetry WAD_LOADS: U16 id 87 @< LOAD_WAD commands that switched the game
+
         # ----------------------------------------------------------------------
         # Events
         # ----------------------------------------------------------------------
@@ -279,6 +324,12 @@ module DoomMission {
         event LevelStarted(level: U8) severity activity high id 9 format "Now playing level {}"
         event KeyPickedUp(keys: U8) severity activity high id 10 format "Keys held (bitmask red=1 blue=2 yellow=4): {}"
         event IntentSet(intentId: U16, mode: IntentMode, ttlMs: U16) severity activity low id 11 format "Intent {} {} for {} ms"
+        event WadLoaded(name: string size 90, $map: string size 8) severity activity high id 12 format "Now flying {} on {}"
+        event WadLoadFailed(name: string size 90, reason: string size 120) severity warning high id 13 format "Could not load {}: {}"
+        event WadUplinked(fileName: string size 120) severity activity high id 14 format "Uplinked WAD ready to load: {}"
+        event WadUplinkFailed(fileName: string size 120) severity warning high id 15 format "Uplinked WAD could not be renamed into place: {}"
+        event WadCommitRefused(fileName: string size 120, haveSize: U64, haveChecksum: U32, wantSize: U32, wantChecksum: U32) severity warning high id 16 format "Uplinked WAD not committed, it is not the file the ground sent: {} has {} bytes, checksum 0x{x}; expected {} bytes, checksum 0x{x}"
+        event WadAlreadyFlying(name: string size 90, $map: string size 8) severity activity high id 17 format "Already flying {} on {}: LOAD_WAD changed nothing"
 
         # ----------------------------------------------------------------------
         # Standard ports
